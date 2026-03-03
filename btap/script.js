@@ -1,6 +1,6 @@
 function toggleForm() {
     const form = document.getElementById("loginForm");
-    const btn = document.getElementById("mainBtn");
+    const btn = document.getElementById("mainLoginBtn");
     if (form) {
         form.classList.toggle("active");
         if(form.classList.contains("active")) btn.style.display = "none";
@@ -50,7 +50,7 @@ if (formDK) {
             let hocvien = { hoten, gioitinh, tuoi, mail, diachi };
             danhSach.push(hocvien);
             renderTable();
-            hienThongBao("Đăng ký thành công!", "#2ed573");
+            hienThongBao("Đăng ký thành công!", "#2fee7f");
             clearForm();
         }, 800);
     });
@@ -104,3 +104,27 @@ window.addEventListener("load", function () {
         }, 3000);
     }
 });
+
+const loginForm = document.getElementById("loginForm");
+
+if (loginForm) {
+    loginForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+
+        if (!email.checkValidity()) {
+            alert("Email không đúng định dạng!");
+            return;
+        }
+
+        if (password.value.length < 8) {
+            alert("Mật khẩu phải ít nhất 8 ký tự!");
+            return;
+        }
+
+        // Nếu hợp lệ thì mới chuyển trang
+        window.location.href = "noidung.html";
+    });
+}

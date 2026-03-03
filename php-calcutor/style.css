@@ -1,0 +1,65 @@
+body {
+    background-color: rgba(rgb(194, 181, 181), rgb(137, 138, 137), rgb(100, 100, 129), 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.display {
+    background-color: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 20px;
+    width: 280px;
+}
+
+input[type="text"] {
+    width: 100%;
+    height: 60px;
+    font-size: 28px;
+    text-align: right;
+    padding-right: 10px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    border: none;
+    background-color: #1e1e1e;
+    color: white;
+}
+
+.btn {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+button {
+    height: 60px;
+    font-size: 28px;
+    border-radius: 50%;
+    border: none;
+    background-color: #ece8e8;
+    color: rgb(35, 34, 34);
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #505050;
+}
+
+button[value="+"],
+button[value="-"],
+button[value="*"],
+button[value="/"] {
+    background-color: #cbd3e6;
+}
+
+button[value="="] {
+    background-color: #8fb3e8;
+    color: black;
+}
+
+button[value="C"] {
+    background-color: #aa4444;
+}

@@ -2,22 +2,31 @@
 $screen = "0";
 
 if (isset($_POST['btn'])) {
+
     $screen = $_POST['screen'];
     $btn = $_POST['btn'];
 
     if ($btn == "C") {
         $screen = "0";
-    } elseif ($btn == "=") {
-        try {
-            $screen = eval("return $screen;");
-        } catch (Throwable $e) {
+    }
+
+    else if ($btn == "=") {
+
+        if (strpos($screen, "/0") !== false) {
             $screen = "Error";
+        } 
+        else {
+            $result = eval("return $screen;");
+            $screen = $result;
         }
-    } else {
+    }
+
+    else {
+
         if ($screen == "0") {
             $screen = $btn;
         } else {
-            $screen .= $btn;
+            $screen = $screen . $btn;
         }
     }
 }
@@ -30,7 +39,7 @@ if (isset($_POST['btn'])) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1> Người đẹp zai nhất thế giới<h1>
+
 <div class="display">
 <form method="post">
 

@@ -124,7 +124,6 @@ if (loginForm) {
             return;
         }
 
-        // Nếu hợp lệ thì mới chuyển trang
         window.location.href = "noidung.html";
     });
 }

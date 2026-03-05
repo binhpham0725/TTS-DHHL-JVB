@@ -32,7 +32,7 @@ for (let i = 1; i < arr.length; i++){
 console.log ("Số lớn nhất trong mảng là " + max) */
 
 
-//cau6
+/*cau6
 let button = document.getElementById("btn");
 
 button.addEventListener("click", function () {
@@ -43,3 +43,4 @@ button.addEventListener("click", function () {
     document.getElementById("result").innerHTML =
         `Chuỗi sau khi đảo ngược là: ${reversed}`;
 });
+*/

@@ -231,31 +231,6 @@ cursor:pointer;
 display:none;
 }
 
-/* DATE INPUT FIX */
-
-.input-box.date{
-position:relative;
-}
-
-.input-box.date input{
-padding-right:45px;
-appearance:none;
--webkit-appearance:none;
--moz-appearance:none;
-}
-
-/* hide native icon */
-
-.input-box.date input::-webkit-calendar-picker-indicator{
-opacity:0;
-position:absolute;
-right:0;
-top:0;
-width:100%;
-height:100%;
-cursor:pointer;
-}
-
 /* custom icon aligned with eye icons */
 
 .calendar-icon{

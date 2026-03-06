@@ -1,0 +1,115 @@
+/* CONTAINER  */
+
+.header-container{
+    max-width:1300px;
+    margin:auto;
+    padding:0 15px;
+}
+
+/* IMG FIX  */
+
+img{
+    max-width:100%;
+    height:auto;
+    display:block;
+}
+
+/*  LOGO  */
+
+.header-logo img{
+    max-width:120px;
+    height:auto;
+}
+
+@media (max-width:992px){
+    .header-logo img{
+        max-width:100px;
+    }
+}
+
+@media (max-width:768px){
+    .header-logo img{
+        max-width:85px;
+    }
+}
+
+/* MENU SCROLL MOBILE */
+
+@media (max-width:768px){
+
+.menu-wrap{
+    display:flex;
+    overflow-x:auto;
+    white-space:nowrap;
+    flex-wrap:nowrap;
+}
+
+.menu-wrap li{
+    flex:0 0 auto;
+}
+
+.menu-wrap::-webkit-scrollbar{
+    display:none;
+}
+
+}
+
+/* HIDE ELEMENT MOBILE */
+
+@media (max-width:768px){
+
+    .header-links{
+        display:none;
+    }
+
+    .header-weather{
+        display:none;
+    }
+
+}
+
+/* MEGA MENU MOBILE */
+
+@media (max-width:768px){
+
+    .mega-menu .row{
+        flex-direction:column;
+    }
+
+    .mega-col{
+        width:100%;
+        margin-bottom:20px;
+    }
+
+}
+
+
+@media (max-width:768px){
+
+    .news-main h4{
+        font-size:20px;
+    }
+
+    .news-left h5{
+        font-size:16px;
+    }
+
+}
+
+/* BREAKPOINT STRUCTURE  */
+
+@media (max-width:1300px){
+
+}
+
+@media (max-width:992px){
+
+}
+
+@media (max-width:768px){
+
+}
+
+@media (max-width:576px){
+
+}

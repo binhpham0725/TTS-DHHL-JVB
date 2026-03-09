@@ -23,10 +23,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <div class="forms-wrapper">
 
 <!-- SIGN IN -->
-<form id="signinForm" class="form active">
+<form id="signinForm" class="form active" novalidate>
 
 <div class="input-box">
-<input type="email" placeholder="Email" required>
+<input id="signinEmail" type="email" placeholder="Email" required>
 </div>
 
 <div class="input-box">
@@ -40,9 +40,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <input type="checkbox"> Remember me
 </label>
 
-<button class="submit">Sign In →</button>
+<button type="submit" class="submit">Sign In →</button>
 
 <div class="social">
+
 <div class="icon">
 <img src="images/google.svg">
 </div>
@@ -58,7 +59,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <div class="icon">
 <img src="images/github.svg">
 </div>
-</div>
+
 </div>
 
 </form>

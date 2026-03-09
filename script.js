@@ -112,3 +112,39 @@ document.getElementById("confirmEyeOpen"),
 document.getElementById("confirmEyeClosed"),
 document.getElementById("confirmPassword")
 );
+
+const emailInput = document.getElementById("signinEmail");
+const passwordInput = document.getElementById("signinPassword");
+
+signinForm.addEventListener("submit", function(e){
+
+e.preventDefault();
+
+let email = emailInput.value.trim();
+let password = passwordInput.value.trim();
+
+let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if(email === ""){
+alert("Email is required");
+return;
+}
+
+if(!emailPattern.test(email)){
+alert("Email format is invalid");
+return;
+}
+
+if(password === ""){
+alert("Password is required");
+return;
+}
+
+if(password.length < 8){
+alert("Password must be at least 8 characters");
+return;
+}
+
+window.location.href = "home.html";
+
+});

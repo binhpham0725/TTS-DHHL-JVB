@@ -1,0 +1,70 @@
+/* toàn bộ trang */
+body{
+font-family:Segoe UI;
+padding:40px;
+}
+
+/* input và select */
+input,select{
+padding:8px;
+margin:5px;
+}
+
+/* button */
+button{
+padding:8px 15px;
+cursor:pointer;
+}
+
+/* bảng danh sách */
+table{
+margin-top:20px;
+border-collapse:collapse;
+width:100%;
+}
+
+/* ô trong bảng */
+th,td{
+border:1px solid #ccc;
+padding:8px;
+text-align:center;
+}
+
+/* logout dialog */
+#logoutPopup{
+display:none;
+position:fixed;
+top:20px;
+right:20px;
+width:260px;
+background:#dff7e6;
+color:#1e7a3a;
+padding:15px 18px;
+border-radius:12px;
+font-weight:600;
+box-shadow:0 6px 18px rgba(0,0,0,0.15);
+overflow:hidden;
+}
+
+/* icon check */
+#logoutPopup span{
+font-size:18px;
+margin-right:6px;
+}
+
+/* progress bar :v */
+#logoutBar{
+position:absolute;
+bottom:0;
+left:0;
+height:4px;
+width:100%;
+background:#6fd39b;
+animation:progress 2.5s linear forwards;
+}
+
+/* animation progress bar */
+@keyframes progress{
+from{width:100%;}
+to{width:0%;}
+}

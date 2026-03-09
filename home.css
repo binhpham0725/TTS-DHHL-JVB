@@ -1,33 +1,89 @@
 /* toàn bộ trang */
 body{
-font-family:Segoe UI;
+font-family:Segoe UI, sans-serif;
 padding:40px;
+background:#f6f7fb;
+color:#2b2b2b;
 }
 
-/* input và select */
+/* khu vực nhập dữ liệu */
 input,select{
-padding:8px;
-margin:5px;
+padding:10px 12px;
+margin:6px;
+border:1px solid #dcdcec;
+border-radius:6px;
+outline:none;
+font-size:14px;
+transition:0.2s;
+}
+
+/* focus input */
+input:focus,select:focus{
+border-color:#6a6cff;
+box-shadow:0 0 0 2px rgba(106,108,255,0.15);
 }
 
 /* button */
 button{
-padding:8px 15px;
+padding:9px 16px;
+border:none;
+border-radius:6px;
+background:linear-gradient(135deg,#5c6cff,#7b5cff);
+color:white;
+font-weight:500;
 cursor:pointer;
 }
 
 /* bảng danh sách */
 table{
-margin-top:20px;
+margin-top:25px;
 border-collapse:collapse;
 width:100%;
+background:white;
+border-radius:8px;
+overflow:hidden;
+box-shadow:0 6px 20px rgba(0,0,0,0.06);
 }
 
-/* ô trong bảng */
-th,td{
-border:1px solid #ccc;
-padding:8px;
+/* header bảng */
+th{
+background:linear-gradient(135deg,#4f5bff,#6c63ff);
+color:white;
+padding:12px;
+font-weight:600;
+letter-spacing:0.3px;
+}
+
+/* ô dữ liệu */
+td{
+padding:12px;
+border-bottom:1px solid #ececf4;
 text-align:center;
+}
+
+/* hover highlight dòng */
+tbody tr{
+transition:0.2s;
+}
+
+tbody tr:hover{
+background:#f1f2ff;
+transform:scale(1.003);
+}
+
+tbody tr:hover td{
+color:#4f5bff;
+}
+
+/* nút xóa */
+td button{
+background:#f2f3ff;
+color:#5a5cff;
+border:1px solid #e3e4ff;
+}
+
+td button:hover{
+background:#e5e7ff;
 }
 
 /* logout dialog */
@@ -37,22 +93,22 @@ position:fixed;
 top:20px;
 right:20px;
 width:260px;
-background:#dff7e6;
-color:#1e7a3a;
+background:white;
+color:green;
 padding:15px 18px;
-border-radius:12px;
+border-radius:10px;
 font-weight:600;
-box-shadow:0 6px 18px rgba(0,0,0,0.15);
+box-shadow:0 8px 22px rgba(0,0,0,0.12);
 overflow:hidden;
 }
 
-/* icon check */
+/* icon */
 #logoutPopup span{
 font-size:18px;
 margin-right:6px;
 }
 
-/* progress bar :v */
+/* progress bar */
 #logoutBar{
 position:absolute;
 bottom:0;
@@ -63,7 +119,7 @@ background:#6fd39b;
 animation:progress 2.5s linear forwards;
 }
 
-/* animation progress bar */
+/* animation */
 @keyframes progress{
 from{width:100%;}
 to{width:0%;}

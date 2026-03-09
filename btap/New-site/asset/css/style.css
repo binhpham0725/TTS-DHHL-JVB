@@ -269,7 +269,6 @@ body {
     font-size: 14px;
 }
 
-
 /* MAIN */
 .news-left{
     border-right:1px solid #e5e5e5;
@@ -432,7 +431,6 @@ img{
     flex:1;
 }
 
-
 .price{
     font-size:18px;
     font-weight:bold;
@@ -470,4 +468,100 @@ button{
     background:#147a6a;
     color:#fff;
     border:none;
+}
+
+.footer {
+    background-color: #ffffff;
+    border-top: 3px solid #006b3c;
+    padding-top: 24px;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    color: #333;
+}
+
+.footer-logo {
+    margin-bottom: 16px;
+}
+
+.footer-logo img {
+    height: 36px;
+    width: auto;
+    display: block;
+}
+
+.footer-wrap {
+    padding-top: 8px;
+}
+
+.footer-wrap p {
+    margin-bottom: 6px;
+    line-height: 1.55;
+    font-size: 15px;
+    color: #333;
+}
+
+.footer-app-label {
+    display: block;
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.logo-app {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.logo-app a {
+    display: inline-block;
+}
+
+.logo-app a img {
+    height: 36px;
+    width: auto;
+    display: block;
+    border-radius: 6px;
+}
+
+.logo-app a:hover img {
+    opacity: 0.85;
+}
+
+.network-society {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.network-society-label {
+    font-size: 15px;
+    color: #333;
+    white-space: nowrap;
+}
+
+.network-society a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.network-society a:hover {
+    opacity: 0.8;
+}
+
+.copyright {
+    width: 100%;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 16px;
+    padding: 14px 0;
+    font-size: 15px;
+    color: #555;
 }

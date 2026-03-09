@@ -101,7 +101,7 @@ transform:translateX(-100%);
 }
 
 .overlay{
-background:linear-gradient(to right,#ff4b2b,#ff416c);
+background:linear-gradient(to right,#ff4b2b,#d53e62);
 color:white;
 position:relative;
 left:-100%;

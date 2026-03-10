@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <meta charset="UTF-8">
 <title>Homepage</title>
 <link rel="stylesheet" href="home.css">
 </head>
 
-<!-- Body -->
 <body>
 
 <h2>Đăng ký danh sách học</h2>
 
-<!-- form thông tin -->
 <div>
 
 <input id="name" placeholder="Họ và tên">
@@ -28,20 +27,13 @@
 
 <input id="address" placeholder="Địa chỉ">
 
-<!-- đăng ký -->
 <button onclick="register()">Đăng ký</button>
-
-<!-- đăng xuất -->
 <button onclick="logout()">Logout</button>
 
 </div>
 
-
-<!-- pop-up thông báo -->
 <p id="message"></p>
 
-
-<!-- bảng danh sách -->
 <table>
 
 <thead>
@@ -56,20 +48,40 @@
 </tr>
 </thead>
 
-<!-- dữ liệu thêm vào = JavaScript -->
 <tbody id="tableBody"></tbody>
 
 </table>
 
 
-<!-- thông báo logout -->
+<!-- logout notification -->
 <div id="logoutPopup">
 <span>✅</span> Logout thành công, chuyển hướng về trang đăng nhập sau 3 giây...
 <div id="logoutBar"></div>
 </div>
 
 
-<!-- liên kết JavaScript -->
+<!-- delete confirmation dialog -->
+<div id="deleteOverlay">
+
+<div id="deleteDialog">
+
+<div id="deleteHeader">
+Xác nhận xóa
+</div>
+
+<div id="deleteContent">
+Bạn có chắc muốn xóa sinh viên này không?
+</div>
+
+<div id="deleteActions">
+<button id="confirmDeleteBtn">Xóa</button>
+<button id="cancelDeleteBtn">Hủy</button>
+</div>
+
+</div>
+
+</div>
+
 <script src="home.js"></script>
 
 </body>

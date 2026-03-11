@@ -1,25 +1,36 @@
-function toggleMenu(id, btn){
 
-    let menu = document.getElementById(id);
+const weatherAPI = "https://hanoimoi.vn/api/getweather";
 
-    if(menu.style.display === "none"){
-        menu.style.display = "block";
-        btn.innerText = "Thu gọn";
-    }else{
-        menu.style.display = "none";
-        btn.innerText = "Xem thêm";
-    }
+fetch(weatherAPI)
+.then(function(response){
+    return response.json();
+})
+.then(function(dataWeather){
+    var dataWeather = JSON.parse(dataWeather)
+    var firstData = dataWeather[0]
+    console.log(firstData)
+    var firstCityName = dataWeather[0].CityName;
+    console.log(firstCityName)
+    var firstTempC = dataWeather[0].Currtent.TempC;
 
+    document.getElementById("city").innerText = firstCityName;
+    document.getElementById("temp").innerText = firstTempC + "°C";
+
+});
+
+function updateDate(){
+
+    const now = new Date();
+
+    const options = {
+        weekday:"long",
+        day:"2-digit",
+        month:"2-digit",
+        year:"numeric"
+    };
+
+    document.getElementById("date").innerText =
+    now.toLocaleDateString("vi-VN", options);
 }
 
-const signUpBtn = document.getElementById("signUp");
-const signInBtn = document.getElementById("signIn");
-const container = document.getElementById("container");
-
-signUpBtn.addEventListener("click", () => {
-    container.classList.add("right-panel-active");
-});
-
-signInBtn.addEventListener("click", () => {
-    container.classList.remove("right-panel-active");
-});
+updateDate();

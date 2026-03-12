@@ -113,6 +113,9 @@ document.getElementById("confirmEyeClosed"),
 document.getElementById("confirmPassword")
 );
 
+
+/* SIGN IN */
+
 const emailInput = document.getElementById("signinEmail");
 const passwordInput = document.getElementById("signinPassword");
 
@@ -145,6 +148,87 @@ alert("Password must be at least 8 characters");
 return;
 }
 
-window.location.href = "home.html";
+let formData = new FormData();
+
+formData.append("email",email);
+formData.append("password",password);
+
+fetch("login.php",{
+method:"POST",
+body:formData
+})
+.then(res=>res.text())
+.then(data=>{
+
+if(data==="success"){
+window.location.href="home.php";
+}
+else if(data==="wrong_password"){
+alert("Sai mật khẩu");
+}
+else{
+alert("Email không tồn tại");
+}
+
+});
+
+});
+
+
+/* SIGN UP */
+
+signupForm.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+let username = signupForm.querySelector("input[type=text]").value.trim();
+let email = signupForm.querySelector("input[type=email]").value.trim();
+let birthday = document.getElementById("birthday").value;
+let password = document.getElementById("signupPassword").value;
+let confirm = document.getElementById("confirmPassword").value;
+
+if(username === ""){
+alert("Username required");
+return;
+}
+
+if(email === ""){
+alert("Email required");
+return;
+}
+
+if(password.length < 8){
+alert("Password must be at least 8 characters");
+return;
+}
+
+if(password !== confirm){
+alert("Password không khớp");
+return;
+}
+
+let formData = new FormData();
+
+formData.append("username",username);
+formData.append("email",email);
+formData.append("password",password);
+formData.append("birthday",birthday);
+
+fetch("signup.php",{
+method:"POST",
+body:formData
+})
+.then(res=>res.text())
+.then(data=>{
+
+if(data==="success"){
+alert("Tạo tài khoản thành công");
+signinTab.click();
+}
+else{
+alert("Không tạo được tài khoản");
+}
+
+});
 
 });

@@ -1,118 +1,88 @@
-let students = [];
-let deleteIndex = null;
+let deleteId=null;
 
 function register(){
 
-let name = document.getElementById("name").value.trim();
-let gender = document.getElementById("gender").value;
-let age = document.getElementById("age").value;
-let email = document.getElementById("email").value.trim();
-let address = document.getElementById("address").value.trim();
+let name=document.getElementById("name").value.trim();
+let gender=document.getElementById("gender").value;
+let age=document.getElementById("age").value;
+let email=document.getElementById("email").value.trim();
+let address=document.getElementById("address").value.trim();
 
-if(name === "" || gender === "" || age === ""){
+if(name===""||gender===""||age===""){
 showMessage("Thiếu thông tin bắt buộc",false);
 return;
 }
 
-age = Number(age);
+let formData=new FormData();
+formData.append("name",name);
+formData.append("gender",gender);
+formData.append("age",age);
+formData.append("email",email);
+formData.append("address",address);
 
-if(gender === "nu" && age < 18){
-showMessage("Nữ phải >= 18 tuổi",false);
-return;
-}
+fetch("register.php",{
+method:"POST",
+body:formData
+})
+.then(res=>res.text())
+.then(data=>{
 
-let student = {name,gender,age,email,address};
-
-students.push(student);
-
-renderTable();
-
+if(data==="success"){
 showMessage("Đăng ký thành công",true);
-
-clearInput();
+location.reload();
+}else{
+showMessage("Lỗi lưu dữ liệu",false);
 }
-
-function renderTable(){
-
-let tbody = document.getElementById("tableBody");
-
-tbody.innerHTML="";
-
-students.forEach((s,index)=>{
-
-let row = `
-<tr>
-<td>${index+1}</td>
-<td>${s.name}</td>
-<td>${s.gender}</td>
-<td>${s.age}</td>
-<td>${s.email}</td>
-<td>${s.address}</td>
-<td><button onclick="confirmDelete(${index})">Xóa</button></td>
-</tr>
-`;
-
-tbody.innerHTML += row;
 
 });
+
 }
 
-function confirmDelete(index){
+function confirmDelete(id){
 
-deleteIndex = index;
-
+deleteId=id;
 document.getElementById("deleteOverlay").style.display="flex";
 
 }
 
 document.getElementById("confirmDeleteBtn").onclick=function(){
 
-students.splice(deleteIndex,1);
+let formData=new FormData();
+formData.append("id",deleteId);
 
-renderTable();
-
-closeDeleteDialog();
+fetch("delete.php",{
+method:"POST",
+body:formData
+})
+.then(res=>res.text())
+.then(data=>{
+if(data==="success"){
+location.reload();
+}
+});
 
 };
 
 document.getElementById("cancelDeleteBtn").onclick=function(){
 
-closeDeleteDialog();
+document.getElementById("deleteOverlay").style.display="none";
 
 };
 
-function closeDeleteDialog(){
-
-document.getElementById("deleteOverlay").style.display="none";
-
-deleteIndex=null;
-
-}
-
 function showMessage(text,success){
 
-let msg = document.getElementById("message");
+let msg=document.getElementById("message");
 
-msg.innerText = text;
+msg.innerText=text;
 
-msg.style.color = success ? "green" : "red";
-
-}
-
-function clearInput(){
-
-document.getElementById("name").value="";
-document.getElementById("gender").value="";
-document.getElementById("age").value="";
-document.getElementById("email").value="";
-document.getElementById("address").value="";
+msg.style.color=success?"green":"red";
 
 }
 
 function logout(){
 
-let popup = document.getElementById("logoutPopup");
-let bar = document.getElementById("logoutBar");
+let popup=document.getElementById("logoutPopup");
+let bar=document.getElementById("logoutBar");
 
 popup.style.display="block";
 

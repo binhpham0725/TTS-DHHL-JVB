@@ -250,3 +250,35 @@ transform:translateY(-50%);
 pointer-events:none;
 opacity:.9;
 }
+
+#toast{
+display:none;
+position:fixed;
+top:20px;
+right:20px;
+width:260px;
+background:rgba(30,35,50,0.95);
+color:white;
+padding:15px 18px;
+border-radius:10px;
+font-weight:600;
+box-shadow:0 10px 26px rgba(0,0,0,0.4);
+overflow:hidden;
+align-items:center;
+gap:8px;
+}
+
+#toastBar{
+position:absolute;
+bottom:0;
+left:0;
+height:4px;
+width:100%;
+background:#6c5ce7;
+animation:toastProgress 3s linear forwards;
+}
+
+@keyframes toastProgress{
+from{width:100%;}
+to{width:0%;}
+}

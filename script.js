@@ -6,7 +6,33 @@ const signupForm = document.getElementById("signupForm");
 
 const card = document.querySelector(".card");
 
-/* smooth switch + card resize */
+/* toast */
+
+function showToast(text, success=true){
+
+let toast = document.getElementById("toast");
+let msg = document.getElementById("toastText");
+let icon = document.getElementById("toastIcon");
+let bar = document.getElementById("toastBar");
+
+msg.innerText = text;
+icon.innerText = success ? "✔" : "⚠";
+
+bar.style.background = success ? "#6c5ce7" : "#ff6b6b";
+
+toast.style.display="flex";
+
+bar.style.animation="none";
+bar.offsetHeight;
+bar.style.animation="toastProgress 3s linear forwards";
+
+setTimeout(()=>{
+toast.style.display="none";
+},3000);
+
+}
+
+/* tab switch */
 
 function animateSwitch(hideForm, showForm, direction){
 
@@ -16,72 +42,64 @@ hideForm.animate([
 { transform:"translateX(0)", opacity:1 },
 { transform:`translateX(${direction*-40}px)`, opacity:0 }
 ],{
-duration:300,
-easing:"ease"
+duration:300
 }).onfinish = () => {
 
 hideForm.classList.remove("active");
-
 showForm.classList.add("active");
 
 const endHeight = card.offsetHeight;
 
-card.style.height = startHeight + "px";
+card.style.height = startHeight+"px";
 
 requestAnimationFrame(()=>{
-card.style.height = endHeight + "px";
+card.style.height = endHeight+"px";
 });
 
 setTimeout(()=>{
-card.style.height = "auto";
+card.style.height="auto";
 },350);
 
 showForm.animate([
 { transform:`translateX(${direction*40}px)`, opacity:0 },
 { transform:"translateX(0)", opacity:1 }
 ],{
-duration:300,
-easing:"ease"
+duration:300
 });
 
 };
 
 }
 
-signinTab.onclick = () => {
-
+signinTab.onclick=()=>{
 if(signinForm.classList.contains("active")) return;
 
-animateSwitch(signupForm, signinForm, -1);
+animateSwitch(signupForm,signinForm,-1);
 
 signinTab.classList.add("active");
 signupTab.classList.remove("active");
-
 };
 
-signupTab.onclick = () => {
-
+signupTab.onclick=()=>{
 if(signupForm.classList.contains("active")) return;
 
-animateSwitch(signinForm, signupForm, 1);
+animateSwitch(signinForm,signupForm,1);
 
 signupTab.classList.add("active");
 signinTab.classList.remove("active");
-
 };
-
 
 /* password toggle */
 
-function togglePassword(open, closed, input){
+function togglePassword(open,closed,input){
 
-open.onclick = () => {
+open.onclick=()=>{
 input.type="text";
 open.style.display="none";
 closed.style.display="block";
 };
 
-closed.onclick = () => {
+closed.onclick=()=>{
 input.type="password";
 closed.style.display="none";
 open.style.display="block";
@@ -89,15 +107,11 @@ open.style.display="block";
 
 }
 
-/* signin password */
-
 togglePassword(
 document.getElementById("signinEyeOpen"),
 document.getElementById("signinEyeClosed"),
 document.getElementById("signinPassword")
 );
-
-/* signup password */
 
 togglePassword(
 document.getElementById("signupEyeOpen"),
@@ -105,51 +119,46 @@ document.getElementById("signupEyeClosed"),
 document.getElementById("signupPassword")
 );
 
-/* confirm password */
-
 togglePassword(
 document.getElementById("confirmEyeOpen"),
 document.getElementById("confirmEyeClosed"),
 document.getElementById("confirmPassword")
 );
 
+/* email regex */
+
+const emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /* SIGN IN */
 
-const emailInput = document.getElementById("signinEmail");
-const passwordInput = document.getElementById("signinPassword");
-
-signinForm.addEventListener("submit", function(e){
+signinForm.addEventListener("submit",function(e){
 
 e.preventDefault();
 
-let email = emailInput.value.trim();
-let password = passwordInput.value.trim();
+let email=document.getElementById("signinEmail").value.trim();
+let password=document.getElementById("signinPassword").value.trim();
 
-let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-if(email === ""){
-alert("Email is required");
+if(email===""){
+showToast("Email is required",false);
 return;
 }
 
 if(!emailPattern.test(email)){
-alert("Email format is invalid");
+showToast("Email format invalid",false);
 return;
 }
 
-if(password === ""){
-alert("Password is required");
+if(password===""){
+showToast("Password required",false);
 return;
 }
 
-if(password.length < 8){
-alert("Password must be at least 8 characters");
+if(password.length<8){
+showToast("Password >= 8 characters",false);
 return;
 }
 
-let formData = new FormData();
-
+let formData=new FormData();
 formData.append("email",email);
 formData.append("password",password);
 
@@ -161,19 +170,22 @@ body:formData
 .then(data=>{
 
 if(data==="success"){
+showToast("Đăng nhập thành công",true);
+
+setTimeout(()=>{
 window.location.href="home.php";
+},1000);
 }
 else if(data==="wrong_password"){
-alert("Sai mật khẩu");
+showToast("Sai mật khẩu",false);
 }
 else{
-alert("Email không tồn tại");
+showToast("Email không tồn tại",false);
 }
 
 });
 
 });
-
 
 /* SIGN UP */
 
@@ -181,33 +193,53 @@ signupForm.addEventListener("submit",function(e){
 
 e.preventDefault();
 
-let username = signupForm.querySelector("input[type=text]").value.trim();
-let email = signupForm.querySelector("input[type=email]").value.trim();
-let birthday = document.getElementById("birthday").value;
-let password = document.getElementById("signupPassword").value;
-let confirm = document.getElementById("confirmPassword").value;
+let username=document.getElementById("signupUsername").value.trim();
+let email=document.getElementById("signupEmail").value.trim();
+let birthday=document.getElementById("birthday").value;
+let password=document.getElementById("signupPassword").value;
+let confirm=document.getElementById("confirmPassword").value;
 
-if(username === ""){
-alert("Username required");
+if(username===""){
+showToast("Nhập username",false);
 return;
 }
 
-if(email === ""){
-alert("Email required");
+if(email===""){
+showToast("Nhập email",false);
 return;
 }
 
-if(password.length < 8){
-alert("Password must be at least 8 characters");
+if(!emailPattern.test(email)){
+showToast("Email sai định dạng",false);
 return;
 }
 
-if(password !== confirm){
-alert("Password không khớp");
+if(birthday===""){
+showToast("Nhập ngày sinh",false);
 return;
 }
 
-let formData = new FormData();
+if(password===""){
+showToast("Nhập mật khẩu",false);
+return;
+}
+
+if(password.length<8){
+showToast("Mật khẩu >= 8 ký tự",false);
+return;
+}
+
+if(confirm===""){
+showToast("Xác nhận mật khẩu",false);
+return;
+}
+
+if(password!==confirm){
+showToast("Mật khẩu không khớp",false);
+return;
+}
+
+let formData=new FormData();
 
 formData.append("username",username);
 formData.append("email",email);
@@ -222,11 +254,14 @@ body:formData
 .then(data=>{
 
 if(data==="success"){
-alert("Tạo tài khoản thành công");
+showToast("Tạo tài khoản thành công",true);
 signinTab.click();
 }
+else if(data==="email_exists"){
+showToast("Email đã tồn tại",false);
+}
 else{
-alert("Không tạo được tài khoản");
+showToast("Không tạo được tài khoản",false);
 }
 
 });

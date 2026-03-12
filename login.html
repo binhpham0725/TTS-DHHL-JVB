@@ -26,11 +26,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <form id="signinForm" class="form active" novalidate>
 
 <div class="input-box">
-<input id="signinEmail" type="email" placeholder="Email" required>
+<input id="signinEmail" type="email" placeholder="Email">
 </div>
 
 <div class="input-box">
-<input id="signinPassword" type="password" placeholder="Password" required>
+<input id="signinPassword" type="password" placeholder="Password">
 
 <i class="fa-solid fa-eye" id="signinEyeOpen"></i>
 <i class="fa-solid fa-eye-slash" id="signinEyeClosed"></i>
@@ -43,23 +43,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <button type="submit" class="submit">Sign In →</button>
 
 <div class="social">
-
-<div class="icon">
-<img src="images/google.svg">
-</div>
-
-<div class="icon">
-<img src="images/facebook.svg">
-</div>
-
-<div class="icon">
-<img src="images/twitter.svg">
-</div>
-
-<div class="icon">
-<img src="images/github.svg">
-</div>
-
+<div class="icon"><img src="images/google.svg"></div>
+<div class="icon"><img src="images/facebook.svg"></div>
+<div class="icon"><img src="images/twitter.svg"></div>
+<div class="icon"><img src="images/github.svg"></div>
 </div>
 
 </form>
@@ -68,27 +55,27 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <form id="signupForm" class="form">
 
 <div class="input-box">
-<input type="text" placeholder="Username" required>
+<input id="signupUsername" type="text" placeholder="Username">
 </div>
 
 <div class="input-box">
-<input type="email" placeholder="Email" required>
+<input id="signupEmail" type="email" placeholder="Email">
 </div>
 
 <div class="input-box date">
-<input id="birthday" type="date" required>
+<input id="birthday" type="date">
 <i class="fa-solid fa-cake-candles birthday-icon"></i>
 </div>
 
 <div class="input-box">
-<input id="signupPassword" type="password" placeholder="Password" required>
+<input id="signupPassword" type="password" placeholder="Password">
 
 <i class="fa-solid fa-eye" id="signupEyeOpen"></i>
 <i class="fa-solid fa-eye-slash" id="signupEyeClosed"></i>
 </div>
 
 <div class="input-box">
-<input id="confirmPassword" type="password" placeholder="Confirm Password" required>
+<input id="confirmPassword" type="password" placeholder="Confirm Password">
 
 <i class="fa-solid fa-eye" id="confirmEyeOpen"></i>
 <i class="fa-solid fa-eye-slash" id="confirmEyeClosed"></i>
@@ -97,29 +84,23 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <button class="submit">Create Account →</button>
 
 <div class="social">
-<div class="icon">
-<img src="images/google.svg">
-</div>
-
-<div class="icon">
-<img src="images/facebook.svg">
-</div>
-
-<div class="icon">
-<img src="images/twitter.svg">
-</div>
-
-<div class="icon">
-<img src="images/github.svg">
-</div>
-</div>
+<div class="icon"><img src="images/google.svg"></div>
+<div class="icon"><img src="images/facebook.svg"></div>
+<div class="icon"><img src="images/twitter.svg"></div>
+<div class="icon"><img src="images/github.svg"></div>
 </div>
 
 </form>
 
 </div>
-
 </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast">
+<span id="toastIcon"></span>
+<span id="toastText"></span>
+<div id="toastBar"></div>
 </div>
 
 <script src="script.js"></script>

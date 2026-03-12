@@ -15,7 +15,7 @@ $result = $conn->query("SELECT * FROM students");
 
 <body>
 
-<h2>Danh sách học sinh</h2>
+<h2>Danh sách sinh viên</h2>
 
 <div>
 

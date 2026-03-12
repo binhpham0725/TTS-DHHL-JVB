@@ -1,27 +1,31 @@
-
 const weatherAPI = "https://hanoimoi.vn/api/getweather";
 
-fetch(weatherAPI)
-.then(function(response){
-    return response.json();
-})
-.then(function(dataWeather){
-    var dataWeather = JSON.parse(dataWeather)
-    var firstData = dataWeather[0]
-    console.log(firstData)
-    var firstCityName = dataWeather[0].CityName;
-    console.log(firstCityName)
-    var firstTempC = dataWeather[0].Currtent.TempC;
+let weatherData = [];
+let index = 0;
 
-    document.getElementById("city").innerText = firstCityName;
-    document.getElementById("temp").innerText = firstTempC + "°C";
-
+$(document).ready(function(){
+    $.get(weatherAPI, function(data){
+        weatherData = JSON.parse(data);
+        showWeather();
+        setInterval(function(){
+            index++;
+            if(index >= weatherData.length){
+                index = 0;
+            }
+            showWeather();
+        },15000);
+    });
 });
 
+function showWeather(){
+    let city = weatherData[index].CityName;
+    let temp = weatherData[index].Currtent.TempC;
+    $("#city").text(city);
+    $("#temp").text(temp + "°C");
+}
+
 function updateDate(){
-
     const now = new Date();
-
     const options = {
         weekday:"long",
         day:"2-digit",
@@ -29,8 +33,7 @@ function updateDate(){
         year:"numeric"
     };
 
-    document.getElementById("date").innerText =
-    now.toLocaleDateString("vi-VN", options);
+    $("#date").text(now.toLocaleDateString("vi-VN", options));
 }
 
 updateDate();

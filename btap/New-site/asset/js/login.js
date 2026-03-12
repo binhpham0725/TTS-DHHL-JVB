@@ -1,19 +1,16 @@
 function showtab(tab){
 
-    let tabs = document.querySelectorAll(".tab")
-    let contents = document.querySelectorAll(".tab-content")
-
-    tabs.forEach(t => t.classList.remove("active"))
-    contents.forEach(c => c.classList.remove("active"))
+    $(".tab").removeClass("active")
+    $(".tab-content").removeClass("active")
 
     if(tab === "login"){
-        tabs[0].classList.add("active")
-        document.getElementById("login").classList.add("active")
+        $(".tab").eq(0).addClass("active")
+        $("#login").addClass("active")
     }
 
     if(tab === "register"){
-        tabs[1].classList.add("active")
-        document.getElementById("register").classList.add("active")
+        $(".tab").eq(1).addClass("active")
+        $("#register").addClass("active")
     }
 
 }

@@ -38,8 +38,9 @@
 
 .header-top{
     display:flex;
-    justify-content:center;
-    position:relative;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 15px;
 }
 
 .menu-btn{

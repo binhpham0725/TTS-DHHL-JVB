@@ -1,0 +1,8 @@
+1. Cài đặt và khởi động xampp + mySQL, import file student_registration.sql vào mySQL để có database.
+
+2. Chạy file login.html bằng PHP Server trong Visual code studio
+
+3. Tài khoản, mật khẩu test: 
+truong@gmail.com
+truong123
+Hoặc có thể tự tạo tài khoản khác

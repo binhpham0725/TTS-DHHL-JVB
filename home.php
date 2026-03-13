@@ -1,3 +1,9 @@
+<?php
+include "db.php";
+
+$result = $conn->query("SELECT * FROM students");
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -9,7 +15,7 @@
 
 <body>
 
-<h2>Đăng ký danh sách học</h2>
+<h2>Danh sách sinh viên</h2>
 
 <div>
 
@@ -17,8 +23,8 @@
 
 <select id="gender">
 <option value="">Giới tính</option>
-<option value="nam">Nam</option>
-<option value="nu">Nữ</option>
+<option value="Nam">Nam</option>
+<option value="Nữ">Nữ</option>
 </select>
 
 <input id="age" type="number" placeholder="Tuổi">
@@ -48,19 +54,32 @@
 </tr>
 </thead>
 
-<tbody id="tableBody"></tbody>
+<tbody id="tableBody">
+
+<?php
+$stt = 1;
+while($row = $result->fetch_assoc()){
+echo "<tr>
+<td>".$stt++."</td>
+<td>".$row['ho_ten']."</td>
+<td>".$row['gioi_tinh']."</td>
+<td>".$row['tuoi']."</td>
+<td>".$row['email']."</td>
+<td>".$row['dia_chi']."</td>
+<td><button onclick='confirmDelete(".$row['id'].")'>Xóa</button></td>
+</tr>";
+}
+?>
+
+</tbody>
 
 </table>
 
-
-<!-- logout notification -->
 <div id="logoutPopup">
 <span>✅</span> Logout thành công, chuyển hướng về trang đăng nhập sau 3 giây...
 <div id="logoutBar"></div>
 </div>
 
-
-<!-- delete confirmation dialog -->
 <div id="deleteOverlay">
 
 <div id="deleteDialog">

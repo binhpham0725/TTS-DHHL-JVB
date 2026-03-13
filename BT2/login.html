@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="stylesheet" href="login.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        primary: "#2b6cee",
+        "background-light": "#f6f6f8",
+        "background-dark": "#101622",
+      },
+      fontFamily: {
+        display: ["Inter","sans-serif"]
+      },
+      borderRadius: {
+        DEFAULT: "1rem",
+        lg: "2rem",
+        xl: "3rem",
+        full: "9999px"
+      },
+    },
+  },
+}
+</script>
+</head>
+
+<body class="font-display antialiased">
+<div class="relative min-h-screen w-full flex items-center justify-center liquid-bg p-6 overflow-hidden">
+
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/20 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/30 rounded-full blur-[120px]"></div>
+
+<div class="layout-container w-full max-w-[440px] z-10">
+<div class="glass-card rounded-xl p-8 shadow-2xl flex flex-col gap-8">
+
+<div class="flex flex-col items-center gap-4">
+<div class="size-16 bg-white/40 flex items-center justify-center rounded-full shadow-inner border border-white/50">
+<span class="material-symbols-outlined text-primary text-4xl">
+🔒
+</span>
+</div>
+<div class="text-center">
+<h2 class="text-slate-900 text-3xl font-bold tracking-tight">
+Đăng nhập hệ thống
+</h2>
+<p class="text-slate-600 mt-2 text-sm">
+Chào mừng bạn trở lại! Vui lòng nhập thông tin.
+</p>
+</div>
+</div>
+<form class="flex flex-col gap-5">
+
+<div class="flex flex-col gap-2">
+<label class="text-slate-800 text-sm font-semibold px-1">
+Email
+</label>
+<input
+class="w-full bg-white/50 border border-white/60 focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-xl h-14 pl-4 pr-4 text-slate-900 placeholder:text-slate-400 outline-none"
+placeholder="name@example.com"
+required
+type="email">
+</div>
+
+<div class="flex flex-col gap-2">
+<label class="text-slate-800 text-sm font-semibold px-1">
+Mật khẩu
+</label>
+<input
+class="w-full bg-white/50 border border-white/60 focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-xl h-14 pl-4 pr-4 text-slate-900 placeholder:text-slate-400 outline-none"
+minlength="8"
+placeholder="Tối thiểu 8 ký tự"
+required
+type="password">
+</div>
+<button
+class="w-full h-14 bg-gradient-to-r from-primary to-blue-400 text-white font-bold rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all duration-200"
+type="submit">
+Đăng nhập
+</button>
+</form>
+</div>
+
+<div class="mt-8 flex justify-center gap-6 text-white/70 text-xs font-medium">
+<a class="hover:text-white transition-colors" href="#">
+Chính sách bảo mật
+</a>
+<a class="hover:text-white transition-colors" href="#">
+Điều khoản dịch vụ
+</a>
+<a class="hover:text-white transition-colors" href="#">
+Hỗ trợ
+</a>
+</div>
+</div>
+</div>
+
+<div class="bubble-container">
+<span class="bubble"></span>
+<span class="bubble"></span>
+<span class="bubble"></span>
+<span class="bubble"></span>
+<span class="bubble"></span>
+<span class="bubble"></span>
+</div>
+<script>
+
+const container = document.querySelector(".bubble-container");
+for(let i=0;i<30;i++){
+let bubble = document.createElement("span");
+bubble.classList.add("bubble");
+let size = Math.random()*80 + 20;
+bubble.style.width = size+"px";
+bubble.style.height = size+"px";
+bubble.style.left = Math.random()*100+"%";
+bubble.style.animationDuration =
+(15 + Math.random()*15)+"s,"+
+(4 + Math.random()*6)+"s";
+bubble.style.animationDelay =
+Math.random()*10+"s";
+container.appendChild(bubble);
+}
+
+const form = document.querySelector("form");
+const emailInput = form.querySelector('input[type="email"]');
+const passwordInput = form.querySelector('input[type="password"]');
+form.addEventListener("submit", function(e){
+e.preventDefault();
+const email = emailInput.value.trim();
+const password = passwordInput.value.trim();
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if(email === ""){
+  alert("Email không được để trống");
+  return;
+}
+if(!emailRegex.test(email)){
+  alert("Email không đúng định dạng");
+  return;
+}
+if(password.length < 8){
+  alert("Mật khẩu phải có ít nhất 8 ký tự");
+  return;
+}
+
+window.location.href = "dashboard.html";
+});
+</script>
+</body>
+</html>

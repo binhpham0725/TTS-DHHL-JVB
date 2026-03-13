@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Logout Success</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="stylesheet" href="logout.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet"/>
+</head>
+
+<body class="font-display antialiased">
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden vibrant-bg px-6">
+<div class="absolute top-[-10%] left-[-10%] w-72 h-72 bg-white/20 rounded-full blur-3xl"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-primary/30 rounded-full blur-3xl"></div>
+
+<div class="liquid-glass relative z-10 w-full max-w-[400px] rounded-xl p-10 flex flex-col items-center text-center shadow-2xl">
+<div class="mb-8 flex items-center justify-center w-20 h-20 bg-green-500 rounded-full text-white success-glow">
+<span class="material-symbols-outlined text-2xl">
+Good Bye
+</span>
+</div>
+<div class="space-y-3 mb-10">
+<h1 class="text-slate-900 text-2xl font-bold tracking-tight">
+Bạn đã Logout thành công
+</h1>
+<p class="text-slate-700 text-base font-medium opacity-80 leading-relaxed">
+Hẹn gặp lại bạn lần sau!
+</p>
+</div>
+<div class="w-full space-y-4">
+<button
+id="backLogin"
+class="w-full h-14 bg-gradient-to-r from-blue-600 to-blue-400 text-white font-bold text-lg rounded-full shadow-lg hover:opacity-95 transition">
+Quay lại Login
+</button>
+</div>
+</div>
+
+<div class="absolute bottom-8 text-white/60 text-xs font-medium uppercase tracking-widest">
+Secure Logout • 2026 System
+</div>
+</div>
+
+<div class="bubble-container"></div>
+<script>
+
+document.getElementById("backLogin").addEventListener("click", function(){
+window.location.href = "login.html";
+});
+
+const container = document.querySelector(".bubble-container");
+for(let i=0;i<35;i++){
+let bubble = document.createElement("span");
+bubble.classList.add("bubble");
+let size = Math.random()*80 + 20;
+bubble.style.width = size + "px";
+bubble.style.height = size + "px";
+bubble.style.left = Math.random()*100 + "%";
+bubble.style.animationDuration =
+(12 + Math.random()*10) + "s";
+bubble.style.animationDelay =
+Math.random()*10 + "s";
+container.appendChild(bubble);
+}
+</script>
+</body>
+</html>

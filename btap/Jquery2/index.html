@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Caro</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <div class="game-area">
+      <div class="controls">
+        <button id="showBoard">Hiện bàn cờ</button>
+        <button id="hideBoard">Ẩn bàn cờ</button>
+        <button id="startGame">Start</button>
+        <button id="clearBoard">Clear</button>
+        <button id="undoMove">Undo</button>
+      </div>
+
+      <div class="status" id="status">Bấm Start để bắt đầu chơi</div>
+
+      <div id="boardWrapper">
+        <div id="board"></div>
+      </div>
+
+      <h2>CARO GAME</h2>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

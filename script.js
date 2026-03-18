@@ -6,9 +6,21 @@ const signupForm = document.getElementById("signupForm");
 
 const card = document.querySelector(".card");
 
-/* toast */
+/* ================= TOAST (FIX RATE LIMIT) ================= */
+
+let lastToastTime = 0;
+const TOAST_COOLDOWN = 3000; // đúng bằng duration
 
 function showToast(text, success=true){
+
+let now = Date.now();
+
+/* ignore nếu spam */
+if(now - lastToastTime < TOAST_COOLDOWN){
+return;
+}
+
+lastToastTime = now;
 
 let toast = document.getElementById("toast");
 let msg = document.getElementById("toastText");
@@ -32,7 +44,7 @@ toast.style.display="none";
 
 }
 
-/* tab switch */
+/* ================= TAB SWITCH ================= */
 
 function animateSwitch(hideForm, showForm, direction){
 
@@ -89,7 +101,7 @@ signupTab.classList.add("active");
 signinTab.classList.remove("active");
 };
 
-/* password toggle */
+/* ================= PASSWORD TOGGLE ================= */
 
 function togglePassword(open,closed,input){
 
@@ -125,11 +137,11 @@ document.getElementById("confirmEyeClosed"),
 document.getElementById("confirmPassword")
 );
 
-/* email regex */
+/* ================= EMAIL REGEX ================= */
 
 const emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/* SIGN IN */
+/* ================= SIGN IN ================= */
 
 signinForm.addEventListener("submit",function(e){
 
@@ -187,7 +199,7 @@ showToast("Email không tồn tại",false);
 
 });
 
-/* SIGN UP */
+/* ================= SIGN UP ================= */
 
 signupForm.addEventListener("submit",function(e){
 

@@ -1,200 +1,243 @@
-let deleteId=null;
-let editId=null;
+let deleteId = null;
+let editId = null;
+let actionLocked = false;
 
-/* helper toast */
+/* toast */
+function showToast(toastId, barId, duration) {
+    let toast = document.getElementById(toastId);
+    let bar = document.getElementById(barId);
 
-function showToast(toastId,barId,duration){
+    toast.style.display = "block";
 
-let toast=document.getElementById(toastId);
-let bar=document.getElementById(barId);
+    bar.style.animation = "none";
+    bar.offsetHeight; // force reflow
+    bar.style.animation = "progress " + duration + "ms linear forwards";
+}
 
-toast.style.display="block";
+/* form */
+function openForm() {
+    if (actionLocked) return;
+    document.getElementById("formOverlay").style.display = "flex";
+}
 
-bar.style.animation="none";
-bar.offsetHeight;
-bar.style.animation="progress "+duration+"ms linear forwards";
+function closeForm() {
+    if (actionLocked) return;
+    document.getElementById("formOverlay").style.display = "none";
+}
 
+function switchTab(tab) {
+    document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+
+    document.getElementById("tab" + tab).classList.add("active");
+    document.querySelectorAll(".tab")[tab - 1].classList.add("active");
 }
 
 /* register */
+document.addEventListener("DOMContentLoaded", function () {
+    let form = document.getElementById("studentForm");
+    let searchInput = document.getElementById("search");
 
-function register(){
+    /* restore search state */
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("search")) {
+        searchInput.value = urlParams.get("search");
+        liveSearch();
+    }
 
-let name=document.getElementById("name").value.trim();
-let gender=document.getElementById("gender").value;
-let age=document.getElementById("age").value;
-let email=document.getElementById("email").value.trim();
-let address=document.getElementById("address").value.trim();
+    if (form) {
+        form.onsubmit = function (e) {
+            if (actionLocked) return;
 
-if(name===""||gender===""||age===""){
+            e.preventDefault();
+            actionLocked = true;
 
-let text=document.getElementById("loadingText");
-text.innerText="⚠ Thiếu thông tin bắt buộc";
+            let formData = new FormData(this);
 
-showToast("loadingToast","loadingBar",2000);
+            fetch("register.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.text())
+            .then(data => {
+                if (data === "success") {
+                    showToast("registerToast", "registerBar", 2000);
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    actionLocked = false;
+                    document.getElementById("loadingText").innerText = "❌ Lỗi";
+                    showToast("loadingToast", "loadingBar", 2000);
+                }
+            });
+        };
+    }
 
-return;
-}
+    /* delete buttons */
+    let confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+    let cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
 
-let formData=new FormData();
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.onclick = function () {
+            if (actionLocked) return;
+            actionLocked = true;
 
-formData.append("name",name);
-formData.append("gender",gender);
-formData.append("age",age);
-formData.append("email",email);
-formData.append("address",address);
+            document.getElementById("deleteOverlay").style.display = "none";
 
-fetch("register.php",{
-method:"POST",
-body:formData
-})
-.then(res=>res.text())
-.then(data=>{
+            let formData = new FormData();
+            formData.append("id", deleteId);
 
-if(data==="success"){
+            fetch("delete.php", { method: "POST", body: formData })
+            .then(() => {
+                showToast("deleteToast", "deleteBar", 2000);
+                setTimeout(() => location.reload(), 2000);
+            });
+        };
+    }
 
-showToast("registerToast","registerBar",2000);
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.onclick = function () {
+            document.getElementById("deleteOverlay").style.display = "none";
+        };
+    }
 
-setTimeout(function(){
-location.reload();
-},2000);
+    /* edit buttons */
+    let confirmEditBtn = document.getElementById("confirmEditBtn");
+    let cancelEditBtn = document.getElementById("cancelEditBtn");
 
-}else{
+    if (confirmEditBtn) {
+        confirmEditBtn.onclick = function () {
+            if (actionLocked) return;
+            actionLocked = true;
 
-let text=document.getElementById("loadingText");
-text.innerText="❌ Lỗi lưu dữ liệu";
+            document.getElementById("editOverlay").style.display = "none";
+            showToast("loadingToast", "loadingBar", 1000);
 
-showToast("loadingToast","loadingBar",2000);
+            setTimeout(() => {
+                window.location = "edit.php?id=" + editId;
+            }, 1000);
+        };
+    }
 
-}
+    if (cancelEditBtn) {
+        cancelEditBtn.onclick = function () {
+            document.getElementById("editOverlay").style.display = "none";
+        };
+    }
+
+    /* search */
+    searchInput.addEventListener("input", liveSearch);
+
+    function liveSearch() {
+        let input = searchInput.value.toLowerCase().trim();
+        let rows = document.querySelectorAll("#tableBody tr");
+
+        rows.forEach(row => {
+            let text = row.textContent || "";
+            text = text.toLowerCase().trim();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+
+        /* update URL param without reload */
+        const url = new URL(window.location.href);
+        if (input) url.searchParams.set("search", input);
+        else url.searchParams.delete("search");
+        window.history.replaceState({}, "", url);
+    }
+
+    /* delete / edit confirmation */
+    window.confirmDelete = function (id) {
+        if (actionLocked) return;
+        deleteId = id;
+        document.getElementById("deleteOverlay").style.display = "flex";
+    };
+
+    window.confirmEdit = function (id) {
+        if (actionLocked) return;
+        editId = id;
+        document.getElementById("editOverlay").style.display = "flex";
+    };
 
 });
-
-}
-
-/* delete */
-
-function confirmDelete(id){
-deleteId=id;
-document.getElementById("deleteOverlay").style.display="flex";
-}
-
-document.getElementById("confirmDeleteBtn").onclick=function(){
-
-document.getElementById("deleteOverlay").style.display="none";
-
-let formData=new FormData();
-formData.append("id",deleteId);
-
-fetch("delete.php",{
-method:"POST",
-body:formData
-})
-.then(res=>res.text())
-.then(data=>{
-
-if(data==="success"){
-
-showToast("deleteToast","deleteBar",2000);
-
-setTimeout(function(){
-location.reload();
-},2000);
-
-}
-
-});
-
-};
-
-document.getElementById("cancelDeleteBtn").onclick=function(){
-document.getElementById("deleteOverlay").style.display="none";
-};
-
-/* edit */
-
-function confirmEdit(id){
-editId=id;
-document.getElementById("editOverlay").style.display="flex";
-}
-
-document.getElementById("confirmEditBtn").onclick=function(){
-
-document.getElementById("editOverlay").style.display="none";
-
-let text=document.getElementById("loadingText");
-text.innerText="⏳ Đang lấy dữ liệu...";
-
-showToast("loadingToast","loadingBar",1500);
-
-setTimeout(function(){
-window.location.href="edit.php?id="+editId;
-},1500);
-
-};
-
-document.getElementById("cancelEditBtn").onclick=function(){
-document.getElementById("editOverlay").style.display="none";
-};
 
 /* pagination */
+function goPage(page) {
+    if (actionLocked) return;
+    actionLocked = true;
 
-function goPage(page){
+    document.getElementById("pageText").innerText = "⏳ Đang lấy dữ liệu trang " + page + "...";
+    showToast("pageToast", "pageBar", 1200);
 
-let text=document.getElementById("pageText");
-text.innerText="⏳ Đang lấy dữ liệu trang "+page+"...";
+    setTimeout(() => {
+        let url = new URL(window.location.href);
+        url.searchParams.set("page", page);
 
-showToast("pageToast","pageBar",1200);
+        /* preserve search param */
+        let searchVal = document.getElementById("search").value.trim();
+        if (searchVal) url.searchParams.set("search", searchVal);
+        else url.searchParams.delete("search");
 
-setTimeout(function(){
-
-let url=new URL(window.location.href);
-url.searchParams.set("page",page);
-
-window.location=url;
-
-},1200);
-
+        window.location = url;
+    }, 1200);
 }
 
 /* logout */
+function logout() {
+    if (actionLocked) return;
+    actionLocked = true;
 
-function logout(){
+    showToast("logoutToast", "logoutBar", 2000);
 
-showToast("logoutToast","logoutBar",2500);
-
-setTimeout(function(){
-window.location.href="login.html";
-},3000);
-
+    setTimeout(() => {
+        window.location = "login.html";
+    }, 2500);
 }
 
-/* search */
+/* sort */
+function sortTable(col) {
+    if (actionLocked) return;
 
-function liveSearch(){
+    let url = new URL(window.location.href);
+    let order = url.searchParams.get("order") === "asc" ? "desc" : "asc";
 
-let input=document.getElementById("search").value.toLowerCase();
-let rows=document.querySelectorAll("#tableBody tr");
+    url.searchParams.set("sort", col);
+    url.searchParams.set("order", order);
 
-rows.forEach(row=>{
-let text=row.innerText.toLowerCase();
-row.style.display=text.includes(input)?"":"none";
-});
+    /* preserve search param */
+    let searchVal = document.getElementById("search").value.trim();
+    if (searchVal) url.searchParams.set("search", searchVal);
+    else url.searchParams.delete("search");
 
+    window.location = url;
 }
 
-/* sorting */
+/* view */
+function changeView() {
+    if (actionLocked) return;
 
-function sortTable(column){
+    let mode = document.getElementById("viewMode").value;
+    let url = new URL(window.location.href);
+    url.searchParams.set("view", mode);
 
-let url=new URL(window.location.href);
+    /* preserve search param */
+    let searchVal = document.getElementById("search").value.trim();
+    if (searchVal) url.searchParams.set("search", searchVal);
+    else url.searchParams.delete("search");
 
-let currentOrder=url.searchParams.get("order");
-let order=currentOrder==="asc"?"desc":"asc";
-
-url.searchParams.set("sort",column);
-url.searchParams.set("order",order);
-
-window.location=url;
-
+    window.location = url;
 }
+
+// live student count
+function updateStudentCount() {
+    fetch("count.php")
+    .then(res => res.text())
+    .then(count => {
+        const span = document.getElementById("studentCount");
+        if (span) span.textContent = count;
+    });
+}
+
+// initial load
+updateStudentCount();
+
+// optional: refresh every 5 seconds
+setInterval(updateStudentCount, 5000);

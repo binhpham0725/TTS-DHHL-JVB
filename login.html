@@ -1,108 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Login Page</title>
 
+<!-- Main CSS -->
 <link rel="stylesheet" href="style.css">
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
+<!-- FontAwesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+</head>
 <body>
 
+<!-- Particle background canvas -->
+<canvas id="particlesCanvas"></canvas>
+
+<!-- Container for the glassmorphic card -->
 <div class="container">
-<div class="card">
+  <div class="card">
 
-<div class="tabs">
-<button id="signinTab" class="active">Sign In</button>
-<button id="signupTab">Sign Up</button>
+    <!-- Tab buttons -->
+    <div class="tabs">
+      <button id="signinTab" class="active">Sign In</button>
+      <button id="signupTab">Sign Up</button>
+    </div>
+
+    <!-- Forms wrapper -->
+    <div class="forms-wrapper">
+
+      <!-- SIGN IN FORM -->
+      <form id="signinForm" class="form active" autocomplete="off" novalidate>
+        <!-- hidden dummy input to prevent autofill -->
+        <input type="text" style="display:none">
+
+        <!-- Email -->
+        <div class="input-box">
+          <input id="signinEmail" type="email" name="signinEmail" autocomplete="off" placeholder="Email">
+        </div>
+
+        <!-- Password -->
+        <div class="input-box">
+          <input id="signinPassword" type="password" name="signinPassword" autocomplete="new-password" placeholder="Password">
+          <i class="fa-solid fa-eye" id="signinEyeOpen"></i>
+          <i class="fa-solid fa-eye-slash" id="signinEyeClosed"></i>
+        </div>
+
+        <!-- Remember checkbox -->
+        <label class="remember">
+          <input type="checkbox" autocomplete="off"> Remember me
+        </label>
+
+        <!-- Submit button -->
+        <button type="submit" class="submit">Sign In →</button>
+
+        <!-- Social login icons -->
+        <div class="social">
+          <div class="icon"><img src="images/google.svg" alt="Google"></div>
+          <div class="icon"><img src="images/facebook.svg" alt="Facebook"></div>
+          <div class="icon"><img src="images/twitter.svg" alt="Twitter"></div>
+          <div class="icon"><img src="images/github.svg" alt="Github"></div>
+        </div>
+      </form>
+
+      <!-- SIGN UP FORM -->
+      <form id="signupForm" class="form" autocomplete="off">
+
+        <!-- hidden dummy input to prevent autofill -->
+        <input type="text" style="display:none">
+
+        <!-- Username -->
+        <div class="input-box">
+          <input id="signupUsername" type="text" name="signupUsername" autocomplete="off" placeholder="Username">
+        </div>
+
+        <!-- Email -->
+        <div class="input-box">
+          <input id="signupEmail" type="email" name="signupEmail" autocomplete="off" placeholder="Email">
+        </div>
+
+        <!-- Birthday -->
+        <div class="input-box date">
+          <input id="birthday" type="date" name="birthday" autocomplete="off">
+          <i class="fa-solid fa-cake-candles birthday-icon"></i>
+        </div>
+
+        <!-- Password -->
+        <div class="input-box">
+          <input id="signupPassword" type="password" name="signupPassword" autocomplete="new-password" placeholder="Password">
+          <i class="fa-solid fa-eye" id="signupEyeOpen"></i>
+          <i class="fa-solid fa-eye-slash" id="signupEyeClosed"></i>
+        </div>
+
+        <!-- Confirm password -->
+        <div class="input-box">
+          <input id="confirmPassword" type="password" name="confirmPassword" autocomplete="new-password" placeholder="Confirm Password">
+          <i class="fa-solid fa-eye" id="confirmEyeOpen"></i>
+          <i class="fa-solid fa-eye-slash" id="confirmEyeClosed"></i>
+        </div>
+
+        <!-- Submit button -->
+        <button class="submit">Create Account →</button>
+
+        <!-- Social login icons -->
+        <div class="social">
+          <div class="icon"><img src="images/google.svg" alt="Google"></div>
+          <div class="icon"><img src="images/facebook.svg" alt="Facebook"></div>
+          <div class="icon"><img src="images/twitter.svg" alt="Twitter"></div>
+          <div class="icon"><img src="images/github.svg" alt="Github"></div>
+        </div>
+      </form>
+
+    </div>
+  </div>
 </div>
 
-<div class="forms-wrapper">
-
-<!-- SIGN IN -->
-<form id="signinForm" class="form active" novalidate>
-
-<div class="input-box">
-<input id="signinEmail" type="email" placeholder="Email">
-</div>
-
-<div class="input-box">
-<input id="signinPassword" type="password" placeholder="Password">
-
-<i class="fa-solid fa-eye" id="signinEyeOpen"></i>
-<i class="fa-solid fa-eye-slash" id="signinEyeClosed"></i>
-</div>
-
-<label class="remember">
-<input type="checkbox"> Remember me
-</label>
-
-<button type="submit" class="submit">Sign In →</button>
-
-<div class="social">
-<div class="icon"><img src="images/google.svg"></div>
-<div class="icon"><img src="images/facebook.svg"></div>
-<div class="icon"><img src="images/twitter.svg"></div>
-<div class="icon"><img src="images/github.svg"></div>
-</div>
-
-</form>
-
-<!-- SIGN UP -->
-<form id="signupForm" class="form">
-
-<div class="input-box">
-<input id="signupUsername" type="text" placeholder="Username">
-</div>
-
-<div class="input-box">
-<input id="signupEmail" type="email" placeholder="Email">
-</div>
-
-<div class="input-box date">
-<input id="birthday" type="date">
-<i class="fa-solid fa-cake-candles birthday-icon"></i>
-</div>
-
-<div class="input-box">
-<input id="signupPassword" type="password" placeholder="Password">
-
-<i class="fa-solid fa-eye" id="signupEyeOpen"></i>
-<i class="fa-solid fa-eye-slash" id="signupEyeClosed"></i>
-</div>
-
-<div class="input-box">
-<input id="confirmPassword" type="password" placeholder="Confirm Password">
-
-<i class="fa-solid fa-eye" id="confirmEyeOpen"></i>
-<i class="fa-solid fa-eye-slash" id="confirmEyeClosed"></i>
-</div>
-
-<button class="submit">Create Account →</button>
-
-<div class="social">
-<div class="icon"><img src="images/google.svg"></div>
-<div class="icon"><img src="images/facebook.svg"></div>
-<div class="icon"><img src="images/twitter.svg"></div>
-<div class="icon"><img src="images/github.svg"></div>
-</div>
-
-</form>
-
-</div>
-</div>
-</div>
-
-<!-- TOAST -->
+<!-- Toast notifications -->
 <div id="toast">
-<span id="toastIcon"></span>
-<span id="toastText"></span>
-<div id="toastBar"></div>
+  <span id="toastIcon"></span>
+  <span id="toastText"></span>
+  <div id="toastBar"></div>
 </div>
 
+<!-- Scripts -->
 <script src="script.js"></script>
+<script src="particles.js"></script>
+
 </body>
 </html>

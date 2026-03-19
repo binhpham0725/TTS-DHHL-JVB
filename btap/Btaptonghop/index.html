@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>Thực Đơn</h2>
+ 
+    <div class="container">
+    
+        <div class="menu">
+        
+            <div class="section-title"> Ưu đãi hôm nay</div>
+        
+            <div class="mon-an">
+                <img src="loads/comchien.jpg">
+                <div>
+                    <div class="ten-mon">Cơm chiên dương châu</div>
+                    <div>Giá trên đã gồm 5.000đ tiền hộp</div>
+                    <div><span class="gia-cu">40.000đ</span> → <span class="gia">33.000đ</span></div>
+                    <div>
+                        SL: <input type="number" min="0" value="0" oninput="tinhTien(0, this.value)">
+                        <span class="thanh-tien" id="tt0">0đ</span>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="section-title"> Mừng Đại Lễ - Ưu đãi 50%</div>
+        
+            <div class="mon-an">
+                <img src="loads/comthoopla.jpg">
+                <div>
+                    <div class="ten-mon">Cơm Thố Ốp La</div>
+                    <div class="gia">20.000đ</div>
+                    <div>
+                        SL: <input type="number" min="0" value="0" oninput="tinhTien(1, this.value)">
+                        <span class="thanh-tien" id="tt1">0đ</span>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="mon-an">
+            <img src="loads/salad.jpg">
+                <div>
+                    <div class="ten-mon">Salad rau củ</div>
+                    <div class="gia">25.000đ</div>
+                    <div>
+                        SL: <input type="number" min="0" value="0" oninput="tinhTien(2, this.value)">
+                        <span class="thanh-tien" id="tt2">0đ</span>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+        
+        <div class="hoa-don">
+            <h2> Hóa Đơn</h2>
+        
+            <div class="dong-hd">
+                <span>Cơm chiên dương châu</span>
+                <span id="hd0">0đ</span>
+            </div>
+            <div class="dong-hd">
+                <span>Cơm Thố Ốp La</span>
+                <span id="hd1">0đ</span>
+            </div>
+            <div class="dong-hd">
+                <span>Salad rau củ</span>
+                <span id="hd2">0đ</span>
+            </div>
+        
+            <hr>
+        
+            <div class="dong-hd">
+                <span>Tổng cộng:</span>
+                <span class="tong" id="tongCong">0đ</span>
+            </div>
+        
+            <div class="dong-hd" style="margin-top:10px">
+                <span>Giảm giá (%):</span>
+                <input type="number" min="0" max="100" value="0" id="phanTramGiam" oninput="tinhTong()">
+            </div>
+        
+            <div class="dong-hd" style="color:green">
+                <span>Số tiền giảm:</span>
+                <span id="soTienGiam">0đ</span>
+            </div>
+        
+            <hr>
+        
+            <div class="dong-hd">
+                <span><b>Thành tiền:</b></span>
+                <span class="tong" id="thanhTien">0đ</span>
+            </div>
+        
+            <button onclick="datHang()">Đặt Hàng</button>
+        </div>
+    
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

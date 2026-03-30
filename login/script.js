@@ -6,6 +6,8 @@ const signupForm = document.getElementById("signupForm");
 
 const card = document.querySelector(".card");
 
+let isSwitching = false;
+
 /* ================= TOAST (FIX RATE LIMIT) ================= */
 
 let lastToastTime = 0;
@@ -45,6 +47,12 @@ function showToast(text, success = true) {
 /* ================= TAB SWITCH ================= */
 
 function animateSwitch(hideForm, showForm, direction) {
+    if (isSwitching) return;
+    isSwitching = true;
+
+    signinTab.disabled = true;
+    signupTab.disabled = true;
+
     const startHeight = card.offsetHeight;
 
     hideForm.animate(
@@ -69,6 +77,10 @@ function animateSwitch(hideForm, showForm, direction) {
 
         setTimeout(() => {
             card.style.height = "auto";
+            isSwitching = false;
+
+            signinTab.disabled = false;
+            signupTab.disabled = false;
         }, 350);
 
         showForm.animate(
@@ -84,21 +96,21 @@ function animateSwitch(hideForm, showForm, direction) {
 }
 
 signinTab.onclick = () => {
-    if (signinForm.classList.contains("active")) return;
-
-    animateSwitch(signupForm, signinForm, -1);
+    if (signinForm.classList.contains("active") || isSwitching) return;
 
     signinTab.classList.add("active");
     signupTab.classList.remove("active");
+
+    animateSwitch(signupForm, signinForm, -1);
 };
 
 signupTab.onclick = () => {
-    if (signupForm.classList.contains("active")) return;
-
-    animateSwitch(signinForm, signupForm, 1);
+    if (signupForm.classList.contains("active") || isSwitching) return;
 
     signupTab.classList.add("active");
     signinTab.classList.remove("active");
+
+    animateSwitch(signinForm, signupForm, 1);
 };
 
 /* ================= PASSWORD TOGGLE ================= */

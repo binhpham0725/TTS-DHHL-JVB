@@ -30,7 +30,7 @@ function showToast(message, redirect = false) {
     if (redirect) {
         navLock = true;
         setTimeout(() => {
-            window.location = "home.php";
+            window.location = "../homepage/home.php";
         }, 3000);
     }
 }
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
         showToast("Cập nhật thông tin thành công");
 
         setTimeout(() => {
-            window.location = "home.php";
+            window.location = "../homepage/home.php";
         }, 3000);
     }
 });

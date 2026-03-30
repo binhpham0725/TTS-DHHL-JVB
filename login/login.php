@@ -1,12 +1,15 @@
 <?php
 
-include "db.php";
+include "../database/db.php";
 
 $email = $_POST["email"];
 $password = $_POST["password"];
 
-$sql = "SELECT * FROM users WHERE email='$email'";
-$result = $conn->query($sql);
+$stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+
+$result = $stmt->get_result();
 
 if($result->num_rows > 0){
 
@@ -21,5 +24,7 @@ echo "wrong_password";
 }else{
 echo "not_found";
 }
+
+$stmt->close();
 
 ?>

@@ -181,7 +181,7 @@ signinForm.addEventListener("submit", function (e) {
                 showToast("Đăng nhập thành công", true);
 
                 setTimeout(() => {
-                    window.location.href = "home.php";
+                    window.location.href = "../homepage/home.php";
                 }, 1000);
             } else if (data === "wrong_password") {
                 showToast("Sai mật khẩu", false);

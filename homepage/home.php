@@ -1,15 +1,33 @@
 <?php
-include "db.php";
+include "../database/db.php";
 
 $limit = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 $start = ($page - 1) * $limit;
 
+$limit = (int)$limit;
+$start = (int)$start;
+
 $view = isset($_GET['view']) ? $_GET['view'] : "personal";
 
-$allowed = ["ho_ten", "gioi_tinh", "ngay_sinh", "email", "dia_chi"];
-$sort = isset($_GET['sort']) && in_array($_GET['sort'], $allowed) ? $_GET['sort'] : "id";
+if ($view == "academic") {
+    $allowed = [
+        "ho_ten" => "s.ho_ten",
+        "chuyen_nganh" => "a.chuyen_nganh",
+        "khoa_hoc" => "a.khoa_hoc",
+        "gpa" => "a.gpa",
+        "tinh_trang" => "a.tinh_trang",
+        "xep_loai" => "a.xep_loai"
+    ];
+
+    $sortKey = $_GET['sort'] ?? "ho_ten";
+    $sort = isset($allowed[$sortKey]) ? $allowed[$sortKey] : "s.id";
+} else {
+    $allowed = ["ho_ten", "gioi_tinh", "ngay_sinh", "email", "dia_chi"];
+    $sort = isset($_GET['sort']) && in_array($_GET['sort'], $allowed) ? $_GET['sort'] : "id";
+}
+
 $order = isset($_GET['order']) && $_GET['order'] == "desc" ? "DESC" : "ASC";
 
 $totalResult = $conn->query("SELECT COUNT(*) as total FROM students");
@@ -54,14 +72,22 @@ if ($view == "academic") {
     <b>Tổng số sinh viên: <span id="studentCount">0</span></b>
 </div>
 
-<div>
-    <button onclick="openForm()">Đăng ký</button>
-    <button onclick="logout()">Logout</button>
-    <input id="search" placeholder="Tìm kiếm..." onkeyup="liveSearch()">
-    <select id="viewMode" onchange="changeView()">
-        <option value="personal" <?= ($view == "personal") ? "selected" : "" ?>>Thông tin cá nhân</option>
-        <option value="academic" <?= ($view == "academic") ? "selected" : "" ?>>Thông tin học tập</option>
-    </select>
+<div class="top-bar">
+    <div class="top-actions">
+        <button onclick="openForm()">Đăng ký</button>
+        <button onclick="logout()">Logout</button>
+        <input id="search" placeholder="Tìm kiếm..." onkeyup="liveSearch()">
+        <select id="viewMode" onchange="changeView()">
+            <option value="personal" <?= ($view == "personal") ? "selected" : "" ?>>Thông tin cá nhân</option>
+            <option value="academic" <?= ($view == "academic") ? "selected" : "" ?>>Thông tin học tập</option>
+        </select>
+    </div>
+
+    <div class="bulk-actions">
+        <button id="bulkDeleteBtn" onclick="confirmBulkDelete()" style="display:none;">
+            Xóa nhiều dữ liệu?
+        </button>
+    </div>
 </div>
 
 <table>
@@ -69,13 +95,13 @@ if ($view == "academic") {
         <?php if ($view == "academic") { ?>
             <tr>
                 <th>STT</th>
-                <th>Họ tên</th>
-                <th>Chuyên ngành</th>
-                <th>Khóa học</th>
-                <th>GPA</th>
-                <th>Tình trạng</th>
-                <th>Xếp loại</th>
-                <th>Thao tác</th>
+                <th onclick="sortTable('ho_ten')">Họ tên</th>
+                <th onclick="sortTable('chuyen_nganh')">Chuyên ngành</th>
+                <th onclick="sortTable('khoa_hoc')">Khóa học</th>
+                <th onclick="sortTable('gpa')">GPA</th>
+                <th onclick="sortTable('tinh_trang')">Tình trạng</th>
+                <th onclick="sortTable('xep_loai')">Xếp loại</th>
+                <th class="action-col">Thao tác</th>
             </tr>
         <?php } else { ?>
             <tr>
@@ -85,7 +111,7 @@ if ($view == "academic") {
                 <th onclick="sortTable('ngay_sinh')">Ngày sinh</th>
                 <th onclick="sortTable('email')">Email</th>
                 <th onclick="sortTable('dia_chi')">Địa chỉ</th>
-                <th>Thao tác</th>
+                <th class="action-col">Thao tác</th>
             </tr>
         <?php } ?>
     </thead>
@@ -102,9 +128,10 @@ if ($view == "academic") {
                     <td>{$row['gpa']}</td>
                     <td>{$row['tinh_trang']}</td>
                     <td>{$row['xep_loai']}</td>
-                    <td>
+                    <td class='action-cell'>
                         <button onclick='confirmEdit({$row['id']})'>Sửa</button>
                         <button onclick='confirmDelete({$row['id']})'>Xóa</button>
+                        <input type='checkbox' class='row-check' value='{$row['id']}' onchange='toggleBulkDeleteButton()'>
                     </td>
                 </tr>";
             } else {
@@ -116,9 +143,10 @@ if ($view == "academic") {
                     <td>{$dob}</td>
                     <td>{$row['email']}</td>
                     <td>{$row['dia_chi']}</td>
-                    <td>
+                    <td class='action-cell'>
                         <button onclick='confirmEdit({$row['id']})'>Sửa</button>
                         <button onclick='confirmDelete({$row['id']})'>Xóa</button>
+                        <input type='checkbox' class='row-check' value='{$row['id']}' onchange='toggleBulkDeleteButton()'>
                     </td>
                 </tr>";
             }
@@ -174,6 +202,18 @@ if ($view == "academic") {
         <div id="deleteActions">
             <button id="confirmDeleteBtn">Xóa</button>
             <button id="cancelDeleteBtn">Hủy</button>
+        </div>
+    </div>
+</div>
+
+<!-- BULK DELETE DIALOG -->
+<div id="bulkDeleteOverlay">
+    <div id="bulkDeleteDialog">
+        <div id="bulkDeleteHeader">Xóa nhiều</div>
+        <div id="bulkDeleteContent">Xác nhận xóa các sinh viên đã chọn?</div>
+        <div id="bulkDeleteActions">
+            <button id="confirmBulkDeleteBtn">Xóa</button>
+            <button id="cancelBulkDeleteBtn">Hủy</button>
         </div>
     </div>
 </div>

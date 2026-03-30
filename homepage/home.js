@@ -33,6 +33,25 @@ function switchTab(tab) {
     document.querySelectorAll(".tab")[tab - 1].classList.add("active");
 }
 
+/* bulk delete button */
+function toggleBulkDeleteButton() {
+    const checked = document.querySelectorAll(".row-check:checked");
+    const bulkBtn = document.getElementById("bulkDeleteBtn");
+
+    if (!bulkBtn) return;
+
+    bulkBtn.style.display = checked.length >= 2 ? "inline-block" : "none";
+}
+
+function confirmBulkDelete() {
+    if (actionLocked) return;
+
+    const checked = document.querySelectorAll(".row-check:checked");
+    if (checked.length < 2) return;
+
+    document.getElementById("bulkDeleteOverlay").style.display = "flex";
+}
+
 /* register */
 document.addEventListener("DOMContentLoaded", function () {
     let form = document.getElementById("studentForm");
@@ -54,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let formData = new FormData(this);
 
-            fetch("register.php", {
+            fetch("../login/register.php", {
                 method: "POST",
                 body: formData
             })
@@ -86,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let formData = new FormData();
             formData.append("id", deleteId);
 
-            fetch("delete.php", { method: "POST", body: formData })
+            fetch("../database/delete.php", { method: "POST", body: formData })
             .then(() => {
                 showToast("deleteToast", "deleteBar", 2000);
                 setTimeout(() => location.reload(), 2000);
@@ -97,6 +116,45 @@ document.addEventListener("DOMContentLoaded", function () {
     if (cancelDeleteBtn) {
         cancelDeleteBtn.onclick = function () {
             document.getElementById("deleteOverlay").style.display = "none";
+        };
+    }
+
+    /* bulk delete buttons */
+    let confirmBulkDeleteBtn = document.getElementById("confirmBulkDeleteBtn");
+    let cancelBulkDeleteBtn = document.getElementById("cancelBulkDeleteBtn");
+
+    if (confirmBulkDeleteBtn) {
+        confirmBulkDeleteBtn.onclick = function () {
+            if (actionLocked) return;
+            actionLocked = true;
+
+            document.getElementById("bulkDeleteOverlay").style.display = "none";
+
+            const checked = document.querySelectorAll(".row-check:checked");
+            const requests = [];
+
+            checked.forEach(cb => {
+                let formData = new FormData();
+                formData.append("id", cb.value);
+
+                requests.push(
+                    fetch("../database/delete.php", {
+                        method: "POST",
+                        body: formData
+                    })
+                );
+            });
+
+            Promise.all(requests).then(() => {
+                showToast("deleteToast", "deleteBar", 2000);
+                setTimeout(() => location.reload(), 2000);
+            });
+        };
+    }
+
+    if (cancelBulkDeleteBtn) {
+        cancelBulkDeleteBtn.onclick = function () {
+            document.getElementById("bulkDeleteOverlay").style.display = "none";
         };
     }
 
@@ -113,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
             showToast("loadingToast", "loadingBar", 1000);
 
             setTimeout(() => {
-                window.location = "edit.php?id=" + editId;
+                window.location = "../edit/edit.php?id=" + editId;
             }, 1000);
         };
     }
@@ -157,6 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("editOverlay").style.display = "flex";
     };
 
+    toggleBulkDeleteButton();
 });
 
 /* pagination */
@@ -188,7 +247,7 @@ function logout() {
     showToast("logoutToast", "logoutBar", 2000);
 
     setTimeout(() => {
-        window.location = "login.html";
+        window.location = "../login/login.html";
     }, 2500);
 }
 
@@ -197,7 +256,9 @@ function sortTable(col) {
     if (actionLocked) return;
 
     let url = new URL(window.location.href);
-    let order = url.searchParams.get("order") === "asc" ? "desc" : "asc";
+    let currentSort = url.searchParams.get("sort");
+    let currentOrder = url.searchParams.get("order") || "asc";
+    let order = (currentSort === col && currentOrder === "asc") ? "desc" : "asc";
 
     url.searchParams.set("sort", col);
     url.searchParams.set("order", order);
@@ -218,6 +279,10 @@ function changeView() {
     let url = new URL(window.location.href);
     url.searchParams.set("view", mode);
 
+    /* reset sort when switching view */
+    url.searchParams.delete("sort");
+    url.searchParams.delete("order");
+
     /* preserve search param */
     let searchVal = document.getElementById("search").value.trim();
     if (searchVal) url.searchParams.set("search", searchVal);
@@ -228,7 +293,7 @@ function changeView() {
 
 // live student count
 function updateStudentCount() {
-    fetch("count.php")
+    fetch("../database/count.php")
     .then(res => res.text())
     .then(count => {
         const span = document.getElementById("studentCount");

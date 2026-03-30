@@ -1,5 +1,5 @@
 <?php
-include "db.php";
+include "../database/db.php";
 
 if($_SERVER["REQUEST_METHOD"]=="POST"){
 
@@ -10,30 +10,38 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
     $address = $_POST['address'];
 
     /* insert student */
-    $sql = "INSERT INTO students(ho_ten, gioi_tinh, ngay_sinh, email, dia_chi)
-            VALUES('$name','$gender','$dob','$email','$address')";
+    $stmt = $conn->prepare("
+        INSERT INTO students(ho_ten, gioi_tinh, ngay_sinh, email, dia_chi)
+        VALUES (?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param("sssss", $name, $gender, $dob, $email, $address);
 
-    if($conn->query($sql)){
+    if($stmt->execute()){
 
         $student_id = $conn->insert_id;
+        $stmt->close();
 
         /* academic data */
         $major = $_POST['major'];
-        $course = $_POST['course']; // new field
+        $course = $_POST['course'];
         $gpa = $_POST['gpa'];
         $status = $_POST['status'];
         $rank = $_POST['rank'];
 
-        /* insert academic including khoa_hoc */
-        $conn->query("
+        /* insert academic */
+        $stmt2 = $conn->prepare("
             INSERT INTO student_academic(student_id, chuyen_nganh, khoa_hoc, gpa, tinh_trang, xep_loai)
-            VALUES('$student_id','$major','$course','$gpa','$status','$rank')
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
+        $stmt2->bind_param("isssss", $student_id, $major, $course, $gpa, $status, $rank);
+        $stmt2->execute();
+        $stmt2->close();
 
         echo "success";
 
     } else {
         echo "error";
+        $stmt->close();
     }
 
 }

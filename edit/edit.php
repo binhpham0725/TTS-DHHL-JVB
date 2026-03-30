@@ -1,5 +1,5 @@
 <?php
-include "db.php";
+include "../database/db.php";
 
 if(!isset($_GET['id'])) die("Missing ID");
 
@@ -8,46 +8,59 @@ $id = (int)$_GET['id'];
 /* ===== HANDLE POST (PRG) ===== */
 if($_SERVER["REQUEST_METHOD"]=="POST"){
 
-    $name=$_POST['name'];
-    $gender=$_POST['gender'];
-    $dob=$_POST['dob'];
-    $email=$_POST['email'];
-    $address=$_POST['address'];
+    $name = $_POST['name'];
+    $gender = $_POST['gender'];
+    $dob = $_POST['dob'];
+    $email = $_POST['email'];
+    $address = $_POST['address'];
 
-    $major=$_POST['major'];
-    $course=$_POST['course']; // NEW
-    $gpa=$_POST['gpa'];
-    $status=$_POST['status'];
-    $rank=$_POST['rank'];
+    $major = $_POST['major'];
+    $course = $_POST['course']; // NEW
+    $gpa = $_POST['gpa'];
+    $status = $_POST['status'];
+    $rank = $_POST['rank'];
 
     /* update students */
-    $conn->query("UPDATE students 
-        SET ho_ten='$name',
-            gioi_tinh='$gender',
-            ngay_sinh='$dob',
-            email='$email',
-            dia_chi='$address'
-        WHERE id=$id");
+    $stmt = $conn->prepare("UPDATE students 
+        SET ho_ten = ?,
+            gioi_tinh = ?,
+            ngay_sinh = ?,
+            email = ?,
+            dia_chi = ?
+        WHERE id = ?");
+    $stmt->bind_param("sssssi", $name, $gender, $dob, $email, $address, $id);
+    $stmt->execute();
+    $stmt->close();
 
     /* check academic */
-    $check = $conn->query("SELECT * FROM student_academic WHERE student_id=$id");
-    $academic = $check->fetch_assoc();
+    $check = $conn->prepare("SELECT * FROM student_academic WHERE student_id = ?");
+    $check->bind_param("i", $id);
+    $check->execute();
+    $academicResult = $check->get_result();
+    $academic = $academicResult->fetch_assoc();
+    $check->close();
 
     /* update / insert academic */
     if($major || $course || $gpa || $status || $rank){ // INCLUDE $course
 
         if($academic){
-            $conn->query("UPDATE student_academic SET
-                chuyen_nganh='$major',
-                khoa_hoc='$course',
-                gpa='$gpa',
-                tinh_trang='$status',
-                xep_loai='$rank'
-                WHERE student_id=$id");
+            $stmt2 = $conn->prepare("UPDATE student_academic SET
+                chuyen_nganh = ?,
+                khoa_hoc = ?,
+                gpa = ?,
+                tinh_trang = ?,
+                xep_loai = ?
+                WHERE student_id = ?");
+            $stmt2->bind_param("sssssi", $major, $course, $gpa, $status, $rank, $id);
+            $stmt2->execute();
+            $stmt2->close();
         }else{
-            $conn->query("INSERT INTO student_academic
-                (student_id,chuyen_nganh,khoa_hoc,gpa,tinh_trang,xep_loai)
-                VALUES('$id','$major','$course','$gpa','$status','$rank')");
+            $stmt3 = $conn->prepare("INSERT INTO student_academic
+                (student_id, chuyen_nganh, khoa_hoc, gpa, tinh_trang, xep_loai)
+                VALUES(?, ?, ?, ?, ?, ?)");
+            $stmt3->bind_param("isssss", $id, $major, $course, $gpa, $status, $rank);
+            $stmt3->execute();
+            $stmt3->close();
         }
     }
 
@@ -59,14 +72,22 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
 /* ===== GET DATA ===== */
 
 /* cá nhân */
-$result = $conn->query("SELECT * FROM students WHERE id=$id");
+$stmt4 = $conn->prepare("SELECT * FROM students WHERE id = ?");
+$stmt4->bind_param("i", $id);
+$stmt4->execute();
+$result = $stmt4->get_result();
 $sv = $result->fetch_assoc();
+$stmt4->close();
 
 if(!$sv) die("Student not found");
 
 /* học tập */
-$academicResult = $conn->query("SELECT * FROM student_academic WHERE student_id=$id");
+$stmt5 = $conn->prepare("SELECT * FROM student_academic WHERE student_id = ?");
+$stmt5->bind_param("i", $id);
+$stmt5->execute();
+$academicResult = $stmt5->get_result();
 $academic = $academicResult->fetch_assoc();
+$stmt5->close();
 ?>
 
 <!DOCTYPE html>
@@ -75,7 +96,7 @@ $academic = $academicResult->fetch_assoc();
 <meta charset="UTF-8">
 <title>Sửa sinh viên</title>
 
-<link rel="stylesheet" href="home.css">
+<link rel="stylesheet" href="../homepage/home.css">
 <link rel="stylesheet" href="edit.css">
 
 </head>
@@ -179,7 +200,7 @@ $academic = $academicResult->fetch_assoc();
 
 </form>
 
-<a class="edit-back" href="home.php">Quay lại</a>
+<a class="edit-back" href="../homepage/home.php">Quay lại</a>
 
 </div>
 </div>

@@ -1,3 +1,4 @@
+/* base reset + font setup đảm bảo layout consistent toàn bộ page */
 *{
 margin:0;
 padding:0;
@@ -5,16 +6,18 @@ box-sizing:border-box;
 font-family:Segoe UI, sans-serif;
 }
 
+/* body layout center card + background tối và particles layer */
 body{
 height:100vh;
 background:#252a3c;
-overflow:hidden; /* prevent scroll from particles */
+overflow:hidden;
 display:flex;
 align-items:center;
 justify-content:center;
 position:relative;
 }
 
+/* particles canvas fixed phía sau toàn bộ UI */
 #particlesCanvas{
 position:fixed;
 top:0;
@@ -24,12 +27,14 @@ height:100%;
 z-index:-1;
 }
 
+/* container giữ card ở center theo chiều ngang */
 .container{
 width:100%;
 display:flex;
 justify-content:center;
 }
 
+/* login card glass effect + shadow + transition height */
 .card{
 position:relative;
 width:420px;
@@ -43,8 +48,7 @@ color:white;
 transition:height .35s cubic-bezier(.4,0,.2,1);
 }
 
-/* tabs */
-
+/* tab navigation switch giữa signin signup */
 .tabs{
 display:flex;
 justify-content:center;
@@ -73,8 +77,7 @@ box-shadow:0 8px 18px rgba(0,0,0,0.4);
 background:#6c5ce7;
 }
 
-/* forms */
-
+/* form visibility và animation control giữa hai form */
 .form{
 display:none;
 }
@@ -83,13 +86,13 @@ display:none;
 display:block;
 }
 
-/* inputs */
-
+/* input container dùng để position icon bên trong */
 .input-box{
 position:relative;
 margin-bottom:18px;
 }
 
+/* input style glass effect + focus highlight rõ ràng */
 .input-box input{
 width:100%;
 padding:15px 45px 15px 20px;
@@ -114,12 +117,10 @@ background:rgba(20,25,40,0.75);
 box-shadow:0 0 0 2px rgba(108,92,231,0.25);
 }
 
-/* eye icons */
-
-#signinEyeOpen,
-#signinEyeClosed,
-#signupEyeOpen,
-#signupEyeClosed{
+/* password eye icons căn phải và center theo chiều dọc */
+#signinEyeOpen,#signinEyeClosed,
+#signupEyeOpen,#signupEyeClosed,
+#confirmEyeOpen,#confirmEyeClosed{
 position:absolute;
 right:18px;
 top:50%;
@@ -128,12 +129,34 @@ cursor:pointer;
 }
 
 #signinEyeClosed,
-#signupEyeClosed{
+#signupEyeClosed,
+#confirmEyeClosed{
 display:none;
 }
 
-/* checkbox */
+/* date input container đảm bảo icon align chính xác */
+.input-box.date{
+position:relative;
+}
 
+/* padding phải để tránh icon đè lên text */
+.input-box.date input{
+padding-right:45px;
+}
+
+/* birthday icon căn giữa dọc giống eye icon */
+.birthday-icon{
+position:absolute;
+right:18px;
+top:50%;
+transform:translateY(-50%);
+pointer-events:none;
+opacity:.9;
+font-size:16px;
+line-height:1;
+}
+
+/* remember checkbox hiển thị inline gọn gàng */
 .remember{
 display:flex;
 align-items:center;
@@ -142,8 +165,7 @@ font-size:14px;
 margin:15px 0 25px 0;
 }
 
-/* main buttons */
-
+/* submit button full width với hover effect nhẹ */
 .submit{
 width:100%;
 padding:16px;
@@ -162,8 +184,7 @@ transform:translateY(-3px);
 box-shadow:0 12px 24px rgba(108,92,231,0.45);
 }
 
-/* form sliding */
-
+/* wrapper giữ animation slide giữa hai form */
 .forms-wrapper{
 position:relative;
 overflow:visible;
@@ -191,8 +212,7 @@ transform:translateX(-40px);
 opacity:0;
 }
 
-/* social icons */
-
+/* social icons hiển thị login options khác */
 .social{
 display:flex;
 justify-content:center;
@@ -208,10 +228,8 @@ background:rgba(255,255,255,0.18);
 display:flex;
 align-items:center;
 justify-content:center;
-font-weight:600;
 cursor:pointer;
 transition:all .25s cubic-bezier(.4,0,.2,1);
-box-shadow:none;
 }
 
 .icon:hover{
@@ -225,41 +243,7 @@ object-fit:contain;
 pointer-events:none;
 }
 
-/* confirm eye icons */
-
-#confirmEyeOpen,
-#confirmEyeClosed{
-position:absolute;
-right:18px;
-top:50%;
-transform:translateY(-50%);
-cursor:pointer;
-}
-
-#confirmEyeClosed{
-display:none;
-}
-
-/* custom icon aligned with eye icons */
-
-.calendar-icon{
-position:absolute;
-right:18px;
-top:50%;
-transform:translateY(-50%);
-pointer-events:none;
-opacity:.9;
-}
-
-.birthday-icon{
-position:absolute;
-right:18px;
-top:50%;
-transform:translateY(-50%);
-pointer-events:none;
-opacity:.9;
-}
-
+/* toast hiển thị feedback login signup với progress bar */
 #toast{
 display:none;
 position:fixed;
@@ -292,26 +276,23 @@ from{width:100%;}
 to{width:0%;}
 }
 
-/* Prevent browser autofill yellow/blue background */
-
-/* Chrome/Safari */
+/* autofill fix tránh màu nền vàng xanh phá UI */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 1000px rgba(20,25,40,0.55) inset !important;
-    -webkit-text-fill-color: #ffffff !important;
-    caret-color: #ffffff !important;
-    background-clip: padding-box;
-    transition: background-color 5000s ease-in-out 0s !important;
-    cursor: text !important;
+input:-webkit-autofill:active{
+-webkit-box-shadow:0 0 0 1000px rgba(20,25,40,0.55) inset !important;
+-webkit-text-fill-color:#ffffff !important;
+caret-color:#ffffff !important;
+background-clip:padding-box;
+transition:background-color 5000s ease-in-out 0s !important;
+cursor:text !important;
 }
 
-/* Firefox autofill fix */
-input:-moz-autofill {
-    box-shadow: inset 0 0 0 30px rgba(20,25,40,0.55) !important; /* smaller inset */
-    -moz-text-fill-color: #ffffff !important;
-    caret-color: #ffffff !important;
-    background-color: rgba(20,25,40,0.55) !important; /* ensures background visible */
-    background-clip: padding-box;
+input:-moz-autofill{
+box-shadow:inset 0 0 0 30px rgba(20,25,40,0.55) !important;
+-moz-text-fill-color:#ffffff !important;
+caret-color:#ffffff !important;
+background-color:rgba(20,25,40,0.55) !important;
+background-clip:padding-box;
 }

@@ -1,3 +1,4 @@
+/* base layout + font setup cho toàn bộ page và spacing tổng thể */
 body{
 font-family:Segoe UI,sans-serif;
 padding:40px;
@@ -5,8 +6,7 @@ background:#f6f7fb;
 color:#2b2b2b;
 }
 
-/* inputs */
-
+/* input + select styling tạo form sạch sẽ dễ nhìn và focus rõ */
 input,select{
 padding:10px 12px;
 margin:6px;
@@ -22,8 +22,7 @@ border-color:#6a6cff;
 box-shadow:0 0 0 2px rgba(106,108,255,0.15);
 }
 
-/* buttons */
-
+/* button style chính dùng gradient và hover nhẹ để tăng UX */
 button{
 padding:9px 16px;
 border:none;
@@ -40,8 +39,7 @@ transform:translateY(-1px);
 opacity:0.95;
 }
 
-/* table */
-
+/* table layout chính hiển thị data với shadow và border clean */
 table{
 margin-top:25px;
 border-collapse:collapse;
@@ -65,6 +63,7 @@ td{
 padding:12px;
 border-bottom:1px solid #ececf4;
 text-align:center;
+vertical-align:middle;
 }
 
 tbody tr{
@@ -80,13 +79,13 @@ tbody tr:hover td{
 color:#4f5bff;
 }
 
-/* action column */
-
+/* action cell chứa button + checkbox căn giữa và spacing đều */
 td:last-child{
 display:flex;
 justify-content:center;
 align-items:center;
 gap:8px;
+flex-wrap:wrap;
 }
 
 td button{
@@ -100,8 +99,7 @@ td button:hover{
 background:#e5e7ff;
 }
 
-/* toast shared */
-
+/* toast notification hiển thị trạng thái async như delete logout register */
 .toast{
 display:none;
 position:fixed;
@@ -116,7 +114,7 @@ box-shadow:0 10px 26px rgba(0,0,0,0.15);
 overflow:hidden;
 opacity:0;
 transform:translateX(120px);
-animation:toastIn 0.6s ease forwards;
+animation:toastIn 0.3s ease forwards;
 z-index:9999;
 }
 
@@ -128,24 +126,14 @@ height:4px;
 width:100%;
 }
 
-/* colors */
-
 .green{background:#6fd39b;}
 .red{background:#ff6b6b;}
 .blue{background:#5c6cff;}
 .purple{background:#7b5cff;}
 
-/* animations */
-
 @keyframes toastIn{
-from{
-opacity:0;
-transform:translateX(60px);
-}
-to{
-opacity:1;
-transform:translateX(0);
-}
+from{opacity:0;transform:translateX(60px);}
+to{opacity:1;transform:translateX(0);}
 }
 
 @keyframes progress{
@@ -153,9 +141,8 @@ from{width:100%;}
 to{width:0%;}
 }
 
-/* dialogs */
-
-#deleteOverlay,#editOverlay{
+/* dialog overlay cho delete edit bulk xác nhận hành động user */
+#deleteOverlay,#editOverlay,#bulkDeleteOverlay{
 display:none;
 position:fixed;
 top:0;
@@ -168,7 +155,7 @@ justify-content:center;
 z-index:1000;
 }
 
-#deleteDialog,#editDialog{
+#deleteDialog,#editDialog,#bulkDeleteDialog{
 width:320px;
 background:white;
 border-radius:10px;
@@ -186,13 +173,20 @@ padding:12px 16px;
 font-weight:600;
 }
 
-#deleteContent,#editContent{
+#bulkDeleteHeader{
+background:linear-gradient(135deg,#ff6b6b,#ff4d4d);
+color:white;
+padding:12px 16px;
+font-weight:600;
+}
+
+#deleteContent,#editContent,#bulkDeleteContent{
 padding:20px 16px;
 text-align:center;
 color:#333;
 }
 
-#deleteActions,#editActions{
+#deleteActions,#editActions,#bulkDeleteActions{
 display:flex;
 justify-content:flex-end;
 gap:10px;
@@ -201,25 +195,18 @@ padding:12px 16px 16px;
 
 #deleteActions button,#editActions button{
 background:#6c63ff;
-color:white;
-padding:8px 14px;
-border-radius:6px;
-border:none;
+}
+
+#bulkDeleteActions button{
+background:#ff5a5a;
 }
 
 @keyframes dialogIn{
-from{
-opacity:0;
-transform:scale(0.9);
-}
-to{
-opacity:1;
-transform:scale(1);
-}
+from{opacity:0;transform:scale(0.9);}
+to{opacity:1;transform:scale(1);}
 }
 
-/* pagination */
-
+/* pagination controls hiển thị page number và highlight current page */
 .pagination{
 margin-top:20px;
 text-align:center;
@@ -247,90 +234,81 @@ color:white;
 border-radius:5px;
 }
 
-/* search */
-
+/* search input nằm trong top bar filter data realtime */
 #search{
 margin-left:10px;
 width:200px;
 }
 
-/* Sign-up form only */
-#formOverlay {
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.3);
-    align-items:center;
-    justify-content:center;
-    z-index:1000;
+/* modal form overlay dùng cho thêm sinh viên với tab cá nhân học tập */
+#formOverlay{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.3);
+align-items:center;
+justify-content:center;
+z-index:1000;
 }
 
-#formBox {
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    width:400px;
-    box-sizing:border-box;
+#formBox{
+background:white;
+padding:20px;
+border-radius:10px;
+width:400px;
+box-sizing:border-box;
 }
 
-.form-tabs {
-    display:flex;
-    gap:10px;
-    margin-bottom:10px;
+.form-tabs{
+display:flex;
+gap:10px;
+margin-bottom:10px;
 }
 
-.tab {
-    padding:6px 12px;
-    background:#eee;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
+.tab{
+padding:6px 12px;
+background:#eee;
+border:none;
+border-radius:6px;
+cursor:pointer;
 }
 
-.tab.active {
-    background:#6c63ff;
-    color:white;
+.tab.active{
+background:#6c63ff;
+color:white;
 }
 
-.tab-content {
-    display:none;
-}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
 
-.tab-content.active {
-    display:block;
-}
-
-.tab-content .form-row {
-    display:flex;
-    gap:6px;
-    margin-bottom:10px;
+.tab-content .form-row{
+display:flex;
+gap:6px;
+margin-bottom:10px;
 }
 
 .tab-content input,
-.tab-content select {
-    width:90%;
-    box-sizing:border-box;
+.tab-content select{
+width:90%;
+box-sizing:border-box;
 }
 
 .tab-content .form-row input,
-.tab-content .form-row select {
-    flex:1;
+.tab-content .form-row select{
+flex:1;
 }
 
-.form-buttons {
-    display:flex;
-    justify-content:flex-end;
-    gap:6px;
-    margin-top:10px;
+.form-buttons{
+display:flex;
+justify-content:flex-end;
+gap:6px;
+margin-top:10px;
 }
 
-.form-buttons button {
-    flex:none;
-}
-
+/* top bar chứa action chính và bulk delete button layout ngang */
 .top-bar{
 display:flex;
 align-items:center;
@@ -352,86 +330,98 @@ align-items:center;
 }
 
 #bulkDeleteBtn{
-padding:9px 16px;
-border:none;
-border-radius:6px;
 background:linear-gradient(135deg,#ff6b6b,#ff4d4d);
-color:white;
-font-weight:700;
-cursor:pointer;
-transition:0.2s;
 }
 
-#bulkDeleteBtn:hover{
-transform:translateY(-1px);
-opacity:0.95;
-}
-
-.action-col{
-text-align:center;
-}
-
-.action-cell{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:8px;
-}
-
-.row-check{
-margin-left:4px;
-transform:scale(1.1);
-cursor:pointer;
-}
-
-#bulkDeleteOverlay{
-display:none;
-position:fixed;
-top:0;
-left:0;
+/* inline edit cho field nhẹ */
+.inline-input{
 width:100%;
-height:100%;
-background:rgba(0,0,0,0.25);
-align-items:center;
-justify-content:center;
-z-index:1000;
-}
-
-#bulkDeleteDialog{
-width:320px;
-background:white;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 12px 28px rgba(0,0,0,0.2);
-opacity:0;
-transform:scale(0.9);
-animation:dialogIn 0.2s ease forwards;
-}
-
-#bulkDeleteHeader{
-background:linear-gradient(135deg,#ff6b6b,#ff4d4d);
-color:white;
-padding:12px 16px;
-font-weight:600;
-}
-
-#bulkDeleteContent{
-padding:20px 16px;
+margin:0;
+padding:8px 10px;
+box-sizing:border-box;
 text-align:center;
-color:#333;
 }
 
-#bulkDeleteActions{
-display:flex;
-justify-content:flex-end;
-gap:10px;
-padding:12px 16px 16px;
+tr.editing td{
+background:#fff9e8;
 }
 
-#bulkDeleteActions button{
-background:#ff5a5a;
-color:white;
-padding:8px 14px;
-border-radius:6px;
-border:none;
+.save-inline-btn{
+background:linear-gradient(135deg,#1fa750,#169143);
+color:#fff;
+border:1px solid #15813d;
+}
+
+.cancel-inline-btn{
+background:linear-gradient(135deg,#ff6b6b,#ff4d4d);
+color:#fff;
+border:1px solid #ff4d4d;
+}
+
+/* ================= RESPONSIVE ================= */
+
+/* tablet layout điều chỉnh spacing và input nhỏ hơn */
+@media (max-width: 991.98px){
+
+body{
+padding:25px;
+}
+
+#search{
+width:160px;
+}
+
+}
+
+/* mobile layout stack top bar và cho table scroll ngang */
+@media (max-width: 767.98px){
+
+body{
+padding:15px;
+}
+
+.top-bar{
+flex-direction:column;
+align-items:stretch;
+}
+
+.top-actions{
+justify-content:space-between;
+}
+
+#search{
+width:100%;
+margin-left:0;
+}
+
+table{
+display:block;
+overflow-x:auto;
+white-space:nowrap;
+}
+
+#formBox{
+width:100%;
+max-width:95%;
+}
+
+}
+
+/* small mobile giảm font và padding để fit màn nhỏ hơn */
+@media (max-width: 575.98px){
+
+body{
+padding:10px;
+font-size:13px;
+}
+
+button{
+padding:7px 10px;
+font-size:13px;
+}
+
+th,td{
+padding:8px;
+}
+
 }

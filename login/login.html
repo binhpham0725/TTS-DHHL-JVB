@@ -4,57 +4,53 @@
 <meta charset="UTF-8">
 <title>Login Page</title>
 
-<!-- Main CSS -->
+<!-- main stylesheet cho layout và responsive login card -->
 <link rel="stylesheet" href="style.css">
 
-<!-- FontAwesome for icons -->
+<!-- fontawesome icon dùng cho eye toggle password -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 </head>
 <body>
 
-<!-- Particle background canvas -->
+<!-- particles background canvas tạo hiệu ứng động phía sau -->
 <canvas id="particlesCanvas"></canvas>
 
-<!-- Container for the glassmorphic card -->
+<!-- container giữ login card ở center màn hình -->
 <div class="container">
   <div class="card">
 
-    <!-- Tab buttons -->
+    <!-- tab switch giữa signin và signup -->
     <div class="tabs">
       <button id="signinTab" class="active">Sign In</button>
       <button id="signupTab">Sign Up</button>
     </div>
 
-    <!-- Forms wrapper -->
+    <!-- wrapper chứa hai form để animate chuyển đổi -->
     <div class="forms-wrapper">
 
-      <!-- SIGN IN FORM -->
+      <!-- signin form xử lý đăng nhập user -->
       <form id="signinForm" class="form active" autocomplete="off" novalidate>
-        <!-- hidden dummy input to prevent autofill -->
+
         <input type="text" style="display:none">
 
-        <!-- Email -->
         <div class="input-box">
           <input id="signinEmail" type="email" name="signinEmail" autocomplete="off" placeholder="Email">
         </div>
 
-        <!-- Password -->
         <div class="input-box">
           <input id="signinPassword" type="password" name="signinPassword" autocomplete="new-password" placeholder="Password">
           <i class="fa-solid fa-eye" id="signinEyeOpen"></i>
           <i class="fa-solid fa-eye-slash" id="signinEyeClosed"></i>
         </div>
 
-        <!-- Remember checkbox -->
         <label class="remember">
           <input type="checkbox" autocomplete="off"> Remember me
         </label>
 
-        <!-- Submit button -->
         <button type="submit" class="submit">Sign In →</button>
 
-        <!-- Social login icons -->
+        <!-- social login icon display (UI only chưa có logic) -->
         <div class="social">
           <div class="icon"><img src="../images/google.svg" alt="Google"></div>
           <div class="icon"><img src="../images/facebook.svg" alt="Facebook"></div>
@@ -63,46 +59,39 @@
         </div>
       </form>
 
-      <!-- SIGN UP FORM -->
+      <!-- signup form xử lý tạo tài khoản mới -->
       <form id="signupForm" class="form" autocomplete="off">
 
-        <!-- hidden dummy input to prevent autofill -->
         <input type="text" style="display:none">
 
-        <!-- Username -->
         <div class="input-box">
           <input id="signupUsername" type="text" name="signupUsername" autocomplete="off" placeholder="Username">
         </div>
 
-        <!-- Email -->
         <div class="input-box">
           <input id="signupEmail" type="email" name="signupEmail" autocomplete="off" placeholder="Email">
         </div>
 
-        <!-- Birthday -->
         <div class="input-box date">
           <input id="birthday" type="date" name="birthday" autocomplete="off">
           <i class="fa-solid fa-cake-candles birthday-icon"></i>
         </div>
 
-        <!-- Password -->
         <div class="input-box">
           <input id="signupPassword" type="password" name="signupPassword" autocomplete="new-password" placeholder="Password">
           <i class="fa-solid fa-eye" id="signupEyeOpen"></i>
           <i class="fa-solid fa-eye-slash" id="signupEyeClosed"></i>
         </div>
 
-        <!-- Confirm password -->
         <div class="input-box">
           <input id="confirmPassword" type="password" name="confirmPassword" autocomplete="new-password" placeholder="Confirm Password">
           <i class="fa-solid fa-eye" id="confirmEyeOpen"></i>
           <i class="fa-solid fa-eye-slash" id="confirmEyeClosed"></i>
         </div>
 
-        <!-- Submit button -->
         <button class="submit">Create Account →</button>
 
-        <!-- Social login icons -->
+        <!-- social login icon display -->
         <div class="social">
           <div class="icon"><img src="../images/google.svg" alt="Google"></div>
           <div class="icon"><img src="../images/facebook.svg" alt="Facebook"></div>
@@ -115,14 +104,14 @@
   </div>
 </div>
 
-<!-- Toast notifications -->
+<!-- toast notification hiển thị feedback login signup -->
 <div id="toast">
   <span id="toastIcon"></span>
   <span id="toastText"></span>
   <div id="toastBar"></div>
 </div>
 
-<!-- Scripts -->
+<!-- scripts xử lý animation form và particles background -->
 <script src="script.js"></script>
 <script src="particles.js"></script>
 

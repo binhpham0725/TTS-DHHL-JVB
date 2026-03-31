@@ -1,25 +1,19 @@
+/* global state quản lý animation lock và toast timing tránh spam interaction */
+let isSwitching = false;
+let lastToastTime = 0;
+const TOAST_COOLDOWN = 3000;
+
+/* DOM references cho tab, form và card container */
 const signinTab = document.getElementById("signinTab");
 const signupTab = document.getElementById("signupTab");
-
 const signinForm = document.getElementById("signinForm");
 const signupForm = document.getElementById("signupForm");
-
 const card = document.querySelector(".card");
 
-let isSwitching = false;
-
-/* ================= TOAST (FIX RATE LIMIT) ================= */
-
-let lastToastTime = 0;
-const TOAST_COOLDOWN = 3000; // đúng bằng duration
-
+/* toast hiển thị message feedback với icon và progress bar */
 function showToast(text, success = true) {
     let now = Date.now();
-
-    /* ignore nếu spam */
-    if (now - lastToastTime < TOAST_COOLDOWN) {
-        return;
-    }
+    if (now - lastToastTime < TOAST_COOLDOWN) return;
 
     lastToastTime = now;
 
@@ -30,7 +24,6 @@ function showToast(text, success = true) {
 
     msg.innerText = text;
     icon.innerText = success ? "✔" : "⚠";
-
     bar.style.background = success ? "#6c5ce7" : "#ff6b6b";
 
     toast.style.display = "flex";
@@ -44,8 +37,7 @@ function showToast(text, success = true) {
     }, 3000);
 }
 
-/* ================= TAB SWITCH ================= */
-
+/* animation chuyển tab giữa signin signup với lock tránh spam click */
 function animateSwitch(hideForm, showForm, direction) {
     if (isSwitching) return;
     isSwitching = true;
@@ -60,9 +52,7 @@ function animateSwitch(hideForm, showForm, direction) {
             { transform: "translateX(0)", opacity: 1 },
             { transform: `translateX(${direction * -40}px)`, opacity: 0 }
         ],
-        {
-            duration: 300
-        }
+        { duration: 300 }
     ).onfinish = () => {
         hideForm.classList.remove("active");
         showForm.classList.add("active");
@@ -88,13 +78,12 @@ function animateSwitch(hideForm, showForm, direction) {
                 { transform: `translateX(${direction * 40}px)`, opacity: 0 },
                 { transform: "translateX(0)", opacity: 1 }
             ],
-            {
-                duration: 300
-            }
+            { duration: 300 }
         );
     };
 }
 
+/* tab click handler điều hướng form tương ứng */
 signinTab.onclick = () => {
     if (signinForm.classList.contains("active") || isSwitching) return;
 
@@ -113,8 +102,7 @@ signupTab.onclick = () => {
     animateSwitch(signinForm, signupForm, 1);
 };
 
-/* ================= PASSWORD TOGGLE ================= */
-
+/* toggle password visibility cho các input password */
 function togglePassword(open, closed, input) {
     open.onclick = () => {
         input.type = "text";
@@ -147,37 +135,20 @@ togglePassword(
     document.getElementById("confirmPassword")
 );
 
-/* ================= EMAIL REGEX ================= */
-
+/* email regex validation dùng chung cho signin signup */
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/* ================= SIGN IN ================= */
-
+/* signin submit xử lý validation và gọi ajax login */
 signinForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
     let email = document.getElementById("signinEmail").value.trim();
     let password = document.getElementById("signinPassword").value.trim();
 
-    if (email === "") {
-        showToast("Email is required", false);
-        return;
-    }
-
-    if (!emailPattern.test(email)) {
-        showToast("Email format invalid", false);
-        return;
-    }
-
-    if (password === "") {
-        showToast("Password required", false);
-        return;
-    }
-
-    if (password.length < 8) {
-        showToast("Password >= 8 characters", false);
-        return;
-    }
+    if (email === "") return showToast("Email is required", false);
+    if (!emailPattern.test(email)) return showToast("Email format invalid", false);
+    if (password === "") return showToast("Password required", false);
+    if (password.length < 8) return showToast("Password >= 8 characters", false);
 
     let formData = new FormData();
     formData.append("email", email);
@@ -203,8 +174,7 @@ signinForm.addEventListener("submit", function (e) {
         });
 });
 
-/* ================= SIGN UP ================= */
-
+/* signup submit validate input và gửi ajax tạo tài khoản */
 signupForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -214,48 +184,16 @@ signupForm.addEventListener("submit", function (e) {
     let password = document.getElementById("signupPassword").value;
     let confirm = document.getElementById("confirmPassword").value;
 
-    if (username === "") {
-        showToast("Nhập username", false);
-        return;
-    }
-
-    if (email === "") {
-        showToast("Nhập email", false);
-        return;
-    }
-
-    if (!emailPattern.test(email)) {
-        showToast("Email sai định dạng", false);
-        return;
-    }
-
-    if (birthday === "") {
-        showToast("Nhập ngày sinh", false);
-        return;
-    }
-
-    if (password === "") {
-        showToast("Nhập mật khẩu", false);
-        return;
-    }
-
-    if (password.length < 8) {
-        showToast("Mật khẩu >= 8 ký tự", false);
-        return;
-    }
-
-    if (confirm === "") {
-        showToast("Xác nhận mật khẩu", false);
-        return;
-    }
-
-    if (password !== confirm) {
-        showToast("Mật khẩu không khớp", false);
-        return;
-    }
+    if (username === "") return showToast("Nhập username", false);
+    if (email === "") return showToast("Nhập email", false);
+    if (!emailPattern.test(email)) return showToast("Email sai định dạng", false);
+    if (birthday === "") return showToast("Nhập ngày sinh", false);
+    if (password === "") return showToast("Nhập mật khẩu", false);
+    if (password.length < 8) return showToast("Mật khẩu >= 8 ký tự", false);
+    if (confirm === "") return showToast("Xác nhận mật khẩu", false);
+    if (password !== confirm) return showToast("Mật khẩu không khớp", false);
 
     let formData = new FormData();
-
     formData.append("username", username);
     formData.append("email", email);
     formData.append("password", password);

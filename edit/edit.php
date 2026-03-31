@@ -1,11 +1,12 @@
 <?php
+/* database connection + validate id để đảm bảo request hợp lệ */
 include "../database/db.php";
 
 if(!isset($_GET['id'])) die("Missing ID");
 
 $id = (int)$_GET['id'];
 
-/* ===== HANDLE POST (PRG) ===== */
+/* xử lý POST update dữ liệu sinh viên và học tập với prepared statements */
 if($_SERVER["REQUEST_METHOD"]=="POST"){
 
     $name = $_POST['name'];
@@ -15,24 +16,26 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
     $address = $_POST['address'];
 
     $major = $_POST['major'];
-    $course = $_POST['course']; // NEW
+    $course = $_POST['course'];
     $gpa = $_POST['gpa'];
     $status = $_POST['status'];
     $rank = $_POST['rank'];
 
-    /* update students */
-    $stmt = $conn->prepare("UPDATE students 
-        SET ho_ten = ?,
+    /* update bảng students */
+    $stmt = $conn->prepare("
+        UPDATE students SET
+            ho_ten = ?,
             gioi_tinh = ?,
             ngay_sinh = ?,
             email = ?,
             dia_chi = ?
-        WHERE id = ?");
+        WHERE id = ?
+    ");
     $stmt->bind_param("sssssi", $name, $gender, $dob, $email, $address, $id);
     $stmt->execute();
     $stmt->close();
 
-    /* check academic */
+    /* kiểm tra tồn tại academic */
     $check = $conn->prepare("SELECT * FROM student_academic WHERE student_id = ?");
     $check->bind_param("i", $id);
     $check->execute();
@@ -40,38 +43,40 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
     $academic = $academicResult->fetch_assoc();
     $check->close();
 
-    /* update / insert academic */
-    if($major || $course || $gpa || $status || $rank){ // INCLUDE $course
+    /* update hoặc insert academic */
+    if($major || $course || $gpa || $status || $rank){
 
         if($academic){
-            $stmt2 = $conn->prepare("UPDATE student_academic SET
-                chuyen_nganh = ?,
-                khoa_hoc = ?,
-                gpa = ?,
-                tinh_trang = ?,
-                xep_loai = ?
-                WHERE student_id = ?");
+            $stmt2 = $conn->prepare("
+                UPDATE student_academic SET
+                    chuyen_nganh = ?,
+                    khoa_hoc = ?,
+                    gpa = ?,
+                    tinh_trang = ?,
+                    xep_loai = ?
+                WHERE student_id = ?
+            ");
             $stmt2->bind_param("sssssi", $major, $course, $gpa, $status, $rank, $id);
             $stmt2->execute();
             $stmt2->close();
-        }else{
-            $stmt3 = $conn->prepare("INSERT INTO student_academic
+        } else {
+            $stmt3 = $conn->prepare("
+                INSERT INTO student_academic
                 (student_id, chuyen_nganh, khoa_hoc, gpa, tinh_trang, xep_loai)
-                VALUES(?, ?, ?, ?, ?, ?)");
+                VALUES(?, ?, ?, ?, ?, ?)
+            ");
             $stmt3->bind_param("isssss", $id, $major, $course, $gpa, $status, $rank);
             $stmt3->execute();
             $stmt3->close();
         }
     }
 
-    /* ===== REDIRECT (FIX LOOP) ===== */
+    /* redirect sau update tránh resubmit form */
     header("Location: edit.php?id=$id&success=1");
     exit();
 }
 
-/* ===== GET DATA ===== */
-
-/* cá nhân */
+/* lấy dữ liệu sinh viên và academic để render form */
 $stmt4 = $conn->prepare("SELECT * FROM students WHERE id = ?");
 $stmt4->bind_param("i", $id);
 $stmt4->execute();
@@ -81,7 +86,6 @@ $stmt4->close();
 
 if(!$sv) die("Student not found");
 
-/* học tập */
 $stmt5 = $conn->prepare("SELECT * FROM student_academic WHERE student_id = ?");
 $stmt5->bind_param("i", $id);
 $stmt5->execute();
@@ -103,6 +107,7 @@ $stmt5->close();
 
 <body class="edit-page">
 
+<!-- wrapper + card layout giữ form ở center màn hình -->
 <div class="edit-wrapper">
 <div class="edit-card">
 
@@ -110,13 +115,13 @@ $stmt5->close();
 
 <form method="post">
 
-<!-- TABS -->
+<!-- tab switch giữa thông tin cá nhân và học tập -->
 <div class="form-tabs">
     <button type="button" class="tab active" onclick="switchTab(1)">Cá nhân</button>
     <button type="button" class="tab" onclick="switchTab(2)">Học tập</button>
 </div>
 
-<!-- TAB 1 -->
+<!-- tab cá nhân hiển thị thông tin cơ bản sinh viên -->
 <div class="tab-content active" id="tab1">
 
     <div class="edit-field">
@@ -149,7 +154,7 @@ $stmt5->close();
 
 </div>
 
-<!-- TAB 2 -->
+<!-- tab học tập hiển thị thông tin academic của sinh viên -->
 <div class="tab-content" id="tab2">
 
     <div class="edit-field">
@@ -157,7 +162,6 @@ $stmt5->close();
         <input type="text" name="major" value="<?=htmlspecialchars($academic['chuyen_nganh'] ?? '')?>">
     </div>
 
-    <!-- NEW ROW -->
     <div class="edit-field">
         <label>Khóa học</label>
         <input type="text" name="course" value="<?=htmlspecialchars($academic['khoa_hoc'] ?? '')?>">
@@ -205,7 +209,7 @@ $stmt5->close();
 </div>
 </div>
 
-<!-- TOAST -->
+<!-- toast hiển thị trạng thái update thành công -->
 <div id="toast">
 <span id="toastMsg"></span>
 <div id="toastBar"></div>

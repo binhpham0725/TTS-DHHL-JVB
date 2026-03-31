@@ -1,9 +1,9 @@
+/* global state quản lý lock submit toast navigation tránh spam interaction */
 let toastLock = false;
 let submitLock = false;
 let navLock = false;
 
-/* ================= TOAST ================= */
-
+/* toast hiển thị message và optional redirect sau delay */
 function showToast(message, redirect = false) {
     if (toastLock) return;
     toastLock = true;
@@ -15,34 +15,30 @@ function showToast(message, redirect = false) {
     msg.textContent = message;
     toast.style.display = "block";
 
-    /* reset animation */
     bar.style.animation = "none";
     bar.offsetHeight;
-    bar.style.animation = "toastProgress 3s linear forwards";
+    bar.style.animation = "toastProgress 1.5s linear forwards";
 
-    /* auto hide */
     setTimeout(() => {
         toast.style.display = "none";
         toastLock = false;
-    }, 3000);
+    }, 1500);
 
-    /* redirect */
     if (redirect) {
         navLock = true;
         setTimeout(() => {
             window.location = "../homepage/home.php";
-        }, 3000);
+        }, 1500);
     }
 }
 
-/* ================= DOM ================= */
-
+/* dom ready setup form submit lock back button và navigation control */
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const submitBtn = document.querySelector(".edit-submit");
     const back = document.querySelector(".edit-back");
 
-    /* ===== SUBMIT LOCK ===== */
+    /* submit lock tránh double submit */
     if (form) {
         form.addEventListener("submit", function (e) {
             if (submitLock) {
@@ -53,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
             submitLock = true;
             navLock = true;
 
-            /* disable button */
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.style.opacity = "0.6";
@@ -62,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* ===== BACK BUTTON ===== */
+    /* back button trigger toast rồi redirect */
     if (back) {
         back.addEventListener("click", function (e) {
             if (navLock) {
@@ -72,11 +67,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             e.preventDefault();
             navLock = true;
-            showToast("Đang quay lại trang chủ sau 3 giây...", true);
+            showToast("Đang quay lại trang chủ sau vài giây...", true);
         });
     }
 
-    /* ===== GLOBAL CLICK BLOCK ===== */
+    /* block toàn bộ click khi đang chuyển navigation */
     document.addEventListener(
         "click",
         function (e) {
@@ -88,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
         true
     );
 
-    /* ===== AFTER SUCCESS ===== */
+    /* xử lý sau khi update thành công disable submit và auto redirect */
     if (window.location.search.includes("success=1")) {
         submitLock = true;
         navLock = true;
@@ -103,17 +98,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
         setTimeout(() => {
             window.location = "../homepage/home.php";
-        }, 3000);
+        }, 1500);
     }
 });
 
-/* ================= TAB ================= */
-
+/* tab switch giữa form cá nhân và học tập */
 function switchTab(tab) {
     if (navLock) return;
 
-    document.querySelectorAll(".tab-content").forEach((t) => t.classList.remove("active"));
-    document.querySelectorAll(".tab").forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
 
     document.getElementById("tab" + tab).classList.add("active");
     document.querySelectorAll(".tab")[tab - 1].classList.add("active");

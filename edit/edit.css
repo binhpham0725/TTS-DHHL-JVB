@@ -1,23 +1,18 @@
-/* ===== PAGE ===== */
-
+/* base page layout center card với background gradient nhẹ */
 body.edit-page{
 margin:0;
 min-height:100vh;
-
 font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
-
 display:flex;
 align-items:center;
 justify-content:center;
-
 background:
 radial-gradient(circle at 20% 20%, #eef1ff 0%, transparent 40%),
 radial-gradient(circle at 80% 70%, #f6f7ff 0%, transparent 40%),
 linear-gradient(135deg,#eef1f7,#f8f9ff);
 }
 
-/* background decoration */
-
+/* background decoration tạo shape phía sau card tăng depth UI */
 .edit-page::before{
 content:"";
 position:absolute;
@@ -30,8 +25,7 @@ transform:rotate(-6deg);
 z-index:0;
 }
 
-/* ===== LAYOUT ===== */
-
+/* wrapper giữ card ở center và đảm bảo layer hiển thị đúng */
 .edit-wrapper{
 position:relative;
 z-index:1;
@@ -40,20 +34,17 @@ display:flex;
 justify-content:center;
 }
 
-/* ===== CARD ===== */
-
+/* main card chứa form với shadow và spacing hợp lý */
 .edit-card{
 width:440px;
+max-width:100%;
 padding:32px 34px;
-
 background:white;
 border-radius:14px;
-
 box-shadow:0 18px 40px rgba(0,0,0,0.12);
 }
 
-/* ===== TITLE ===== */
-
+/* title hiển thị heading của form edit */
 .edit-title{
 font-size:26px;
 font-weight:700;
@@ -61,8 +52,7 @@ margin-bottom:20px;
 color:#2b2b2b;
 }
 
-/* ===== TABS ===== */
-
+/* tab navigation switch giữa cá nhân và học tập */
 .form-tabs{
 display:flex;
 gap:8px;
@@ -72,16 +62,12 @@ margin-bottom:16px;
 .tab{
 flex:1;
 padding:8px 0;
-
 border:none;
 border-radius:8px;
-
 background:#eef0ff;
 color:#555;
-
 font-weight:600;
 cursor:pointer;
-
 transition:0.2s;
 }
 
@@ -94,8 +80,7 @@ color:white;
 opacity:0.9;
 }
 
-/* ===== TAB CONTENT ===== */
-
+/* tab content hiển thị form section với animation nhẹ */
 .tab-content{
 display:none;
 animation:fadeIn 0.25s ease;
@@ -106,18 +91,11 @@ display:block;
 }
 
 @keyframes fadeIn{
-from{
-opacity:0;
-transform:translateY(6px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
+from{opacity:0;transform:translateY(6px);}
+to{opacity:1;transform:translateY(0);}
 }
 
-/* ===== FIELDS ===== */
-
+/* form field gồm label và input/select spacing đều */
 .edit-field{
 margin-bottom:14px;
 }
@@ -134,13 +112,10 @@ color:#3a3a3a;
 width:100%;
 height:40px;
 padding:8px 12px;
-
 border:1px solid #d7d9ea;
 border-radius:8px;
-
 font-size:14px;
 background:#ffffff;
-
 outline:none;
 transition:0.15s;
 box-sizing:border-box;
@@ -152,23 +127,17 @@ border-color:#6c63ff;
 box-shadow:0 0 0 2px rgba(108,99,255,0.15);
 }
 
-/* ===== BUTTON ===== */
-
+/* submit button full width với hover effect nhẹ */
 .edit-submit{
 margin-top:12px;
-
 width:100%;
 padding:10px;
-
 border:none;
 border-radius:8px;
-
 background:linear-gradient(135deg,#6c63ff,#7b73ff);
 color:white;
-
 font-weight:600;
 cursor:pointer;
-
 box-shadow:0 6px 14px rgba(0,0,0,0.12);
 transition:0.2s;
 }
@@ -178,21 +147,15 @@ transform:translateY(-1px);
 box-shadow:0 8px 18px rgba(0,0,0,0.18);
 }
 
-/* ===== BACK ===== */
-
+/* back button quay lại homepage với style nhẹ nhàng */
 .edit-back{
 display:inline-block;
 margin-top:14px;
-
 padding:8px 16px;
-
 border-radius:8px;
-
 font-weight:600;
 color:#6c63ff;
-
 text-decoration:none;
-
 box-shadow:0 4px 10px rgba(0,0,0,0.08);
 transition:0.2s;
 }
@@ -203,77 +166,97 @@ box-shadow:0 6px 14px rgba(0,0,0,0.14);
 transform:translateY(-1px);
 }
 
-/* ===== TOAST ===== */
-
+/* toast hiển thị trạng thái update thành công với animation */
 #toast{
 display:none;
-
 position:fixed;
 top:20px;
 right:20px;
-
 background:white;
 color:#2e7d32;
-
 padding:14px 18px 14px 44px;
-
 border-radius:10px;
-
 box-shadow:0 10px 26px rgba(0,0,0,0.18);
-
 font-weight:600;
-
 opacity:0;
 transform:translateX(120px);
-
 animation:toastIn 0.5s ease forwards;
-
 z-index:9999;
 }
 
-/* icon */
-
+/* icon hiển thị trong toast */
 #toast::before{
 content:"✔";
 position:absolute;
 left:14px;
 top:12px;
-
 font-size:18px;
 font-weight:700;
-
 color:#2ecc71;
 }
 
-/* progress bar */
-
+/* progress bar chạy dưới toast theo thời gian */
 #toastBar{
 position:absolute;
 bottom:0;
 left:0;
-
 height:4px;
 width:100%;
-
 background:#2ecc71;
-
 animation:toastProgress 3s linear forwards;
 }
 
-/* ===== ANIMATION ===== */
-
+/* animation cho toast và progress bar */
 @keyframes toastIn{
-from{
-opacity:0;
-transform:translateX(60px);
-}
-to{
-opacity:1;
-transform:translateX(0);
-}
+from{opacity:0;transform:translateX(60px);}
+to{opacity:1;transform:translateX(0);}
 }
 
 @keyframes toastProgress{
 from{width:100%;}
 to{width:0%;}
+}
+
+/* Responsive section */
+
+/* tablet giảm padding card để fit màn trung */
+@media (max-width: 991.98px){
+.edit-card{
+padding:28px 26px;
+}
+}
+
+/* mobile tối ưu spacing và layout cho màn nhỏ */
+@media (max-width: 767.98px){
+.edit-card{
+padding:24px 18px;
+border-radius:12px;
+}
+
+.edit-title{
+font-size:22px;
+}
+
+.tab{
+font-size:14px;
+padding:7px 0;
+}
+}
+
+/* small mobile giảm tiếp font và padding tránh overflow */
+@media (max-width: 575.98px){
+.edit-card{
+padding:20px 14px;
+}
+
+.edit-field input,
+.edit-field select{
+font-size:13px;
+height:36px;
+}
+
+.edit-submit{
+padding:9px;
+font-size:14px;
+}
 }

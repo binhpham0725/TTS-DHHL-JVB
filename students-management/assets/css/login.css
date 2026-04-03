@@ -1,0 +1,136 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+
+    background: linear-gradient(
+        180deg,
+        #001D39 0%,
+        #0A4174 20%,
+        #49769F 40%,
+        #4E8EA2 55%,
+        #6EA2B3 70%,
+        #7BBDE8 85%,
+        #BDD8E9 100%
+    );
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.login-page{
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-box{
+    width: 380px;
+    padding: 35px 30px;
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.12);
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.login-box h2{
+    text-align: center;
+    color: #fff;
+    margin-bottom: 25px;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.input-group{
+    margin-bottom: 16px;
+}
+
+.input-group input{
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.35);
+    outline: none;
+
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 15px;
+}
+
+.input-group input::placeholder{
+    color: rgba(255,255,255,0.85);
+}
+
+.input-group small{
+    display: block;
+    color: #ffd6d6;
+    margin-top: 6px;
+    font-size: 13px;
+    min-height: 16px;
+}
+
+.options{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+
+.remember{
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.forgot{
+    color: #fff;
+    text-decoration: none;
+}
+
+.forgot:hover{
+    text-decoration: underline;
+}
+
+.login-btn{
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-btn:hover{
+    background: #f1f1f1;
+    transform: translateY(-1px);
+}
+
+.error-text{
+    margin-bottom: 15px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255, 80, 80, 0.18);
+    border: 1px solid rgba(255, 120, 120, 0.35);
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+}

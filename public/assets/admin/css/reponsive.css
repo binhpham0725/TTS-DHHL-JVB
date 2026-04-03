@@ -1,0 +1,26 @@
+/* Thiết bị di động (Dưới 768px) */
+@media (max-width: 768px) {
+    body {
+        /* Chuyển về 1 cột duy nhất */
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "navbar"
+            "main"
+            "footer";
+    }
+    nav {
+        display: block;
+    }
+    aside {
+        display: none;
+    }
+    footer {
+        display: block;
+    }
+
+}
+
+/* Máy tính (Trên 768px) */
+@media (min-width: 769px) {
+
+}

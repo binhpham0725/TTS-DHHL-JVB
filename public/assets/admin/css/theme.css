@@ -1,0 +1,374 @@
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+a {
+    text-decoration: none;
+}
+ol,
+ul {
+    list-style: none;
+}
+
+blockquote,
+q {
+    quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: "";
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+a {
+    color: initial;
+}
+/******************
+     THEME
+*******************/
+:root {
+    /*===============
+          COLORS
+      =================*/
+
+    /* Các màu khác  */
+
+    --bs-blue: #0d6efd;
+    --bs-indigo: #6610f2;
+    --bs-purple: #6f42c1;
+    --bs-pink: #d63384;
+    --bs-red: #dc3545;
+    --bs-orange: #fd7e14;
+    --bs-yellow: #ffc107;
+    --bs-green: #198754;
+    --bs-teal: #20c997;
+    --bs-cyan: #0dcaf0;
+    --bs-black: #000;
+    --bs-white: #fff;
+    --bs-gray: #6c757d;
+    --bs-gray-dark: #343a40;
+    --bs-gray-100: #f8f9fa;
+    --bs-gray-200: #e9ecef;
+    --bs-gray-300: #dee2e6;
+    --bs-gray-400: #ced4da;
+    --bs-gray-500: #adb5bd;
+    --bs-gray-600: #6c757d;
+    --bs-gray-700: #495057;
+    --bs-gray-800: #343a40;
+    --bs-gray-900: #212529;
+    --bs-primary: #2b64e3;
+    --bs-secondary: #6c757d;
+    --bs-success: #10a93a;
+    --bs-info: #3a7dff;
+    --bs-warning: #d28b00;
+    --bs-danger: #bd0221;
+    --bs-light: #d8d9df;
+    --bs-dark: #212529;
+    --bs-primary-rgb: 43, 100, 227;
+    --bs-secondary-rgb: 108, 117, 125;
+    --bs-success-rgb: 16, 169, 58;
+    --bs-info-rgb: 58, 125, 255;
+    --bs-warning-rgb: 210, 139, 0;
+    --bs-danger-rgb: 189, 2, 33;
+    --bs-light-rgb: 216, 217, 223;
+    --bs-dark-rgb: 33, 37, 41;
+    --bs-primary-text-emphasis: rgb(17.2, 40, 90.8);
+    --bs-secondary-text-emphasis: rgb(43.2, 46.8, 50);
+    --bs-success-text-emphasis: rgb(6.4, 67.6, 23.2);
+    --bs-info-text-emphasis: rgb(23.2, 50, 102);
+    --bs-warning-text-emphasis: rgb(84, 55.6, 0);
+    --bs-danger-text-emphasis: rgb(75.6, .8, 13.2);
+    --bs-light-text-emphasis: #495057;
+    --bs-dark-text-emphasis: #495057;
+    --bs-primary-bg-subtle: rgb(212.6, 224, 249.4);
+    --bs-secondary-bg-subtle: rgb(225.6, 227.4, 229);
+    --bs-success-bg-subtle: rgb(207.2, 237.8, 215.6);
+    --bs-info-bg-subtle: rgb(215.6, 229, 255);
+    --bs-warning-bg-subtle: rgb(246, 231.8, 204);
+    --bs-danger-bg-subtle: rgb(241.8, 204.4, 210.6);
+    --bs-light-bg-subtle: rgb(251.5, 252, 252.5);
+    --bs-dark-bg-subtle: #ced4da;
+    --bs-primary-border-subtle: rgb(170.2, 193, 243.8);
+    --bs-secondary-border-subtle: rgb(196.2, 199.8, 203);
+    --bs-success-border-subtle: rgb(159.4, 220.6, 176.2);
+    --bs-info-border-subtle: rgb(176.2, 203, 255);
+    --bs-warning-border-subtle: rgb(237, 208.6, 153);
+    --bs-danger-border-subtle: rgb(228.6, 153.8, 166.2);
+    --bs-light-border-subtle: #e9ecef;
+    --bs-dark-border-subtle: #adb5bd;
+    --bs-white-rgb: 255, 255, 255;
+    --bs-black-rgb: 0, 0, 0;
+    --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, 0));
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-body-font-size: 1rem;
+    --bs-body-font-weight: 400;
+    --bs-body-line-height: 1.5;
+    --bs-body-color: #212529;
+    --bs-body-color-rgb: 33, 37, 41;
+    --bs-body-bg: #fff;
+    --bs-body-bg-rgb: 255, 255, 255;
+    --bs-emphasis-color: #000;
+    --bs-emphasis-color-rgb: 0, 0, 0;
+    --bs-secondary-color: rgba(33, 37, 41, .75);
+    --bs-secondary-color-rgb: 33, 37, 41;
+    --bs-secondary-bg: #e9ecef;
+    --bs-secondary-bg-rgb: 233, 236, 239;
+    --bs-tertiary-color: rgba(33, 37, 41, .5);
+    --bs-tertiary-color-rgb: 33, 37, 41;
+    --bs-tertiary-bg: #f8f9fa;
+    --bs-tertiary-bg-rgb: 248, 249, 250;
+    --bs-heading-color: inherit;
+    --bs-link-color: #2b64e3;
+    --bs-link-color-rgb: 43, 100, 227;
+    --bs-link-decoration: underline;
+    --bs-link-hover-color: rgb(34.4, 80, 181.6);
+    --bs-link-hover-color-rgb: 34, 80, 182;
+    --bs-code-color: #d63384;
+    --bs-highlight-color: #212529;
+    --bs-highlight-bg: rgb(255, 242.6, 205.4);
+    --bs-border-width: 1px;
+    --bs-border-style: solid;
+    --bs-border-color: #dee2e6;
+    --bs-border-color-translucent: rgba(0, 0, 0, .175);
+    --bs-border-radius: .375rem;
+    --bs-border-radius-sm: .25rem;
+    --bs-border-radius-lg: .5rem;
+    --bs-border-radius-xl: 1rem;
+    --bs-border-radius-xxl: 2rem;
+    --bs-border-radius-2xl: var(--bs-border-radius-xxl);
+    --bs-border-radius-pill: 50rem;
+    --bs-box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+    --bs-box-shadow-sm: 0 .125rem .25rem rgba(0, 0, 0, .075);
+    --bs-box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, .175);
+    --bs-box-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, .075);
+    --bs-focus-ring-width: .25rem;
+    --bs-focus-ring-opacity: .25;
+    --bs-focus-ring-color: rgba(43, 100, 227, .25);
+    --bs-form-valid-color: #10a93a;
+    --bs-form-valid-border-color: #10a93a;
+    --bs-form-invalid-color: #bd0221;
+    --bs-form-invalid-border-color: #bd0221;
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #212529;
+    --bs-btn-border-color: #212529;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgb(66.3, 69.7, 73.1);
+    --bs-btn-hover-border-color: rgb(55.2, 58.8, 62.4);
+    --bs-btn-focus-shadow-rgb: 66, 70, 73;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: rgb(77.4, 80.6, 83.8);
+    --bs-btn-active-border-color: rgb(55.2, 58.8, 62.4);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #212529;
+    --bs-btn-disabled-border-color: #212529;
+    bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    /*
+
+    */
+    /* Hết các màu khác */
+    /*
+    MÀU CHŨ
+    */
+    --text-black:#000;
+    --text-white:#fff;
+
+    /* Primary colors */
+    --p-20: hsl(213, 100%, 98%);
+    --p-50: hsl(215, 100%, 97%);
+    --p-100: hsl(215, 100%, 94%);
+    --p-200: hsl(216, 93%, 89%);
+    --p-300: hsl(219, 91%, 82%);
+    --p-400: hsl(224, 86%, 74%);
+    --p-450: hsl(198, 81%, 63%);
+    --p-500: hsl(228, 81%, 63%);
+    --p-500-code: 228, 81%, 63%;
+    --p-600: hsl(233, 73%, 59%);
+    --p-600-code: 233, 73%, 59%;
+    --p-700: hsl(234, 56%, 51%);
+    --p-700-code: 234, 56%, 51%;
+    --p-800: hsl(233, 53%, 41%);
+    --p-900: hsl(231, 46%, 34%);
+    --p-900-code: 231, 46%, 34%;
+    --p-950: hsl(233, 45%, 20%);
+    --p-950-code: 233, 45%, 20%;
+
+    /* Neutrals */
+    --n-50:  hsl(210, 14%, 97%);
+    --n-100: hsl(210, 14%, 93%);
+
+    /* Trung bình nhạt - Dùng cho Border, Divider */
+    --n-200: hsl(210, 14%, 87%);
+    --n-300: hsl(210, 14%, 78%);
+    --n-400: hsl(215, 16%, 60%);
+
+    /* Trung bình - Dùng cho Icon, Subtext (Biến bạn đã có) */
+    --n-500: hsl(215, 16%, 47%);
+
+    /* Trung bình đậm - Dùng cho Text phụ, Hover (Biến bạn đã có) */
+    --n-600: hsl(215, 16%, 35%);
+
+    /* Đậm - Dùng cho Heading, Chữ chính */
+    --n-700: hsl(215, 16%, 28%);
+    --n-800: hsl(215, 16%, 20%);
+    --n-900: hsl(215, 16%, 15%);
+    --n-950: hsl(215, 16%, 10%);
+    --foreground-color: hsl(0, 0%, 100%); /* background color */
+
+    /* Gradients */
+    --main-gradient-color: linear-gradient(to right, var(--p-450), var(--p-500));
+    --gradient-color: linear-gradient(var(--foreground-color) 10%, var(--p-100));
+
+    /*=================================
+          FONTS -  Sử dụng Scale 1.125
+      =================================*/
+    /* 32px */
+    --h1-font-size: 2rem;
+    /* 36px */
+    --h1-line-height: 2.25rem;
+
+    /* 26px */
+    --h2-font-size: 1.6rem;
+    /* 32px */
+    --h2-line-height: 2rem;
+
+    /* 20px */
+    --h3-font-size: 1.266rem;
+    /* 24px */
+    --h3-line-height: 1.5rem;
+
+    /* 18px */
+    --h4-font-size: 1.125rem;
+    /* 16px */
+    --h4-line-height: 1.5rem;
+
+    /* 16px */
+    --p-font-size: 1rem;
+    /* 24px */
+    --p-line-height: 1.5rem;
+
+    --p-letter-spacing: 0.025rem;
+
+    /* 12px */
+    --caption-font-size: 0.875rem;
+    /* 16px */
+    --caption-line-height: 1rem;
+    --small-font-size: 0.75rem;   /* 12px - Dùng cho ghi chú nhỏ hơn */
+    --tiny-font-size: 0.625rem;    /* 10px - Rất nhỏ, dùng cho footnote */
+    /*BÓNG DỔ*/
+    /* Bóng đổ nhẹ, tinh tế */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* Bóng đổ trung bình cho Sidebar/Navbar */
+    --shadow-md: 4px 0 10px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ cho Header */
+    --shadow-bottom: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}

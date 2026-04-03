@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Magazine | Tạp chí ĐH Hoa Lư</title>
+    <link rel="stylesheet" href="../css/magazine.css" />
+</head>
+<body>
+    <div class="sticky-progress" id="reading-progress"></div>
+    <header class="site-header">
+        <div class="site-nav">
+            <a class="brand" href="index.html">Tạp chí ĐH Hoa Lư</a>
+            <button class="menu-toggle" id="menu-toggle">☰</button>
+            <nav class="nav-links" id="nav-links" aria-label="Điều hướng chính">
+                <a href="index.html">Home</a>
+                <a href="magazine.html" class="active">Magazine</a>
+                <a href="category.html?id=0">Chuyên mục</a>
+                <a href="search.html">Tìm kiếm</a>
+                <a href="login.html">Đăng nhập</a>
+            </nav>
+            <div class="actions">
+                <button class="chip" id="theme-toggle">Dark Mode</button>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section class="hero">
+            <div class="hero-left">
+                <p class="story-meta">Magazine Online</p>
+                <h1>Tạp chí Đại học Hoa Lư</h1>
+                <p>Đón đọc tin tức, bài học, kỹ năng và giải trí, cập nhật mỗi ngày. Hệ thống hỗ trợ chế độ sáng/tối, tìm kiếm, bookmark và trình duyệt thân thiện.</p>
+                <div class="filters" id="category-filters"></div>
+            </div>
+            <aside class="right-aside" style="background:var(--surface);padding:1rem;border-radius:12px;box-shadow:0 3px 16px rgba(0,0,0,.08);">
+                <h3>Top chủ đề</h3>
+                <ul style="margin:0;padding-left:1rem;color:var(--muted);">
+                    <li>Công nghệ</li>
+                    <li>Đời sống</li>
+                    <li>Học tập</li>
+                    <li>Giải trí</li>
+                    <li>Sự kiện</li>
+                </ul>
+            </aside>
+        </section>
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="story-meta">Tin mới</p>
+                    <h2>Bài viết mới nhất</h2>
+                </div>
+                <button class="chip" id="load-more">Xem thêm</button>
+            </div>
+            <div id="articles" class="story-grid"></div>
+        </section>
+    </main>
+    <button id="back-top">↑</button>
+    <script src="../js/magazine.js"></script>
+    <script src="hluv-header.js"></script>
+</body>
+</html>

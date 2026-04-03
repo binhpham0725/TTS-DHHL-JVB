@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết bài viết | Tạp chí ĐH Hoa Lư</title>
+    <link rel="stylesheet" href="../css/article.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-nav">
+            <a class="brand" href="index.html">Tạp chí ĐH Hoa Lư</a>
+            <button class="menu-toggle" id="menu-toggle">☰</button>
+            <nav class="nav-links" id="nav-links">
+                <a href="index.html">Home</a>
+                <a href="magazine.html">Magazine</a>
+                <a href="category.html?id=0">Chuyên mục</a>
+                <a href="search.html">Tìm kiếm</a>
+            </nav>
+            <button class="btn" onclick="location.href='profile.html'">Trang cá nhân</button>
+        </div>
+    </header>
+    <main class="container">
+        <div class="article-header">
+            <p class="story-meta" id="article-category">Chuyên mục</p>
+            <h1 id="article-title">Đang tải...</h1>
+            <div class="meta-grid">
+                <div><strong>Tác giả</strong><p id="article-author">Ban biên tập</p></div>
+                <div><strong>Ngày đăng</strong><p id="article-date">--</p></div>
+                <div><strong>Độ dài</strong><p id="article-readtime">0 min</p></div>
+            </div>
+            <div class="article-actions">
+                <button class="btn primary" id="bookmark-btn">🔖 Lưu bài</button>
+                <button class="btn secondary" id="share-btn">📤 Chia sẻ</button>
+            </div>
+        </div>
+        <div class="article-cover"><img id="article-image" src="https://via.placeholder.com/940x360" alt=""></div>
+        <article class="article-content" id="article-content"></article>
+        <div class="tag-list" id="tag-list"></div>
+        <section class="related">
+            <h3>Có thể bạn quan tâm</h3>
+            <div id="related" class="related-grid"></div>
+        </section>
+    </main>
+    <button class="backtop" id="back-top">↑</button>
+    <script src="../js/article.js"></script>
+    <script src="hluv-header.js"></script>
+</body>
+</html>

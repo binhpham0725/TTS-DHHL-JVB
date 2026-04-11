@@ -43,12 +43,6 @@ student-app/
 |   |   |-- auth-particles.js
 |   |   |-- students-page.js
 |   |   |-- edit-student.js
-|   |-- images/
-|       |-- social/
-|           |-- facebook.svg
-|           |-- github.svg
-|           |-- google.svg
-|           |-- twitter.svg
 ```
 
 ## Ý nghĩa từng phần
@@ -82,7 +76,7 @@ Chứa các file nhận request từ frontend.
 - export csv
 
 ### `assets/`
-Chứa file tĩnh: CSS, JS, ảnh / icon.
+Chứa file tĩnh: CSS và JS.
 
 ### `config/`
 Chứa phần cấu hình chung, hiện tại là file kết nối database.
@@ -138,7 +132,7 @@ images/
 - `homepage/` -> tách thành `pages/students`, `components`, `api/students`, `assets`
 - `edit/` -> chuyển vào `pages/students/edit.php` và `assets/...`
 - `database/` -> tách thành `config/database.php` và `services/`
-- `images/` -> chuyển vào `assets/images/social/`
+- `images/` -> đã bỏ do không còn dùng social icon
 
 ## Những gì đã cải thiện
 - nhìn structure rõ hơn

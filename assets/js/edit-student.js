@@ -2,7 +2,6 @@
 let toastLock = false;
 let submitLock = false;
 let navLock = false;
-
 /* toast hiển thị message và optional redirect sau delay */
 function showToast(message, redirect = false) {
     if (toastLock) return;
@@ -27,11 +26,10 @@ function showToast(message, redirect = false) {
     if (redirect) {
         navLock = true;
         setTimeout(() => {
-            window.location = "../homepage/home.php";
+            window.location = "./index.php";
         }, 1500);
     }
 }
-
 /* dom ready setup form submit lock back button và navigation control */
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
@@ -97,11 +95,10 @@ document.addEventListener("DOMContentLoaded", function () {
         showToast("Cập nhật thông tin thành công");
 
         setTimeout(() => {
-            window.location = "../homepage/home.php";
+            window.location = "./index.php";
         }, 1500);
     }
 });
-
 /* tab switch giữa form cá nhân và học tập */
 function switchTab(tab) {
     if (navLock) return;

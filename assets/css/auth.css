@@ -48,6 +48,19 @@ color:white;
 transition:height .35s cubic-bezier(.4,0,.2,1);
 }
 
+/* tiêu đề chính của hệ thống */
+.system-title{
+font-size:28px;
+font-weight:800;
+text-align:center;
+margin-bottom:22px;
+letter-spacing:0.2px;
+}
+
+.system-title span{
+display:block;
+}
+
 /* tab navigation switch giữa signin signup */
 .tabs{
 display:flex;
@@ -156,15 +169,6 @@ font-size:16px;
 line-height:1;
 }
 
-/* remember checkbox hiển thị inline gọn gàng */
-.remember{
-display:flex;
-align-items:center;
-gap:8px;
-font-size:14px;
-margin:15px 0 25px 0;
-}
-
 /* submit button full width với hover effect nhẹ */
 .submit{
 width:100%;
@@ -212,35 +216,26 @@ transform:translateX(-40px);
 opacity:0;
 }
 
-/* social icons hiển thị login options khác */
-.social{
-display:flex;
-justify-content:center;
-gap:20px;
-margin-top:25px;
+/* khối text hỗ trợ thay cho social login để hợp ngữ cảnh hệ thống nội bộ */
+.support-box{
+margin-top:22px;
+padding:14px 16px;
+border-radius:16px;
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.12);
 }
 
-.icon{
-width:45px;
-height:45px;
-border-radius:50%;
-background:rgba(255,255,255,0.18);
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-transition:all .25s cubic-bezier(.4,0,.2,1);
+.support-title{
+font-size:14px;
+font-weight:700;
+margin-bottom:6px;
+color:#ffffff;
 }
 
-.icon:hover{
-transform:translateY(-4px);
-}
-
-.icon img{
-width:20px;
-height:20px;
-object-fit:contain;
-pointer-events:none;
+.support-text{
+font-size:13px;
+line-height:1.5;
+color:rgba(255,255,255,0.78);
 }
 
 /* toast hiển thị feedback login signup với progress bar */

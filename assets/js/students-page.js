@@ -1,37 +1,35 @@
-/* global state quản lý lock hành động và toast timing tránh spam interaction */
+/* global state quản lý lock thao tác và toast */
 let actionLocked = false;
 let lastToastTime = 0;
 const TOAST_COOLDOWN = 1500;
 const TOAST_DURATION = 1500;
-
 let deleteId = null;
 let editId = null;
 let searchTimer = null;
 
+/* các field được phép sửa nhanh theo từng view */
 const INLINE_FIELDS = {
     personal: ["email", "dia_chi"],
     academic: ["chuyen_nganh", "tinh_trang", "xep_loai"]
 };
 
+/* option cố định cho các field select khi sửa nhanh */
 const INLINE_SELECT_OPTIONS = {
     tinh_trang: ["Năm 1", "Năm 2", "Năm 3", "Năm 4", "Đã tốt nghiệp", "Khác"],
     xep_loai: ["Xuất sắc", "Giỏi", "Khá", "Trung bình", "Yếu"]
 };
 
-/* toast hiển thị message trạng thái với progress bar và anti spam */
+/* toast hiển thị trạng thái thao tác */
 function showToast(id, barId, duration = TOAST_DURATION, force = false) {
     let now = Date.now();
     if (!force && now - lastToastTime < TOAST_COOLDOWN) return;
-
     lastToastTime = now;
 
     let toast = document.getElementById(id);
     let bar = document.getElementById(barId);
-
     if (!toast || !bar) return;
 
     toast.style.display = "block";
-
     bar.style.animation = "none";
     bar.offsetHeight;
     bar.style.animation = "progress " + duration + "ms linear forwards";
@@ -42,7 +40,22 @@ function showToast(id, barId, duration = TOAST_DURATION, force = false) {
     }, duration);
 }
 
-/* helper escape html an toàn khi render inline edit */
+/* map mã lỗi trả về từ api sang nội dung toast */
+function getStudentErrorMessage(code) {
+    const messages = {
+        missing_name: "Thiếu họ tên",
+        invalid_gender: "Giới tính không hợp lệ",
+        missing_dob: "Thiếu ngày sinh",
+        invalid_email: "Email không hợp lệ",
+        invalid_status: "Tình trạng không hợp lệ",
+        invalid_rank: "Xếp loại không hợp lệ",
+        invalid_gpa: "GPA không hợp lệ",
+        gpa_too_high: "GPA không được lớn hơn 4.0"
+    };
+    return messages[code] || "Lỗi";
+}
+
+/* escape html để render an toàn khi sửa inline */
 function escapeHtml(value) {
     return String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -52,117 +65,95 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 }
 
-/* helper set nội dung toast tải trang */
 function setPageToastMessage(message) {
     const pageText = document.getElementById("pageText");
     if (pageText) pageText.textContent = message;
 }
 
-/* helper lấy search hiện tại */
 function getSearchValue() {
     const input = document.getElementById("search");
     return input ? input.value.trim() : "";
 }
 
-/* helper update search param vào url */
+/* giữ query search khi đổi page, sort hoặc export */
 function applySearchParam(url) {
     const searchVal = getSearchValue();
     if (searchVal) url.searchParams.set("search", searchVal);
     else url.searchParams.delete("search");
 }
 
-/* export csv giữ nguyên state hiện tại */
+/* export csv theo đúng trạng thái đang xem */
 function exportCSV() {
     if (actionLocked) return;
-
-    let url = new URL(window.location.href);
+    let url = new URL(window.studentPageConfig.exportApi, window.location.href);
+    let currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.forEach((value, key) => {
+        url.searchParams.set(key, value);
+    });
     applySearchParam(url);
-    url.searchParams.set("export", "csv");
     window.location.href = url.toString();
 }
 
-/* helper build action cell mặc định */
 function buildDefaultActionCell(id, hasInline) {
     let html = "";
-
     if (hasInline) {
         html += `<button type="button" onclick="startInlineEdit(this)">Sửa nhanh</button>`;
     }
-
     html += `<button onclick="confirmEdit(${id})">Sửa</button>`;
     html += `<button onclick="confirmDelete(${id})">Xóa</button>`;
     html += `<input type="checkbox" class="row-check" value="${id}" onchange="toggleBulkDeleteButton()">`;
-
     return html;
 }
 
-/* live search filter trực tiếp trên table hiện tại, không fetch không reload */
+/* search trên toàn bộ database rồi reload lại page */
 function liveSearch() {
     clearTimeout(searchTimer);
-
     searchTimer = setTimeout(() => {
         const searchInput = document.getElementById("search");
         if (!searchInput) return;
 
-        let input = searchInput.value.toLowerCase().trim();
-        let rows = document.querySelectorAll("#tableBody tr");
-
-        rows.forEach(row => {
-            let text = row.textContent || "";
-            text = text.toLowerCase().trim();
-            row.style.display = text.includes(input) ? "" : "none";
-        });
-
+        let input = searchInput.value.trim();
         const url = new URL(window.location.href);
         if (input) url.searchParams.set("search", input);
         else url.searchParams.delete("search");
-
-        window.history.replaceState({}, "", url.toString());
-    }, 80);
+        url.searchParams.set("page", "1");
+        window.location.href = url.toString();
+    }, 350);
 }
 
-/* logout action hiển thị toast rồi redirect về login page */
 function logout() {
     if (actionLocked) return;
     actionLocked = true;
-
     showToast("logoutToast", "logoutBar", TOAST_DURATION, true);
-
     setTimeout(() => {
-        window.location.href = "../login/login.html";
+        window.location.href = window.studentPageConfig.loginPageUrl;
     }, TOAST_DURATION);
 }
 
-/* mở form overlay thêm sinh viên mới và reset dữ liệu form */
 function openForm() {
     if (actionLocked) return;
     document.getElementById("formOverlay").style.display = "flex";
     document.getElementById("studentForm").reset();
 }
 
-/* đóng form overlay và clear trạng thái nhập liệu */
 function closeForm() {
     if (actionLocked) return;
     document.getElementById("formOverlay").style.display = "none";
 }
 
-/* switch tab giữa thông tin cá nhân và học tập trong form */
+/* switch tab trong form thêm mới */
 function switchTab(tab) {
     document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
     document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-
     document.getElementById("tab" + tab).classList.add("active");
     document.querySelectorAll(".tab")[tab - 1].classList.add("active");
 }
 
-/* pagination chuyển trang giữ nguyên state sort view search hiện tại */
 function goPage(page) {
     if (actionLocked) return;
-
     actionLocked = true;
     setPageToastMessage("⏳ Đang chuyển trang...");
     showToast("pageToast", "pageBar", TOAST_DURATION, true);
-
     setTimeout(() => {
         let url = new URL(window.location.href);
         url.searchParams.set("page", page);
@@ -171,47 +162,35 @@ function goPage(page) {
     }, TOAST_DURATION);
 }
 
-/* sort table theo column và toggle asc desc bằng URL params */
 function sortTable(column) {
     if (actionLocked) return;
-
     actionLocked = true;
     setPageToastMessage("⏳ Đang sắp xếp dữ liệu...");
     showToast("pageToast", "pageBar", TOAST_DURATION, true);
-
     setTimeout(() => {
         let url = new URL(window.location.href);
-
         let currentSort = url.searchParams.get("sort");
         let currentOrder = url.searchParams.get("order");
-
         if (currentSort === column) {
             url.searchParams.set("order", currentOrder === "asc" ? "desc" : "asc");
         } else {
             url.searchParams.set("sort", column);
             url.searchParams.set("order", "asc");
         }
-
         applySearchParam(url);
         window.location.href = url.toString();
     }, TOAST_DURATION);
 }
 
-/* change view giữa personal và academic bằng query param */
 function changeView() {
     if (actionLocked) return;
-
     actionLocked = true;
-
     let view = document.getElementById("viewMode").value;
-
     const text = view === "academic"
         ? "⏳ Đang chuyển sang thông tin học tập..."
         : "⏳ Đang chuyển sang thông tin cá nhân...";
-
     setPageToastMessage(text);
     showToast("pageToast", "pageBar", TOAST_DURATION, true);
-
     setTimeout(() => {
         let url = new URL(window.location.href);
         url.searchParams.set("view", view);
@@ -220,45 +199,36 @@ function changeView() {
     }, TOAST_DURATION);
 }
 
-/* confirm delete một sinh viên với dialog overlay */
 function confirmDelete(id) {
     if (actionLocked) return;
-
     deleteId = id;
     document.getElementById("deleteOverlay").style.display = "flex";
 }
 
-/* confirm edit chuyển sang trang edit với delay nhẹ UX */
 function confirmEdit(id) {
     if (actionLocked) return;
-
     editId = id;
     document.getElementById("editOverlay").style.display = "flex";
 }
 
-/* bulk delete hiển thị button khi chọn nhiều checkbox */
+/* chỉ hiện nút xóa nhiều khi chọn từ 2 dòng trở lên */
 function toggleBulkDeleteButton() {
     let checked = document.querySelectorAll(".row-check:checked");
     let btn = document.getElementById("bulkDeleteBtn");
-
     if (!btn) return;
     btn.style.display = checked.length >= 2 ? "inline-block" : "none";
 }
 
-/* mở dialog xác nhận bulk delete */
 function confirmBulkDelete() {
     if (actionLocked) return;
-
     let checked = document.querySelectorAll(".row-check:checked");
     if (checked.length < 2) return;
-
     document.getElementById("bulkDeleteOverlay").style.display = "flex";
 }
 
-/* bắt đầu inline edit chỉ cho field nhẹ */
+/* bắt đầu sửa nhanh trên các cột nhẹ */
 function startInlineEdit(button) {
     if (actionLocked) return;
-
     const row = button.closest("tr");
     if (!row || row.classList.contains("editing")) return;
 
@@ -267,19 +237,16 @@ function startInlineEdit(button) {
     if (!allowedFields.length) return;
 
     row.classList.add("editing");
-
     allowedFields.forEach(field => {
         const cell = row.querySelector(`td[data-field="${field}"]`);
         if (!cell) return;
 
         const value = cell.dataset.value ?? cell.textContent.trim();
         cell.dataset.original = value;
-
         if (INLINE_SELECT_OPTIONS[field]) {
             let options = INLINE_SELECT_OPTIONS[field]
                 .map(opt => `<option value="${escapeHtml(opt)}" ${opt === value ? "selected" : ""}>${escapeHtml(opt)}</option>`)
                 .join("");
-
             cell.innerHTML = `<select class="inline-input" data-inline-field="${field}">${options}</select>`;
         } else {
             cell.innerHTML = `<input type="text" class="inline-input" data-inline-field="${field}" value="${escapeHtml(value)}">`;
@@ -296,39 +263,33 @@ function startInlineEdit(button) {
     }
 }
 
-/* hủy inline edit */
 function cancelInlineEdit(button) {
     const row = button.closest("tr");
     if (!row) return;
-
     restoreInlineRow(row);
 }
 
-/* restore row sau khi hủy inline edit */
+/* trả row về trạng thái ban đầu nếu hủy sửa nhanh */
 function restoreInlineRow(row) {
     const view = row.dataset.view;
     const allowedFields = INLINE_FIELDS[view] || [];
-
     allowedFields.forEach(field => {
         const cell = row.querySelector(`td[data-field="${field}"]`);
         if (!cell) return;
-
         const original = cell.dataset.original ?? cell.dataset.value ?? "";
         cell.dataset.value = original;
         cell.textContent = original;
     });
 
     row.classList.remove("editing");
-
     const actionCell = row.querySelector(".action-cell");
     if (actionCell) {
         actionCell.innerHTML = buildDefaultActionCell(row.dataset.id, true);
     }
-
     toggleBulkDeleteButton();
 }
 
-/* lưu inline edit qua ajax */
+/* lưu sửa nhanh qua api */
 function saveInlineEdit(button) {
     const row = button.closest("tr");
     if (!row || actionLocked) return;
@@ -337,22 +298,19 @@ function saveInlineEdit(button) {
     const id = row.dataset.id;
     const allowedFields = INLINE_FIELDS[view] || [];
     const payload = {};
-
     allowedFields.forEach(field => {
         const input = row.querySelector(`[data-inline-field="${field}"]`);
         if (input) payload[field] = input.value.trim();
     });
 
     actionLocked = true;
-
-    fetch(window.location.href, {
+    fetch(window.studentPageConfig.inlineUpdateApi, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             "X-Requested-With": "XMLHttpRequest"
         },
         body: new URLSearchParams({
-            action: "inline_update",
             id: id,
             view: view,
             payload: JSON.stringify(payload)
@@ -361,7 +319,6 @@ function saveInlineEdit(button) {
         .then(res => res.json())
         .then(data => {
             actionLocked = false;
-
             if (!data || data.status !== "success") {
                 showToast("inlineErrorToast", "inlineErrorBar", TOAST_DURATION, true);
                 return;
@@ -370,19 +327,16 @@ function saveInlineEdit(button) {
             allowedFields.forEach(field => {
                 const cell = row.querySelector(`td[data-field="${field}"]`);
                 if (!cell) return;
-
                 const value = data.data[field] ?? "";
                 cell.dataset.value = value;
                 cell.textContent = value;
             });
 
             row.classList.remove("editing");
-
             const actionCell = row.querySelector(".action-cell");
             if (actionCell) {
                 actionCell.innerHTML = buildDefaultActionCell(id, true);
             }
-
             showToast("inlineSuccessToast", "inlineSuccessBar", TOAST_DURATION, true);
             toggleBulkDeleteButton();
         })
@@ -392,9 +346,9 @@ function saveInlineEdit(button) {
         });
 }
 
-/* live student count fetch dữ liệu tổng số sinh viên định kỳ */
+/* lấy tổng số sinh viên định kỳ */
 function updateStudentCount() {
-    fetch("../database/count.php")
+    fetch(window.studentPageConfig.countApi)
         .then(res => res.text())
         .then(count => {
             const span = document.getElementById("studentCount");
@@ -402,6 +356,7 @@ function updateStudentCount() {
         });
 }
 
+/* setup sự kiện cho form, search, delete và edit */
 document.addEventListener("DOMContentLoaded", function () {
     let form = document.getElementById("studentForm");
     let searchInput = document.getElementById("search");
@@ -409,13 +364,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (form) {
         form.onsubmit = function (e) {
             if (actionLocked) return;
-
             e.preventDefault();
             actionLocked = true;
 
             let formData = new FormData(this);
-
-            fetch("../login/register.php", {
+            fetch(window.studentPageConfig.createApi, {
                 method: "POST",
                 body: formData
             })
@@ -427,7 +380,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         setTimeout(() => location.reload(), TOAST_DURATION);
                     } else {
                         actionLocked = false;
-                        document.getElementById("loadingText").textContent = "❌ Lỗi";
+                        document.getElementById("loadingText").textContent = "❌ " + getStudentErrorMessage(data);
                         showToast("loadingToast", "loadingBar", TOAST_DURATION, true);
                     }
                 })
@@ -443,9 +396,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has("search")) {
             searchInput.value = urlParams.get("search");
-            liveSearch();
         }
-
         searchInput.addEventListener("input", liveSearch);
     }
 
@@ -466,10 +417,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (confirmDeleteBtn) {
         confirmDeleteBtn.onclick = function () {
             if (!deleteId || actionLocked) return;
-
             actionLocked = true;
-
-            fetch("../database/delete.php", {
+            fetch(window.studentPageConfig.deleteApi, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
@@ -497,17 +446,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (confirmBulkDeleteBtn) {
         confirmBulkDeleteBtn.onclick = function () {
             if (actionLocked) return;
-
             let checked = document.querySelectorAll(".row-check:checked");
             if (checked.length < 2) return;
-
             actionLocked = true;
 
             let requests = [];
-
             checked.forEach(cb => {
                 requests.push(
-                    fetch("../database/delete.php", {
+                    fetch(window.studentPageConfig.deleteApi, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded"
@@ -539,15 +485,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (confirmEditBtn) {
         confirmEditBtn.onclick = function () {
             if (!editId || actionLocked) return;
-
             actionLocked = true;
-
             document.getElementById("editOverlay").style.display = "none";
             document.getElementById("loadingText").textContent = "⏳ Đang lấy thông tin sinh viên...";
             showToast("loadingToast", "loadingBar", TOAST_DURATION, true);
-
             setTimeout(() => {
-                window.location.href = "../edit/edit.php?id=" + editId;
+                window.location.href = window.studentPageConfig.editPageUrl + "?id=" + editId;
             }, TOAST_DURATION);
         };
     }
@@ -555,6 +498,6 @@ document.addEventListener("DOMContentLoaded", function () {
     toggleBulkDeleteButton();
 });
 
-/* initial load và auto refresh student count */
+/* load lần đầu và auto refresh student count */
 updateStudentCount();
 setInterval(updateStudentCount, 5000);

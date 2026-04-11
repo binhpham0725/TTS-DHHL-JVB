@@ -2,14 +2,12 @@
 let isSwitching = false;
 let lastToastTime = 0;
 const TOAST_COOLDOWN = 3000;
-
 /* DOM references cho tab, form và card container */
 const signinTab = document.getElementById("signinTab");
 const signupTab = document.getElementById("signupTab");
 const signinForm = document.getElementById("signinForm");
 const signupForm = document.getElementById("signupForm");
 const card = document.querySelector(".card");
-
 /* toast hiển thị message feedback với icon và progress bar */
 function showToast(text, success = true) {
     let now = Date.now();
@@ -36,7 +34,6 @@ function showToast(text, success = true) {
         toast.style.display = "none";
     }, 3000);
 }
-
 /* animation chuyển tab giữa signin signup với lock tránh spam click */
 function animateSwitch(hideForm, showForm, direction) {
     if (isSwitching) return;
@@ -82,7 +79,6 @@ function animateSwitch(hideForm, showForm, direction) {
         );
     };
 }
-
 /* tab click handler điều hướng form tương ứng */
 signinTab.onclick = () => {
     if (signinForm.classList.contains("active") || isSwitching) return;
@@ -101,7 +97,6 @@ signupTab.onclick = () => {
 
     animateSwitch(signinForm, signupForm, 1);
 };
-
 /* toggle password visibility cho các input password */
 function togglePassword(open, closed, input) {
     open.onclick = () => {
@@ -116,7 +111,6 @@ function togglePassword(open, closed, input) {
         open.style.display = "block";
     };
 }
-
 togglePassword(
     document.getElementById("signinEyeOpen"),
     document.getElementById("signinEyeClosed"),
@@ -134,10 +128,8 @@ togglePassword(
     document.getElementById("confirmEyeClosed"),
     document.getElementById("confirmPassword")
 );
-
 /* email regex validation dùng chung cho signin signup */
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 /* signin submit xử lý validation và gọi ajax login */
 signinForm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -154,7 +146,7 @@ signinForm.addEventListener("submit", function (e) {
     formData.append("email", email);
     formData.append("password", password);
 
-    fetch("login.php", {
+    fetch(window.authPageConfig.loginApi, {
         method: "POST",
         body: formData
     })
@@ -164,7 +156,7 @@ signinForm.addEventListener("submit", function (e) {
                 showToast("Đăng nhập thành công", true);
 
                 setTimeout(() => {
-                    window.location.href = "../homepage/home.php";
+                    window.location.href = window.authPageConfig.studentPageUrl;
                 }, 1000);
             } else if (data === "wrong_password") {
                 showToast("Sai mật khẩu", false);
@@ -173,7 +165,6 @@ signinForm.addEventListener("submit", function (e) {
             }
         });
 });
-
 /* signup submit validate input và gửi ajax tạo tài khoản */
 signupForm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -199,7 +190,7 @@ signupForm.addEventListener("submit", function (e) {
     formData.append("password", password);
     formData.append("birthday", birthday);
 
-    fetch("signup.php", {
+    fetch(window.authPageConfig.signupApi, {
         method: "POST",
         body: formData
     })
@@ -208,6 +199,18 @@ signupForm.addEventListener("submit", function (e) {
             if (data === "success") {
                 showToast("Tạo tài khoản thành công", true);
                 signinTab.click();
+            } else if (data === "missing_username") {
+                showToast("Thiếu username", false);
+            } else if (data === "missing_email") {
+                showToast("Thiếu email", false);
+            } else if (data === "invalid_email") {
+                showToast("Email sai định dạng", false);
+            } else if (data === "missing_birthday") {
+                showToast("Thiếu ngày sinh", false);
+            } else if (data === "missing_password") {
+                showToast("Thiếu mật khẩu", false);
+            } else if (data === "weak_password") {
+                showToast("Mật khẩu phải từ 8 ký tự", false);
             } else if (data === "email_exists") {
                 showToast("Email đã tồn tại", false);
             } else {

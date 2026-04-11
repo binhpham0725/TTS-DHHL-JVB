@@ -144,7 +144,7 @@ images/
 - GPA hiện được giới hạn tối đa là 4.0
 
 ## Phần chưa làm sâu
-Hiện tại em mới tập trung vào phần structure.
+Hiện tại em mới tập trung vào phần structure nên chưa tối ưu những phần sau:
 - naming
 - tối ưu performance
 - chuẩn hóa code style kỹ hơn

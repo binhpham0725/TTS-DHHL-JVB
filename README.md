@@ -88,11 +88,11 @@ Chứa file tĩnh như CSS và các JS điều khiển UI theo từng màn hình
 Chứa phần cấu hình chung, hiện tại là file kết nối database.
 
 ## Flow hiện tại
-### Dùng XAMPP
-- bật `Apache` và `MySQL` trong XAMPP
+### Chạy project
 - import file SQL vào phpMyAdmin
 - kiểm tra database name là `student_registration`
-- Mở Visual Studio Code và chạy index.php
+- mở project bằng Visual Studio Code
+- chạy `PHP Server: Serve Project`
 
 ### Entry point
 - `index.php` sẽ chuyển qua `pages/auth/login.php`

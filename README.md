@@ -93,15 +93,6 @@ Chứa phần cấu hình chung, hiện tại là file kết nối database.
 - import file SQL vào phpMyAdmin
 - kiểm tra database name là `student_registration`
 - Mở Visual Studio Code và chạy index.php
-Ví dụ đường dẫn:
-```text
-C:\xampp\htdocs\Project
-```
-
-Mở trên trình duyệt:
-```text
-http://localhost/Project
-```
 
 ### Entry point
 - `index.php` sẽ chuyển qua `pages/auth/login.php`

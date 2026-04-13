@@ -92,7 +92,7 @@ Chứa phần cấu hình chung, hiện tại là file kết nối database.
 - import file SQL vào phpMyAdmin
 - kiểm tra database name là `student_registration`
 - mở project bằng Visual Studio Code
-- chạy `PHP Server: Serve Project`
+- chạy `PHP Server: Serve Project trên file index.php`
 
 ### Entry point
 - `index.php` sẽ chuyển qua `pages/auth/login.php`

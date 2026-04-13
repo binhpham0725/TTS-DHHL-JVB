@@ -1,49 +1,49 @@
 # Refactor Structure
 ## Structure mới
 ```text
-Project/
-|-- index.php
-|-- config/
-|   |-- database.php
-|-- core/
-|   |-- AuthService.php
-|   |-- StudentService.php
-|-- pages/
-|   |-- auth/
-|   |   |-- login.php
-|   |-- students/
-|       |-- index.php
-|       |-- edit.php
-|-- components/
-|   |-- auth-toast.php
-|   |-- student-create-modal.php
-|   |-- student-dialogs.php
-|   |-- student-table.php
-|   |-- student-toasts.php
-|-- services/
-|   |-- authService.js
-|   |-- studentService.js
-|-- api/
-|   |-- auth/
-|   |   |-- login.php
-|   |   |-- signup.php
-|   |-- students/
-|       |-- count.php
-|       |-- create.php
-|       |-- delete.php
-|       |-- export.php
-|       |-- inline-update.php
-|       |-- update.php
-|-- assets/
-|   |-- css/
-|   |   |-- auth.css
-|   |   |-- students.css
-|   |   |-- edit-student.css
-|   |-- js/
-|   |   |-- auth.js
-|   |   |-- auth-particles.js
-|   |   |-- students-page.js
-|   |   |-- edit-student.js
+📁 Project/
+├── 📄 index.php
+├── 📁 config/
+│   └── 📄 database.php
+├── 📁 core/
+│   ├── 📄 AuthService.php
+│   └── 📄 StudentService.php
+├── 📁 pages/
+│   ├── 📁 auth/
+│   │   └── 📄 login.php
+│   └── 📁 students/
+│       ├── 📄 index.php
+│       └── 📄 edit.php
+├── 📁 components/
+│   ├── 📄 auth-toast.php
+│   ├── 📄 student-create-modal.php
+│   ├── 📄 student-dialogs.php
+│   ├── 📄 student-table.php
+│   └── 📄 student-toasts.php
+├── 📁 services/
+│   ├── 📄 authService.js
+│   └── 📄 studentService.js
+├── 📁 api/
+│   ├── 📁 auth/
+│   │   ├── 📄 login.php
+│   │   └── 📄 signup.php
+│   └── 📁 students/
+│       ├── 📄 count.php
+│       ├── 📄 create.php
+│       ├── 📄 delete.php
+│       ├── 📄 export.php
+│       ├── 📄 inline-update.php
+│       └── 📄 update.php
+└── 📁 assets/
+    ├── 📁 css/
+    │   ├── 📄 auth.css
+    │   ├── 📄 students.css
+    │   └── 📄 edit-student.css
+    └── 📁 js/
+        ├── 📄 auth.js
+        ├── 📄 auth-particles.js
+        ├── 📄 students-page.js
+        └── 📄 edit-student.js
 ```
 
 ## Phân chia từng phần

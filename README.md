@@ -1,6 +1,4 @@
-# Ghi chú structure sau khi tách lại project
-File này để ghi lại structure mới của project cho dễ nhìn và dễ trình bày.
-
+# Refactor Structure
 ## Structure mới
 ```text
 student-app/
@@ -45,7 +43,7 @@ student-app/
 |   |   |-- edit-student.js
 ```
 
-## Ý nghĩa từng phần
+## Phân chia từng phần
 ### `pages/`
 Chứa các trang chính để mở trên trình duyệt.
 - `pages/auth/login.php`: trang đăng nhập / đăng ký
@@ -81,7 +79,7 @@ Chứa file tĩnh: CSS và JS.
 ### `config/`
 Chứa phần cấu hình chung, hiện tại là file kết nối database.
 
-## Luồng chạy hiện tại
+## Flow hiện tại
 ### Dùng XAMPP
 - đặt thư mục `student-app` vào `htdocs`
 - bật `Apache` và `MySQL` trong XAMPP

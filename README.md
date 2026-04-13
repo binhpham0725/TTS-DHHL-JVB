@@ -5,6 +5,9 @@ student-app/
 |-- index.php
 |-- config/
 |   |-- database.php
+|-- core/
+|   |-- AuthService.php
+|   |-- StudentService.php
 |-- pages/
 |   |-- auth/
 |   |   |-- login.php
@@ -18,8 +21,8 @@ student-app/
 |   |-- student-table.php
 |   |-- student-toasts.php
 |-- services/
-|   |-- AuthService.php
-|   |-- StudentService.php
+|   |-- authService.js
+|   |-- studentService.js
 |-- api/
 |   |-- auth/
 |   |   |-- login.php
@@ -57,24 +60,29 @@ Chứa các phần giao diện được tách ra từ page để file chính đ�
 - popup xác nhận
 - form thêm sinh viên
 
-### `services/`
+### `core/`
 Chứa phần xử lý dữ liệu phía PHP.
 - xử lý user
 - xử lý sinh viên
 - query database
 - create / update / delete / export
 
-### `api/`
-Chứa các file nhận request từ frontend.
-- login
-- signup
+### `services/`
+Chứa JS gọi API bằng `fetch`.
+- login / signup
 - tạo sinh viên
 - xóa sinh viên
-- sửa sinh viên
-- export csv
+- sửa nhanh inline
+- lấy số lượng sinh viên
+
+### `api/`
+Chứa các file PHP nhận request từ frontend và xử lý logic.
+- validate dữ liệu
+- gọi hàm trong `core/`
+- trả kết quả về cho frontend
 
 ### `assets/`
-Chứa file tĩnh: CSS và JS.
+Chứa file tĩnh như CSS và các JS điều khiển UI theo từng màn hình.
 
 ### `config/`
 Chứa phần cấu hình chung, hiện tại là file kết nối database.
@@ -100,7 +108,8 @@ http://localhost/student-app
 
 ### Trang login
 - giao diện ở `pages/auth/login.php`
-- JS ở `assets/js/auth.js`
+- JS điều khiển giao diện ở `assets/js/auth.js`
+- JS gọi API ở `services/authService.js`
 - gọi API:
   - `api/auth/login.php`
   - `api/auth/signup.php`
@@ -108,7 +117,8 @@ http://localhost/student-app
 ### Trang danh sách sinh viên
 - giao diện chính ở `pages/students/index.php`
 - bảng và popup được tách ra ở `components/`
-- JS gọi các API trong `api/students/`
+- JS điều khiển giao diện ở `assets/js/students-page.js`
+- JS gọi API ở `services/studentService.js`
 
 ### Trang sửa sinh viên
 - giao diện ở `pages/students/edit.php`
@@ -126,15 +136,16 @@ images/
 
 ### Mới
 - `login/` -> tách thành `pages/auth`, `api/auth`, `assets/css`, `assets/js`
-- `homepage/` -> tách thành `pages/students`, `components`, `api/students`, `assets`
+- `homepage/` -> tách thành `pages/students`, `components`, `api/students`, `services`, `assets`
 - `edit/` -> chuyển vào `pages/students/edit.php` và `assets/...`
-- `database/` -> tách thành `config/database.php` và `services/`
+- `database/` -> tách thành `config/database.php`, `core/` và `api/`
 - `images/` -> đã bỏ do không còn dùng social icon
 
 ## Những gì đã cải thiện
 - nhìn structure rõ hơn
 - page không còn ôm quá nhiều xử lý trong cùng một file
 - phần giao diện, API, logic và assets đã tách riêng
+- phần PHP xử lý và phần JS gọi API đã tách vai trò rõ hơn
 - dễ theo dõi hơn khi đọc project
 - search sinh viên hiện tại tìm trên toàn bộ database, không chỉ trong page đang mở
 - đã thêm validate backend cho signup, create và update

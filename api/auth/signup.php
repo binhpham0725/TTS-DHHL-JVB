@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../services/AuthService.php';
+require_once __DIR__ . '/../../core/AuthService.php';
 /* nhận dữ liệu đăng ký từ form */
 $username = trim($_POST['username'] ?? '');
 $email = trim($_POST['email'] ?? '');

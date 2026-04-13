@@ -142,15 +142,7 @@ signinForm.addEventListener("submit", function (e) {
     if (password === "") return showToast("Password required", false);
     if (password.length < 8) return showToast("Password >= 8 characters", false);
 
-    let formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
-
-    fetch(window.authPageConfig.loginApi, {
-        method: "POST",
-        body: formData
-    })
-        .then(res => res.text())
+    loginAccount(email, password)
         .then(data => {
             if (data === "success") {
                 showToast("Đăng nhập thành công", true);
@@ -184,17 +176,12 @@ signupForm.addEventListener("submit", function (e) {
     if (confirm === "") return showToast("Xác nhận mật khẩu", false);
     if (password !== confirm) return showToast("Mật khẩu không khớp", false);
 
-    let formData = new FormData();
-    formData.append("username", username);
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("birthday", birthday);
-
-    fetch(window.authPageConfig.signupApi, {
-        method: "POST",
-        body: formData
+    signupAccount({
+        username: username,
+        email: email,
+        password: password,
+        birthday: birthday
     })
-        .then(res => res.text())
         .then(data => {
             if (data === "success") {
                 showToast("Tạo tài khoản thành công", true);

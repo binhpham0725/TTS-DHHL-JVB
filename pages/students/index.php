@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../services/StudentService.php';
+require_once __DIR__ . '/../../core/StudentService.php';
 /* lấy trạng thái view, search và phân trang */
 $view = (isset($_GET['view']) && $_GET['view'] === 'academic') ? 'academic' : 'personal';
 $search = trim($_GET['search'] ?? '');
@@ -65,6 +65,8 @@ $pageData = getStudentListViewData($view, $page, 10);
             exportApi: '../../api/students/export.php'
         };
     </script>
+    <!-- service js gọi api -->
+    <script src="../../services/studentService.js"></script>
     <!-- js xử lý tương tác của trang danh sách -->
     <script src="../../assets/js/students-page.js"></script>
 </body>

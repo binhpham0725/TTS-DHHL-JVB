@@ -81,6 +81,8 @@
             studentPageUrl: '../students/index.php'
         };
     </script>
+    <!-- service js gọi api -->
+    <script src="../../services/authService.js"></script>
     <!-- js xử lý form và hiệu ứng nền -->
     <script src="../../assets/js/auth.js"></script>
     <script src="../../assets/js/auth-particles.js"></script>

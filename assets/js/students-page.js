@@ -304,19 +304,11 @@ function saveInlineEdit(button) {
     });
 
     actionLocked = true;
-    fetch(window.studentPageConfig.inlineUpdateApi, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "X-Requested-With": "XMLHttpRequest"
-        },
-        body: new URLSearchParams({
-            id: id,
-            view: view,
-            payload: JSON.stringify(payload)
-        }).toString()
+    updateInlineStudent({
+        id: id,
+        view: view,
+        payload: JSON.stringify(payload)
     })
-        .then(res => res.json())
         .then(data => {
             actionLocked = false;
             if (!data || data.status !== "success") {
@@ -348,8 +340,7 @@ function saveInlineEdit(button) {
 
 /* lấy tổng số sinh viên định kỳ */
 function updateStudentCount() {
-    fetch(window.studentPageConfig.countApi)
-        .then(res => res.text())
+    getStudentCount()
         .then(count => {
             const span = document.getElementById("studentCount");
             if (span) span.textContent = count;
@@ -368,11 +359,7 @@ document.addEventListener("DOMContentLoaded", function () {
             actionLocked = true;
 
             let formData = new FormData(this);
-            fetch(window.studentPageConfig.createApi, {
-                method: "POST",
-                body: formData
-            })
-                .then(res => res.text())
+            createStudent(formData)
                 .then(data => {
                     if (data === "success") {
                         closeForm();
@@ -418,14 +405,7 @@ document.addEventListener("DOMContentLoaded", function () {
         confirmDeleteBtn.onclick = function () {
             if (!deleteId || actionLocked) return;
             actionLocked = true;
-            fetch(window.studentPageConfig.deleteApi, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: "id=" + deleteId
-            })
-                .then(res => res.text())
+            deleteStudentById(deleteId)
                 .then(() => {
                     document.getElementById("deleteOverlay").style.display = "none";
                     showToast("deleteToast", "deleteBar", TOAST_DURATION, true);
@@ -453,13 +433,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let requests = [];
             checked.forEach(cb => {
                 requests.push(
-                    fetch(window.studentPageConfig.deleteApi, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        body: "id=" + cb.value
-                    })
+                    deleteStudentById(cb.value)
                 );
             });
 

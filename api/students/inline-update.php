@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../services/StudentService.php';
+require_once __DIR__ . '/../../core/StudentService.php';
 header('Content-Type: application/json; charset=UTF-8');
 /* nhận payload sửa nhanh từ bảng */
 $studentId = isset($_POST['id']) ? (int) $_POST['id'] : 0;

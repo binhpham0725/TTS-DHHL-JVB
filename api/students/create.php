@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../services/StudentService.php';
+require_once __DIR__ . '/../../core/StudentService.php';
 /* gom dữ liệu cá nhân */
 $studentData = [
     'name' => trim($_POST['name'] ?? ''),

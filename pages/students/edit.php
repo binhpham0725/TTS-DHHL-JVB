@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../services/StudentService.php';
+require_once __DIR__ . '/../../core/StudentService.php';
 /* lấy sinh viên theo id để đổ dữ liệu vào form */
 $studentId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $student = getStudentById($studentId);

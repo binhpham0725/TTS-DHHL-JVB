@@ -81,11 +81,10 @@ Chứa phần cấu hình chung, hiện tại là file kết nối database.
 
 ## Flow hiện tại
 ### Dùng XAMPP
-- đặt thư mục `student-app` vào `htdocs`
 - bật `Apache` và `MySQL` trong XAMPP
 - import file SQL vào phpMyAdmin
 - kiểm tra database name là `student_registration`
-
+- Mở Visual Studio Code và chạy index.php
 Ví dụ đường dẫn:
 ```text
 C:\xampp\htdocs\student-app

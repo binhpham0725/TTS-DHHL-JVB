@@ -1,7 +1,7 @@
 # Refactor Structure
 ## Structure mới
 ```text
-student-app/
+Project/
 |-- index.php
 |-- config/
 |   |-- database.php
@@ -95,12 +95,12 @@ Chứa phần cấu hình chung, hiện tại là file kết nối database.
 - Mở Visual Studio Code và chạy index.php
 Ví dụ đường dẫn:
 ```text
-C:\xampp\htdocs\student-app
+C:\xampp\htdocs\Project
 ```
 
 Mở trên trình duyệt:
 ```text
-http://localhost/student-app
+http://localhost/Project
 ```
 
 ### Entry point

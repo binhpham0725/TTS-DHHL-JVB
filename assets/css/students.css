@@ -420,6 +420,12 @@ body[data-theme="dark"] td{
 border-bottom:1px solid #3a3d45;
 }
 
+body[data-theme="dark"] #deleteContent,
+body[data-theme="dark"] #editContent,
+body[data-theme="dark"] #bulkDeleteContent{
+color:#f2f3f5;
+}
+
 body[data-theme="dark"] tbody tr:hover{
 background:#313338;
 }

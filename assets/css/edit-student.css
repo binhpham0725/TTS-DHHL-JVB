@@ -44,12 +44,25 @@ border-radius:14px;
 box-shadow:0 18px 40px rgba(0,0,0,0.12);
 }
 
+.edit-header{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:12px;
+margin-bottom:20px;
+}
+
 /* title hiển thị heading của form edit */
 .edit-title{
 font-size:26px;
 font-weight:700;
-margin-bottom:20px;
+margin:0;
 color:#2b2b2b;
+}
+
+.edit-theme-toggle{
+padding:10px 14px;
+min-width:120px;
 }
 
 /* tab navigation switch giữa cá nhân và học tập */
@@ -184,6 +197,10 @@ animation:toastIn 0.5s ease forwards;
 z-index:9999;
 }
 
+#toast.toast-error{
+color:#c62828;
+}
+
 /* icon hiển thị trong toast */
 #toast::before{
 content:"✔";
@@ -195,6 +212,11 @@ font-weight:700;
 color:#2ecc71;
 }
 
+#toast.toast-error::before{
+content:"⚠";
+color:#ff6b6b;
+}
+
 /* progress bar chạy dưới toast theo thời gian */
 #toastBar{
 position:absolute;
@@ -204,6 +226,55 @@ height:4px;
 width:100%;
 background:#2ecc71;
 animation:toastProgress 3s linear forwards;
+}
+
+#toast.toast-error #toastBar{
+background:#ff6b6b;
+}
+
+body.edit-page[data-theme="dark"]{
+background:
+radial-gradient(circle at 20% 20%, rgba(88,101,242,0.18) 0%, transparent 40%),
+radial-gradient(circle at 80% 70%, rgba(88,101,242,0.12) 0%, transparent 40%),
+linear-gradient(135deg,#1e1f22,#16171a);
+color:#f2f3f5;
+}
+
+body.edit-page[data-theme="dark"] .edit-card{
+background:#2b2d31;
+box-shadow:0 18px 40px rgba(0,0,0,0.28);
+}
+
+body.edit-page[data-theme="dark"] .edit-title,
+body.edit-page[data-theme="dark"] .edit-field label{
+color:#f2f3f5;
+}
+
+body.edit-page[data-theme="dark"] .edit-field input,
+body.edit-page[data-theme="dark"] .edit-field select{
+background:#313338;
+border-color:#404249;
+color:#f2f3f5;
+}
+
+body.edit-page[data-theme="dark"] .edit-field input:focus,
+body.edit-page[data-theme="dark"] .edit-field select:focus{
+border-color:#5865f2;
+box-shadow:0 0 0 2px rgba(88,101,242,0.25);
+}
+
+body.edit-page[data-theme="dark"] .edit-back{
+color:#dfe3ff;
+background:#313338;
+}
+
+body.edit-page[data-theme="dark"] .edit-back:hover{
+background:#3a3d45;
+}
+
+body.edit-page[data-theme="dark"] #toast{
+background:#2b2d31;
+box-shadow:0 10px 26px rgba(0,0,0,0.3);
 }
 
 /* animation cho toast và progress bar */

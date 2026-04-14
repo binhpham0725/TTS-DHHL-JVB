@@ -2,8 +2,10 @@
 let toastLock = false;
 let submitLock = false;
 let navLock = false;
+const EDIT_THEME_STORAGE_KEY = "student_app_theme";
+
 /* toast hiển thị message và optional redirect sau delay */
-function showToast(message, redirect = false) {
+function showToast(message, isSuccess = true, redirect = false) {
     if (toastLock) return;
     toastLock = true;
 
@@ -12,6 +14,7 @@ function showToast(message, redirect = false) {
     const bar = document.getElementById("toastBar");
 
     msg.textContent = message;
+    toast.classList.toggle("toast-error", !isSuccess);
     toast.style.display = "block";
 
     bar.style.animation = "none";
@@ -30,11 +33,30 @@ function showToast(message, redirect = false) {
         }, 1500);
     }
 }
+
+function applyEditTheme(theme) {
+    document.body.setAttribute("data-theme", theme);
+    const toggleButton = document.querySelector(".edit-theme-toggle");
+    if (toggleButton) {
+        toggleButton.textContent = theme === "dark" ? "Dark mode" : "Light mode";
+    }
+}
+
+function toggleEditTheme() {
+    const currentTheme = document.body.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    const nextTheme = currentTheme === "dark" ? "light" : "dark";
+    localStorage.setItem(EDIT_THEME_STORAGE_KEY, nextTheme);
+    applyEditTheme(nextTheme);
+}
+
 /* dom ready setup form submit lock back button và navigation control */
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const submitBtn = document.querySelector(".edit-submit");
     const back = document.querySelector(".edit-back");
+    const pageState = window.editPageState || { success: false, errorMessage: "" };
+
+    applyEditTheme(localStorage.getItem(EDIT_THEME_STORAGE_KEY) || "light");
 
     /* submit lock tránh double submit */
     if (form) {
@@ -65,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             e.preventDefault();
             navLock = true;
-            showToast("Đang quay lại trang chủ sau vài giây...", true);
+            showToast("Đang quay lại trang chủ sau vài giây...", true, true);
         });
     }
 
@@ -81,8 +103,8 @@ document.addEventListener("DOMContentLoaded", function () {
         true
     );
 
-    /* xử lý sau khi update thành công disable submit và auto redirect */
-    if (window.location.search.includes("success=1")) {
+    /* sau redirect từ backend thì hiện toast đúng theo success/error */
+    if (pageState.success) {
         submitLock = true;
         navLock = true;
 
@@ -92,13 +114,16 @@ document.addEventListener("DOMContentLoaded", function () {
             submitBtn.style.cursor = "not-allowed";
         }
 
-        showToast("Cập nhật thông tin thành công");
+        showToast("Cập nhật thông tin thành công", true);
 
         setTimeout(() => {
             window.location = "./index.php";
         }, 1500);
+    } else if (pageState.errorMessage) {
+        showToast(pageState.errorMessage, false);
     }
 });
+
 /* tab switch giữa form cá nhân và học tập */
 function switchTab(tab) {
     if (navLock) return;

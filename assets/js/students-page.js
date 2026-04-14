@@ -188,8 +188,8 @@ function validateCreateStudentForm(formData) {
     const rank = (formData.get("rank") || "").trim();
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const namePattern = /^[\p{L}\s'.-]+$/u;
-    const addressPattern = /^[\p{L}\p{N}\s,./-]+$/u;
-    const academicTextPattern = /^[\p{L}\p{N}\s().,&/-]+$/u;
+    const addressPattern = /^[-\p{L}\p{N}\s,.\/]+$/u;
+    const academicTextPattern = /^[-\p{L}\p{N}\s().,&\/]+$/u;
 
     if (!name) return "missing_name";
     if (!namePattern.test(name)) return "invalid_name";

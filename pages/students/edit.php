@@ -20,7 +20,10 @@ if (!$student) {
 <body class="edit-page">
     <div class="edit-wrapper">
         <div class="edit-card">
-            <h2 class="edit-title">Sửa thông tin sinh viên</h2>
+            <div class="edit-header">
+                <h2 class="edit-title">Sửa thông tin sinh viên</h2>
+                <button type="button" class="theme-toggle edit-theme-toggle" onclick="toggleEditTheme()">Light mode</button>
+            </div>
             <!-- form sửa đầy đủ thông tin sinh viên -->
             <form method="post" action="../../api/students/update.php?id=<?= $studentId ?>">
                 <div class="form-tabs">
@@ -100,19 +103,16 @@ if (!$student) {
         <span id="toastMsg"></span>
         <div id="toastBar"></div>
     </div>
-    <script src="../../assets/js/edit-student.js"></script>
-    <?php if (isset($_GET['success'])) { ?>
-        <script>
-            showToast('Cập nhật thông tin thành công');
-        </script>
-    <?php } elseif (isset($_GET['error'])) { ?>
-        <script>
-            showToast('<?= escapeValue(match ($_GET['error']) {
+    <script>
+        window.editPageState = {
+            success: <?= isset($_GET['success']) ? 'true' : 'false' ?>,
+            errorMessage: <?= json_encode(isset($_GET['error']) ? match ($_GET['error']) {
                 'missing_name' => 'Thiếu họ tên',
                 'invalid_name' => 'Họ tên không hợp lệ',
                 'invalid_gender' => 'Giới tính không hợp lệ',
                 'missing_dob' => 'Thiếu ngày sinh',
                 'invalid_email' => 'Email không hợp lệ',
+                'duplicate_email' => 'Email đã tồn tại',
                 'invalid_address' => 'Địa chỉ không hợp lệ',
                 'invalid_major' => 'Chuyên ngành không hợp lệ',
                 'invalid_course' => 'Khóa học không hợp lệ',
@@ -121,8 +121,9 @@ if (!$student) {
                 'invalid_gpa' => 'GPA không hợp lệ',
                 'gpa_too_high' => 'GPA không được lớn hơn 4.0',
                 default => 'Cập nhật thất bại'
-            }) ?>');
-        </script>
-    <?php } ?>
+            } : '') ?>
+        };
+    </script>
+    <script src="../../assets/js/edit-student.js"></script>
 </body>
 </html>

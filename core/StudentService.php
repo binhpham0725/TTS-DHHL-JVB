@@ -5,6 +5,12 @@ function escapeValue($value): string
 {
     return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES, 'UTF-8');
 }
+/* chuẩn hóa input text để tránh lưu nhiều khoảng trắng liên tiếp */
+function normalizeTextInput(?string $value): string
+{
+    $value = trim((string) ($value ?? ''));
+    return preg_replace('/\s+/u', ' ', $value) ?? $value;
+}
 function isValidStudentName(string $value): bool
 {
     return preg_match("/^[\p{L}\s'.-]+$/u", $value) === 1;
@@ -15,11 +21,11 @@ function isValidStudentText(string $value, string $pattern): bool
 }
 function isValidStudentAddress(string $value): bool
 {
-    return isValidStudentText($value, "/^[\p{L}\p{N}\s,./-]+$/u");
+    return isValidStudentText($value, "/^[-\p{L}\p{N}\s,.\/]+$/u");
 }
 function isValidAcademicText(string $value): bool
 {
-    return isValidStudentText($value, "/^[\p{L}\p{N}\s().,&/-]+$/u");
+    return isValidStudentText($value, "/^[-\p{L}\p{N}\s().,&\/]+$/u");
 }
 /* validate dữ liệu sinh viên trước khi create hoặc update */
 function validateStudentData(array $studentData, array $academicData, bool $requireAcademicDetails = false): ?string
@@ -288,6 +294,29 @@ function getStudentById(int $studentId): ?array
 
     return $student;
 }
+/* check email sinh viên đã tồn tại chưa, có thể bỏ qua chính record đang sửa */
+function studentEmailExists(string $email, int $excludeStudentId = 0): bool
+{
+    global $conn;
+    if ($email === '') {
+        return false;
+    }
+
+    if ($excludeStudentId > 0) {
+        $statement = $conn->prepare('SELECT id FROM students WHERE email = ? AND id <> ? LIMIT 1');
+        $statement->bind_param('si', $email, $excludeStudentId);
+    } else {
+        $statement = $conn->prepare('SELECT id FROM students WHERE email = ? LIMIT 1');
+        $statement->bind_param('s', $email);
+    }
+
+    $statement->execute();
+    $result = $statement->get_result();
+    $exists = $result->num_rows > 0;
+    $statement->close();
+
+    return $exists;
+}
 /* lấy dữ liệu học tập theo student_id */
 function getStudentAcademicByStudentId(int $studentId): ?array
 {
@@ -400,18 +429,33 @@ function updateStudentRecord(int $studentId, array $studentData, array $academic
     $academic = getStudentAcademicByStudentId($studentId);
 
     if ($academic) {
-        $academicStatement = $conn->prepare(
-            'UPDATE student_academic SET chuyen_nganh = ?, khoa_hoc = ?, gpa = ?, tinh_trang = ?, xep_loai = ? WHERE student_id = ?'
-        );
-        $academicStatement->bind_param(
-            'ssdssi',
-            $academicData['major'],
-            $academicData['course'],
-            $academicData['gpa'],
-            $academicData['status'],
-            $academicData['rank'],
-            $studentId
-        );
+        /* nếu GPA đang để trống thì ghi NULL thay vì ép về 0 */
+        if ($academicData['gpa'] === '' || $academicData['gpa'] === null) {
+            $academicStatement = $conn->prepare(
+                'UPDATE student_academic SET chuyen_nganh = ?, khoa_hoc = ?, gpa = NULL, tinh_trang = ?, xep_loai = ? WHERE student_id = ?'
+            );
+            $academicStatement->bind_param(
+                'ssssi',
+                $academicData['major'],
+                $academicData['course'],
+                $academicData['status'],
+                $academicData['rank'],
+                $studentId
+            );
+        } else {
+            $academicStatement = $conn->prepare(
+                'UPDATE student_academic SET chuyen_nganh = ?, khoa_hoc = ?, gpa = ?, tinh_trang = ?, xep_loai = ? WHERE student_id = ?'
+            );
+            $academicStatement->bind_param(
+                'ssdssi',
+                $academicData['major'],
+                $academicData['course'],
+                $academicData['gpa'],
+                $academicData['status'],
+                $academicData['rank'],
+                $studentId
+            );
+        }
         $isAcademicUpdated = $academicStatement->execute();
         $academicStatement->close();
         if (!$isAcademicUpdated) {
@@ -423,18 +467,33 @@ function updateStudentRecord(int $studentId, array $studentData, array $academic
         return true;
     }
 
-    $academicStatement = $conn->prepare(
-        'INSERT INTO student_academic(student_id, chuyen_nganh, khoa_hoc, gpa, tinh_trang, xep_loai) VALUES (?, ?, ?, ?, ?, ?)'
-    );
-    $academicStatement->bind_param(
-        'issdss',
-        $studentId,
-        $academicData['major'],
-        $academicData['course'],
-        $academicData['gpa'],
-        $academicData['status'],
-        $academicData['rank']
-    );
+    /* trường hợp chưa có record học tập thì tạo mới, vẫn giữ GPA trống là NULL */
+    if ($academicData['gpa'] === '' || $academicData['gpa'] === null) {
+        $academicStatement = $conn->prepare(
+            'INSERT INTO student_academic(student_id, chuyen_nganh, khoa_hoc, gpa, tinh_trang, xep_loai) VALUES (?, ?, ?, NULL, ?, ?)'
+        );
+        $academicStatement->bind_param(
+            'issss',
+            $studentId,
+            $academicData['major'],
+            $academicData['course'],
+            $academicData['status'],
+            $academicData['rank']
+        );
+    } else {
+        $academicStatement = $conn->prepare(
+            'INSERT INTO student_academic(student_id, chuyen_nganh, khoa_hoc, gpa, tinh_trang, xep_loai) VALUES (?, ?, ?, ?, ?, ?)'
+        );
+        $academicStatement->bind_param(
+            'issdss',
+            $studentId,
+            $academicData['major'],
+            $academicData['course'],
+            $academicData['gpa'],
+            $academicData['status'],
+            $academicData['rank']
+        );
+    }
     $isAcademicCreated = $academicStatement->execute();
     $academicStatement->close();
     if (!$isAcademicCreated) {

@@ -12,11 +12,11 @@ $studentData = [
 $academicData = [
     'major' => trim($_POST['major'] ?? ''),
     'course' => trim($_POST['course'] ?? ''),
-    'gpa' => (float) ($_POST['gpa'] ?? 0),
+    'gpa' => trim($_POST['gpa'] ?? ''),
     'status' => trim($_POST['status'] ?? ''),
     'rank' => trim($_POST['rank'] ?? ''),
 ];
-$validationError = validateStudentData($studentData, $academicData);
+$validationError = validateStudentData($studentData, $academicData, true);
 if ($validationError) {
     echo $validationError;
     exit;

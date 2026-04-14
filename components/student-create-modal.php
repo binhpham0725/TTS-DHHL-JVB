@@ -19,7 +19,7 @@
                     <input type="date" name="dob" required style="flex:1;">
                 </div>
                 <div class="form-row">
-                    <input name="email" placeholder="Email" style="width:90%;">
+                    <input type="email" name="email" placeholder="Email" required style="width:90%;">
                 </div>
                 <div class="form-row">
                     <input name="address" placeholder="Địa chỉ" style="width:90%;">
@@ -32,21 +32,23 @@
 
             <div class="tab-content" id="tab2">
                 <div class="form-row" style="display:flex; gap:6px;">
-                    <input name="major" placeholder="Chuyên ngành" style="flex:7;">
-                    <input name="course" placeholder="Khóa học" style="flex:3;">
+                    <input name="major" placeholder="Chuyên ngành" required style="flex:7;">
+                    <input name="course" placeholder="Khóa học" required style="flex:3;">
                 </div>
                 <div class="form-row">
-                    <input type="number" step="0.01" name="gpa" placeholder="GPA" style="width:90%;">
+                    <input type="number" step="0.01" min="0" max="4" name="gpa" placeholder="GPA" required style="width:90%;">
                 </div>
                 <div class="form-row" style="display:flex; gap:6px;">
-                    <select name="rank" style="flex:1;">
+                    <select name="rank" required style="flex:1;">
+                        <option value="">Xếp loại</option>
                         <option>Xuất sắc</option>
                         <option>Giỏi</option>
                         <option>Khá</option>
                         <option>Trung bình</option>
                         <option>Yếu</option>
                     </select>
-                    <select name="status" style="flex:1;">
+                    <select name="status" required style="flex:1;">
+                        <option value="">Tình trạng</option>
                         <option>Năm 1</option>
                         <option>Năm 2</option>
                         <option>Năm 3</option>

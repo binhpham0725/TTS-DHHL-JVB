@@ -46,6 +46,12 @@ function getStudentErrorMessage(code) {
         missing_name: "Thiếu họ tên",
         invalid_gender: "Giới tính không hợp lệ",
         missing_dob: "Thiếu ngày sinh",
+        missing_email: "Thiếu email",
+        missing_major: "Thiếu chuyên ngành",
+        missing_course: "Thiếu khóa học",
+        missing_gpa: "Thiếu GPA",
+        missing_status: "Thiếu tình trạng",
+        missing_rank: "Thiếu xếp loại",
         invalid_email: "Email không hợp lệ",
         invalid_status: "Tình trạng không hợp lệ",
         invalid_rank: "Xếp loại không hợp lệ",
@@ -139,6 +145,28 @@ function openForm() {
 function closeForm() {
     if (actionLocked) return;
     document.getElementById("formOverlay").style.display = "none";
+}
+
+function validateCreateStudentForm(formData) {
+    const email = (formData.get("email") || "").trim();
+    const major = (formData.get("major") || "").trim();
+    const course = (formData.get("course") || "").trim();
+    const gpa = (formData.get("gpa") || "").trim();
+    const status = (formData.get("status") || "").trim();
+    const rank = (formData.get("rank") || "").trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) return "missing_email";
+    if (!emailPattern.test(email)) return "invalid_email";
+    if (!major) return "missing_major";
+    if (!course) return "missing_course";
+    if (!gpa) return "missing_gpa";
+    if (Number.isNaN(Number(gpa)) || Number(gpa) < 0) return "invalid_gpa";
+    if (Number(gpa) > 4) return "gpa_too_high";
+    if (!status) return "missing_status";
+    if (!rank) return "missing_rank";
+
+    return null;
 }
 
 /* switch tab trong form thêm mới */
@@ -356,9 +384,16 @@ document.addEventListener("DOMContentLoaded", function () {
         form.onsubmit = function (e) {
             if (actionLocked) return;
             e.preventDefault();
-            actionLocked = true;
 
             let formData = new FormData(this);
+            const validationError = validateCreateStudentForm(formData);
+            if (validationError) {
+                document.getElementById("loadingText").textContent = "❌ " + getStudentErrorMessage(validationError);
+                showToast("loadingToast", "loadingBar", TOAST_DURATION, true);
+                return;
+            }
+
+            actionLocked = true;
             createStudent(formData)
                 .then(data => {
                     if (data === "success") {

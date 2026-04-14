@@ -6,7 +6,7 @@ function escapeValue($value): string
     return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES, 'UTF-8');
 }
 /* validate dữ liệu sinh viên trước khi create hoặc update */
-function validateStudentData(array $studentData, array $academicData): ?string
+function validateStudentData(array $studentData, array $academicData, bool $requireAcademicDetails = false): ?string
 {
     $validGenders = ['Nam', 'Nữ'];
     $validStatuses = ['Năm 1', 'Năm 2', 'Năm 3', 'Năm 4', 'Đã tốt nghiệp', 'Khác', ''];
@@ -21,8 +21,26 @@ function validateStudentData(array $studentData, array $academicData): ?string
     if (($studentData['dob'] ?? '') === '') {
         return 'missing_dob';
     }
+    if ($requireAcademicDetails && ($studentData['email'] ?? '') === '') {
+        return 'missing_email';
+    }
     if (($studentData['email'] ?? '') !== '' && !filter_var($studentData['email'], FILTER_VALIDATE_EMAIL)) {
         return 'invalid_email';
+    }
+    if ($requireAcademicDetails && ($academicData['major'] ?? '') === '') {
+        return 'missing_major';
+    }
+    if ($requireAcademicDetails && ($academicData['course'] ?? '') === '') {
+        return 'missing_course';
+    }
+    if ($requireAcademicDetails && (($academicData['gpa'] ?? '') === '' || $academicData['gpa'] === null)) {
+        return 'missing_gpa';
+    }
+    if ($requireAcademicDetails && ($academicData['status'] ?? '') === '') {
+        return 'missing_status';
+    }
+    if ($requireAcademicDetails && ($academicData['rank'] ?? '') === '') {
+        return 'missing_rank';
     }
     if (!in_array(($academicData['status'] ?? ''), $validStatuses, true)) {
         return 'invalid_status';

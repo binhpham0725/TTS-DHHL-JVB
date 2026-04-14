@@ -19,6 +19,7 @@ class StudentModel
 
     public function filtered(string $search = '', string $class = ''): array
     {
+        // Phiên bản hiện tại lấy toàn bộ danh sách rồi lọc trong PHP; cách này đơn giản nhưng chưa tối ưu cho dữ liệu lớn.
         $students = $this->all();
         $allowedCourses = $this->getAllowedCourses();
 
@@ -141,6 +142,7 @@ class StudentModel
         while (($row = fgetcsv($handle, 1000, ',')) !== false) {
             $rowIndex++;
 
+            // Bỏ qua dòng tiêu đề nếu file CSV có header ở dòng đầu tiên.
             if ($rowIndex === 1 && strtolower(trim($row[0] ?? '')) === 'mssv') {
                 continue;
             }
@@ -166,6 +168,7 @@ class StudentModel
                 continue;
             }
 
+            // Trường class không lấy trực tiếp từ CSV mà suy ra từ 4 số đầu của MSSV.
             $student['class'] = $validation['class'];
 
             if ($this->existsByMssv($student['mssv'])) {
@@ -209,6 +212,7 @@ class StudentModel
                 return ['error' => 'Lớp không hợp lệ.', 'class' => null];
             }
         } else {
+            // Khi thêm mới hoặc import, hệ thống tự xác định khóa học từ năm nhập học nằm trong MSSV.
             $class = getClassFromMssv($mssv);
             if ($class === null) {
                 return ['error' => 'Năm trong MSSV không hợp lệ.', 'class' => null];

@@ -11,6 +11,7 @@ abstract class Controller
 
     protected function render(string $view, array $data = []): void
     {
+        // Truyền APP_BASE vào mọi view để các liên kết nội bộ luôn đúng đường dẫn gốc.
         $data['appBase'] = APP_BASE;
         extract($data, EXTR_SKIP);
         require __DIR__ . '/../views/' . $view . '.php';
@@ -24,6 +25,7 @@ abstract class Controller
 
     protected function json(array $payload, int $status = 200): never
     {
+        // Dùng cho các endpoint AJAX hoặc API báo cáo trả về dữ liệu JSON.
         http_response_code($status);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($payload, JSON_UNESCAPED_UNICODE);

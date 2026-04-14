@@ -16,6 +16,7 @@ class ScoreModel
     public function getScoreRows(int $subjectId, string $selectedClass = ''): array
     {
         $rows = [];
+        // Dùng LEFT JOIN để vẫn hiển thị cả sinh viên chưa có điểm, từ đó có thể nhập điểm hàng loạt trên cùng một màn hình.
         $sql = "
             SELECT
                 st.id AS student_id,
@@ -55,6 +56,7 @@ class ScoreModel
             return false;
         }
 
+        // Mỗi dòng điểm đều được tính lại điểm tổng kết theo đúng trọng số cấu hình của môn học đang chọn.
         foreach ($scores as $studentId => $row) {
             $studentId = (int)$studentId;
             $attendance = max(0, min(10, round((float)($row['attendance_score'] ?? 0), 1)));
@@ -76,6 +78,7 @@ class ScoreModel
             $existing = $result->fetch_assoc();
             $checkStmt->close();
 
+            // Upsert thủ công: nếu đã có bản ghi điểm thì UPDATE, nếu chưa có thì INSERT mới.
             if ($existing) {
                 $stmt = $this->db->prepare(
                     'UPDATE scores SET attendance_score = ?, midterm_score = ?, final_score = ?, scores = ? WHERE id = ?'
@@ -115,6 +118,7 @@ class ScoreModel
             $where = "AND s.class = '{$escaped}'";
         }
 
+        // Dashboard đọc 3 chỉ số tổng quát: tổng số sinh viên, GPA trung bình và tỷ lệ đạt học phần.
         $totalResult = $this->db->query("SELECT COUNT(*) AS total FROM students s WHERE 1=1 {$where}");
         $gpaResult = $this->db->query("SELECT ROUND(AVG(sc.scores), 2) AS gpa FROM scores sc JOIN students s ON sc.student_id = s.id WHERE 1=1 {$where}");
         $passResult = $this->db->query("
@@ -154,6 +158,8 @@ class ScoreModel
             GROUP BY sc.student_id
         ");
 
+        // Gom sinh viên vào các mức xếp loại để biểu đồ doughnut dùng trực tiếp dữ liệu đã tổng hợp.
+
         $ranks = ['Xuất sắc' => 0, 'Giỏi' => 0, 'Khá' => 0, 'Trung bình' => 0, 'Yếu' => 0];
         if ($result) {
             while ($row = $result->fetch_assoc()) {
@@ -183,6 +189,7 @@ class ScoreModel
             $where = "AND s.class = '{$escaped}'";
         }
 
+        // Trả về bảng tổng hợp theo môn và lớp để tái sử dụng cho biểu đồ, bảng thống kê hoặc báo cáo khác.
         $result = $this->db->query("
             SELECT
                 sub.subject_name,

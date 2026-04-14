@@ -15,6 +15,7 @@ class StudentController extends Controller
         Session::start();
         Auth::requireLogin();
 
+        // Màn hình danh sách gom đầy đủ phần tìm kiếm, lọc lớp, phân trang và link export theo bộ lọc hiện tại.
         $search = trim($_GET['search'] ?? '');
         $class = trim($_GET['class'] ?? '');
         $page = max(1, (int)($_GET['page'] ?? 1));
@@ -68,6 +69,7 @@ class StudentController extends Controller
             'address' => trim($_POST['address'] ?? ''),
         ];
 
+        // Khi thêm mới, lớp không nhập tay mà được suy ra từ 4 số đầu của MSSV trong model validate().
         $validation = $this->students->validate($data, false);
         if ($validation['error'] !== null) {
             Session::set('student_add_error', $validation['error']);
@@ -123,6 +125,7 @@ class StudentController extends Controller
             $this->json(['success' => false, 'message' => 'Sinh vien khong hop le.'], 422);
         }
 
+        // Trả lời JSON để form sửa trong modal có thể submit bằng fetch/AJAX mà không cần tải lại form HTML.
         $validation = $this->students->validate($data, true, $id);
         if ($validation['error'] !== null) {
             $this->json(['success' => false, 'message' => $validation['error']], 422);
@@ -158,6 +161,7 @@ class StudentController extends Controller
             $this->redirect(app_url('interface/listsv.php?msg=error_file'));
         }
 
+        // Model trả về số dòng import thành công và số dòng bị bỏ qua để hiển thị thông báo ngoài giao diện.
         $result = $this->students->importCsv($_FILES['csv_file']['tmp_name']);
         if ($result['error'] !== null) {
             $this->redirect(app_url('interface/listsv.php?msg=' . urlencode($result['error'])));
@@ -178,6 +182,7 @@ class StudentController extends Controller
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=students_export.csv');
 
+        // Ghi trực tiếp dữ liệu CSV ra output stream để trình duyệt tải file ngay lập tức.
         $output = fopen('php://output', 'w');
         fputcsv($output, ['mssv', 'fullname', 'birthday', 'gender', 'phone', 'email', 'class', 'address']);
         foreach ($students as $student) {

@@ -18,6 +18,7 @@ class AuthController extends Controller
             $this->redirect(app_url('interface/index.php'));
         }
 
+        // Dùng flash để giữ lại lỗi và email vừa nhập sau một lần redirect.
         $this->render('auth/login', [
             'error' => Session::flash('error', ''),
             'oldEmail' => Session::flash('old_email', ''),
@@ -43,6 +44,7 @@ class AuthController extends Controller
         }
 
         $teacher = $this->teachers->findByEmail($email);
+        // Project hiện tại so sánh mật khẩu trực tiếp theo dữ liệu đang lưu trong bảng teacher.
         if ($teacher && $password === $teacher['password']) {
             Auth::login($teacher);
             $this->redirect(app_url('interface/index.php'));

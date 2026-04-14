@@ -127,6 +127,7 @@ class SubjectModel
             $errors[] = 'Số tín chỉ phải lớn hơn 0.';
         }
 
+        // Tổng ba trọng số phải đúng 100 để công thức tính điểm tổng kết không bị sai lệch.
         if (($attendanceWeight + $midtermWeight + $finalWeight) !== 100) {
             $errors[] = 'Tổng tỷ trọng điểm phải bằng 100%.';
         }

@@ -31,6 +31,7 @@ class Session
     {
         self::start();
 
+        // Flash chỉ được đọc một lần rồi xóa, phù hợp cho thông báo sau khi redirect.
         if (!isset($_SESSION[$key])) {
             return $default;
         }
@@ -45,6 +46,7 @@ class Session
         self::start();
         $_SESSION = [];
 
+        // Xóa cả dữ liệu session trong bộ nhớ lẫn cookie để đăng xuất triệt để.
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
             setcookie(

@@ -130,6 +130,7 @@ togglePassword(
 );
 /* email regex validation dùng chung cho signin signup */
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const usernamePattern = /^[A-Za-z0-9_.]{3,30}$/;
 /* signin submit xử lý validation và gọi ajax login */
 signinForm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -145,6 +146,7 @@ signinForm.addEventListener("submit", function (e) {
     loginAccount(email, password)
         .then(data => {
             if (data === "success") {
+                localStorage.setItem("student_app_user", email);
                 showToast("Đăng nhập thành công", true);
 
                 setTimeout(() => {
@@ -168,6 +170,7 @@ signupForm.addEventListener("submit", function (e) {
     let confirm = document.getElementById("confirmPassword").value;
 
     if (username === "") return showToast("Nhập username", false);
+    if (!usernamePattern.test(username)) return showToast("Username chỉ gồm chữ, số, dấu chấm hoặc gạch dưới", false);
     if (email === "") return showToast("Nhập email", false);
     if (!emailPattern.test(email)) return showToast("Email sai định dạng", false);
     if (birthday === "") return showToast("Nhập ngày sinh", false);
@@ -188,6 +191,8 @@ signupForm.addEventListener("submit", function (e) {
                 signinTab.click();
             } else if (data === "missing_username") {
                 showToast("Thiếu username", false);
+            } else if (data === "invalid_username") {
+                showToast("Username không hợp lệ", false);
             } else if (data === "missing_email") {
                 showToast("Thiếu email", false);
             } else if (data === "invalid_email") {

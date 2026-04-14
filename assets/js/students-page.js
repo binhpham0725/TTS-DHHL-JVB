@@ -6,6 +6,8 @@ const TOAST_DURATION = 1500;
 let deleteId = null;
 let editId = null;
 let searchTimer = null;
+const THEME_STORAGE_KEY = "student_app_theme";
+const USER_STORAGE_KEY = "student_app_user";
 
 /* các field được phép sửa nhanh theo từng view */
 const INLINE_FIELDS = {
@@ -44,6 +46,7 @@ function showToast(id, barId, duration = TOAST_DURATION, force = false) {
 function getStudentErrorMessage(code) {
     const messages = {
         missing_name: "Thiếu họ tên",
+        invalid_name: "Họ tên không hợp lệ",
         invalid_gender: "Giới tính không hợp lệ",
         missing_dob: "Thiếu ngày sinh",
         missing_email: "Thiếu email",
@@ -53,6 +56,9 @@ function getStudentErrorMessage(code) {
         missing_status: "Thiếu tình trạng",
         missing_rank: "Thiếu xếp loại",
         invalid_email: "Email không hợp lệ",
+        invalid_address: "Địa chỉ không hợp lệ",
+        invalid_major: "Chuyên ngành không hợp lệ",
+        invalid_course: "Khóa học không hợp lệ",
         invalid_status: "Tình trạng không hợp lệ",
         invalid_rank: "Xếp loại không hợp lệ",
         invalid_gpa: "GPA không hợp lệ",
@@ -127,9 +133,33 @@ function liveSearch() {
     }, 350);
 }
 
+function applyTheme(theme) {
+    document.body.setAttribute("data-theme", theme);
+    const toggleButton = document.querySelector(".theme-toggle");
+    if (toggleButton) {
+        toggleButton.textContent = theme === "dark" ? "Dark mode" : "Light mode";
+    }
+}
+
+function toggleTheme() {
+    const currentTheme = document.body.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    const nextTheme = currentTheme === "dark" ? "light" : "dark";
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    applyTheme(nextTheme);
+}
+
+function setGreetingText() {
+    const greeting = document.getElementById("userGreeting");
+    if (!greeting) return;
+
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY) || "người dùng";
+    greeting.textContent = "Xin chào, " + storedUser;
+}
+
 function logout() {
     if (actionLocked) return;
     actionLocked = true;
+    localStorage.removeItem(USER_STORAGE_KEY);
     showToast("logoutToast", "logoutBar", TOAST_DURATION, true);
     setTimeout(() => {
         window.location.href = window.studentPageConfig.loginPageUrl;
@@ -148,6 +178,8 @@ function closeForm() {
 }
 
 function validateCreateStudentForm(formData) {
+    const name = (formData.get("name") || "").trim();
+    const address = (formData.get("address") || "").trim();
     const email = (formData.get("email") || "").trim();
     const major = (formData.get("major") || "").trim();
     const course = (formData.get("course") || "").trim();
@@ -155,11 +187,19 @@ function validateCreateStudentForm(formData) {
     const status = (formData.get("status") || "").trim();
     const rank = (formData.get("rank") || "").trim();
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const namePattern = /^[\p{L}\s'.-]+$/u;
+    const addressPattern = /^[\p{L}\p{N}\s,./-]+$/u;
+    const academicTextPattern = /^[\p{L}\p{N}\s().,&/-]+$/u;
 
+    if (!name) return "missing_name";
+    if (!namePattern.test(name)) return "invalid_name";
     if (!email) return "missing_email";
     if (!emailPattern.test(email)) return "invalid_email";
+    if (address && !addressPattern.test(address)) return "invalid_address";
     if (!major) return "missing_major";
+    if (!academicTextPattern.test(major)) return "invalid_major";
     if (!course) return "missing_course";
+    if (!academicTextPattern.test(course)) return "invalid_course";
     if (!gpa) return "missing_gpa";
     if (Number.isNaN(Number(gpa)) || Number(gpa) < 0) return "invalid_gpa";
     if (Number(gpa) > 4) return "gpa_too_high";
@@ -340,6 +380,12 @@ function saveInlineEdit(button) {
         .then(data => {
             actionLocked = false;
             if (!data || data.status !== "success") {
+                const inlineErrorText = document.getElementById("inlineErrorText");
+                if (inlineErrorText) {
+                    inlineErrorText.textContent = data && data.message
+                        ? data.message
+                        : "Dữ liệu không hợp lệ hoặc cập nhật thất bại";
+                }
                 showToast("inlineErrorToast", "inlineErrorBar", TOAST_DURATION, true);
                 return;
             }
@@ -362,6 +408,10 @@ function saveInlineEdit(button) {
         })
         .catch(() => {
             actionLocked = false;
+            const inlineErrorText = document.getElementById("inlineErrorText");
+            if (inlineErrorText) {
+                inlineErrorText.textContent = "Dữ liệu không hợp lệ hoặc cập nhật thất bại";
+            }
             showToast("inlineErrorToast", "inlineErrorBar", TOAST_DURATION, true);
         });
 }
@@ -377,6 +427,9 @@ function updateStudentCount() {
 
 /* setup sự kiện cho form, search, delete và edit */
 document.addEventListener("DOMContentLoaded", function () {
+    applyTheme(localStorage.getItem(THEME_STORAGE_KEY) || "light");
+    setGreetingText();
+
     let form = document.getElementById("studentForm");
     let searchInput = document.getElementById("search");
 

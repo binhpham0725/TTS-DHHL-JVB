@@ -5,6 +5,22 @@ function escapeValue($value): string
 {
     return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES, 'UTF-8');
 }
+function isValidStudentName(string $value): bool
+{
+    return preg_match("/^[\p{L}\s'.-]+$/u", $value) === 1;
+}
+function isValidStudentText(string $value, string $pattern): bool
+{
+    return $value === '' || preg_match($pattern, $value) === 1;
+}
+function isValidStudentAddress(string $value): bool
+{
+    return isValidStudentText($value, "/^[\p{L}\p{N}\s,./-]+$/u");
+}
+function isValidAcademicText(string $value): bool
+{
+    return isValidStudentText($value, "/^[\p{L}\p{N}\s().,&/-]+$/u");
+}
 /* validate dữ liệu sinh viên trước khi create hoặc update */
 function validateStudentData(array $studentData, array $academicData, bool $requireAcademicDetails = false): ?string
 {
@@ -14,6 +30,9 @@ function validateStudentData(array $studentData, array $academicData, bool $requ
 
     if (($studentData['name'] ?? '') === '') {
         return 'missing_name';
+    }
+    if (!isValidStudentName($studentData['name'])) {
+        return 'invalid_name';
     }
     if (($studentData['gender'] ?? '') === '' || !in_array($studentData['gender'], $validGenders, true)) {
         return 'invalid_gender';
@@ -26,6 +45,9 @@ function validateStudentData(array $studentData, array $academicData, bool $requ
     }
     if (($studentData['email'] ?? '') !== '' && !filter_var($studentData['email'], FILTER_VALIDATE_EMAIL)) {
         return 'invalid_email';
+    }
+    if (!isValidStudentAddress($studentData['address'] ?? '')) {
+        return 'invalid_address';
     }
     if ($requireAcademicDetails && ($academicData['major'] ?? '') === '') {
         return 'missing_major';
@@ -41,6 +63,12 @@ function validateStudentData(array $studentData, array $academicData, bool $requ
     }
     if ($requireAcademicDetails && ($academicData['rank'] ?? '') === '') {
         return 'missing_rank';
+    }
+    if (!isValidAcademicText($academicData['major'] ?? '')) {
+        return 'invalid_major';
+    }
+    if (!isValidAcademicText($academicData['course'] ?? '')) {
+        return 'invalid_course';
     }
     if (!in_array(($academicData['status'] ?? ''), $validStatuses, true)) {
         return 'invalid_status';
@@ -433,6 +461,9 @@ function handleInlineStudentUpdate(int $studentId, string $view, array $payload)
         if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return ['status' => 'error', 'message' => 'Email không hợp lệ'];
         }
+        if (!isValidStudentAddress($address)) {
+            return ['status' => 'error', 'message' => 'Địa chỉ không hợp lệ'];
+        }
 
         $statement = $conn->prepare('UPDATE students SET email = ?, dia_chi = ? WHERE id = ?');
         $statement->bind_param('ssi', $email, $address, $studentId);
@@ -465,6 +496,9 @@ function handleInlineStudentUpdate(int $studentId, string $view, array $payload)
 
     if ($rank !== '' && !in_array($rank, $validRanks, true)) {
         return ['status' => 'error', 'message' => 'Xếp loại không hợp lệ'];
+    }
+    if (!isValidAcademicText($major)) {
+        return ['status' => 'error', 'message' => 'Chuyên ngành không hợp lệ'];
     }
 
     $academic = getStudentAcademicByStudentId($studentId);

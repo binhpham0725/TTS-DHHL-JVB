@@ -14,9 +14,17 @@ $pageData = getStudentListViewData($view, $page, 10);
     <link rel="stylesheet" href="../../assets/css/students.css">
 </head>
 <body>
-    <h2>Danh sách sinh viên</h2>
-    <div class="student-count">
-        <b>Tổng số sinh viên: <span id="studentCount">0</span></b>
+    <div class="page-header">
+        <div class="page-title-block">
+            <h2>Danh sách sinh viên</h2>
+            <div class="student-count">
+                <b>Tổng số sinh viên: <span id="studentCount">0</span></b>
+            </div>
+        </div>
+        <div class="page-header-actions">
+            <div id="userGreeting" class="user-greeting">Xin chào, người dùng</div>
+            <button type="button" class="theme-toggle" onclick="toggleTheme()">Dark mode</button>
+        </div>
     </div>
     <!-- thanh action chính -->
     <div class="top-bar">

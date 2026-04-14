@@ -109,9 +109,13 @@ if (!$student) {
         <script>
             showToast('<?= escapeValue(match ($_GET['error']) {
                 'missing_name' => 'Thiếu họ tên',
+                'invalid_name' => 'Họ tên không hợp lệ',
                 'invalid_gender' => 'Giới tính không hợp lệ',
                 'missing_dob' => 'Thiếu ngày sinh',
                 'invalid_email' => 'Email không hợp lệ',
+                'invalid_address' => 'Địa chỉ không hợp lệ',
+                'invalid_major' => 'Chuyên ngành không hợp lệ',
+                'invalid_course' => 'Khóa học không hợp lệ',
                 'invalid_status' => 'Tình trạng không hợp lệ',
                 'invalid_rank' => 'Xếp loại không hợp lệ',
                 'invalid_gpa' => 'GPA không hợp lệ',

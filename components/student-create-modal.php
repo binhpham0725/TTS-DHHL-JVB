@@ -5,7 +5,7 @@
             <button type="button" class="tab" onclick="switchTab(2)">Học tập</button>
         </div>
 
-        <form id="studentForm">
+        <form id="studentForm" novalidate>
             <div class="tab-content active" id="tab1">
                 <div class="form-row">
                     <input name="name" placeholder="Họ tên" required style="width:90%;">

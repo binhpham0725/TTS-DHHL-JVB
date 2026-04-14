@@ -1,10 +1,17 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
+function isValidUsername(string $username): bool
+{
+    return preg_match('/^[A-Za-z0-9_.]{3,30}$/', $username) === 1;
+}
 /* validate dữ liệu signup trước khi tạo tài khoản */
 function validateSignupData(string $username, string $email, string $password, string $birthday): ?string
 {
     if ($username === '') {
         return 'missing_username';
+    }
+    if (!isValidUsername($username)) {
+        return 'invalid_username';
     }
     if ($email === '') {
         return 'missing_email';

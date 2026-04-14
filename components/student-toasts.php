@@ -29,6 +29,6 @@
 </div>
 
 <div id="inlineErrorToast" class="toast">
-    <span>Dữ liệu không hợp lệ hoặc cập nhật thất bại</span>
+    <span id="inlineErrorText">Dữ liệu không hợp lệ hoặc cập nhật thất bại</span>
     <div class="toastBar red" id="inlineErrorBar"></div>
 </div>

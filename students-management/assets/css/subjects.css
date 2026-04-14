@@ -8,36 +8,33 @@ body {
     color: #1f2937;
 }
 
-.main {
-    padding: 24px 28px;
-    background: #f6f7fb;
-    min-height: 100vh;
-}
-
 .subjects-page {
-    margin-top: 20px;
+    margin: 0 34px 34px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
 }
 
-.subjects-header {
+.subjects-head {
     display: flex;
     justify-content: space-between;
+    gap: 15px;
     align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
 }
 
-.subjects-header h1 {
-    font-size: 28px;
+.subjects-head h2 {
+    font-size: 26px;
     font-weight: 800;
-    margin: 0;
-    color: #1f2a44;
+    color: #0f1b34;
+    margin-bottom: 14px;
+    padding: 20px 30px 0px 0px;
 }
 
-.subjects-header p {
+.subjects-head p {
     margin-top: 8px;
     color: #8a94a6;
     font-size: 14px;
+    padding-bottom: 15px;
 }
 
 .btn-add-subject {
@@ -411,5 +408,33 @@ body {
 
     .info-row {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .subjects-page {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+
+    .subjects-head {
+        flex-direction: column;
+    }
+
+    .subjects-head h2 {
+        font-size: 22px;
+        padding-right: 0;
+    }
+
+    .subjects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .subject-actions {
+        flex-wrap: wrap;
+    }
+
+    .btn-detail {
+        width: 100%;
     }
 }

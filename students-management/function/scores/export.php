@@ -10,6 +10,16 @@ if ($subject_id <= 0) {
     exit;
 }
 
+$subjectQuery = mysqli_query($conn, "SELECT subject_code FROM subject WHERE id = $subject_id");
+$subject = mysqli_fetch_assoc($subjectQuery);
+
+if (!$subject) {
+    header("Location: ../../interface/scores.php?msg=subject_not_found");
+    exit;
+}
+
+$subject_code = $subject['subject_code'];
+
 $sql = "
     SELECT
         st.mssv,
@@ -32,7 +42,8 @@ mysqli_stmt_bind_param($stmt, "iss", $subject_id, $class, $class);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
-$filename = "scores_subject_" . $subject_id . "_" . date("Ymd_His") . ".csv";
+
+$filename = "scores_" . $subject_code . "_" . date("Ymd_His") . ".csv";
 
 header('Content-Type: text/csv; charset=utf-8');
 header('Content-Disposition: attachment; filename=' . $filename);
@@ -40,10 +51,21 @@ header('Content-Disposition: attachment; filename=' . $filename);
 $output = fopen('php://output', 'w');
 fputs($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
-fputcsv($output, ['MSSV', 'Họ và tên', 'Lớp', 'Chuyên cần', 'Giữa kỳ', 'Cuối kỳ', 'Trung bình']);
+fputcsv($output, [
+    'Mã môn',
+    'MSSV',
+    'Họ và tên',
+    'Lớp',
+    'Chuyên cần',
+    'Giữa kỳ',
+    'Cuối kỳ',
+    'Trung bình'
+]);
+
 
 while ($row = mysqli_fetch_assoc($result)) {
     fputcsv($output, [
+        $subject_code,
         $row['mssv'],
         $row['fullname'],
         $row['class'],
@@ -53,6 +75,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         $row['total_score']
     ]);
 }
+
 
 fclose($output);
 exit;

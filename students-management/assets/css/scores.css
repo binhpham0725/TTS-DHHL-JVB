@@ -321,3 +321,35 @@
     }
 }
 
+@media (max-width: 991.98px) {
+    .content {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+
+    .page-head {
+        flex-direction: column;
+    }
+
+    .page-head h2,
+    .page-actions {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .score-filters {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .score-table-wrap {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+
+    .table-footer {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+

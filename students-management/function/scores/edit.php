@@ -1,68 +1,49 @@
 <?php
-session_start();
-require_once "../../config/db.php";
-require_once "../../reports/average.php";
+require_once __DIR__ . '/../../app/bootstrap.php';
 
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: ../../interface/scores.php");
+Session::start();
+Auth::requireLogin();
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: ' . app_url('interface/scores.php'));
     exit;
 }
 
+$conn = app_db();
 $id = (int)($_POST['id'] ?? 0);
-$subject_id = (int)($_POST['subject_id'] ?? 0);
+$subjectId = (int)($_POST['subject_id'] ?? 0);
 $class = trim($_POST['class'] ?? '');
 
-$attendance_score = round((float)($_POST['attendance_score'] ?? 0), 1);
-$midterm_score = round((float)($_POST['midterm_score'] ?? 0), 1);
-$final_score = round((float)($_POST['final_score'] ?? 0), 1);
+$attendance = max(0, min(10, round((float)($_POST['attendance_score'] ?? 0), 1)));
+$midterm = max(0, min(10, round((float)($_POST['midterm_score'] ?? 0), 1)));
+$final = max(0, min(10, round((float)($_POST['final_score'] ?? 0), 1)));
 
-$attendance_score = max(0, min(10, $attendance_score));
-$midterm_score = max(0, min(10, $midterm_score));
-$final_score = max(0, min(10, $final_score));
-
-if ($id <= 0 || $subject_id <= 0) {
-    header("Location: ../../interface/scores.php?msg=error_edit");
+if ($id <= 0 || $subjectId <= 0) {
+    header('Location: ' . app_url('interface/scores.php?msg=error_edit'));
     exit;
 }
 
-$subjectStmt = mysqli_prepare($conn, "SELECT attendance_weight, midterm_weight, final_weight FROM subject WHERE id = ?");
-mysqli_stmt_bind_param($subjectStmt, "i", $subject_id);
-mysqli_stmt_execute($subjectStmt);
-$subjectRes = mysqli_stmt_get_result($subjectStmt);
-$subject = mysqli_fetch_assoc($subjectRes);
-
-if (!$subject) {
-    header("Location: ../../interface/scores.php?msg=error_subject");
+$subject = (new SubjectModel($conn))->find($subjectId);
+if ($subject === null) {
+    header('Location: ' . app_url('interface/scores.php?msg=error_subject'));
     exit;
 }
 
 $total = calculateAverage(
-    $attendance_score,
-    $midterm_score,
-    $final_score,
+    $attendance,
+    $midterm,
+    $final,
     (int)$subject['attendance_weight'],
     (int)$subject['midterm_weight'],
     (int)$subject['final_weight']
 );
 
-$updateStmt = mysqli_prepare(
-    $conn,
-    "UPDATE scores
-     SET attendance_score = ?, midterm_score = ?, final_score = ?, scores = ?
-     WHERE id = ?"
+$stmt = $conn->prepare(
+    'UPDATE scores SET attendance_score = ?, midterm_score = ?, final_score = ?, scores = ? WHERE id = ?'
 );
+$stmt->bind_param('ddddi', $attendance, $midterm, $final, $total, $id);
+$stmt->execute();
+$stmt->close();
 
-mysqli_stmt_bind_param(
-    $updateStmt,
-    "ddddi",
-    $attendance_score,
-    $midterm_score,
-    $final_score,
-    $total,
-    $id
-);
-
-mysqli_stmt_execute($updateStmt);
-
-header("Location: ../../interface/scores.php?subject_id={$subject_id}&class=" . urlencode($class) . "&msg=edit_success");
+header('Location: ' . app_url('interface/scores.php?subject_id=' . $subjectId . '&class=' . urlencode($class) . '&msg=edit_success'));
 exit;

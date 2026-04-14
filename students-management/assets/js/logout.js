@@ -1,9 +1,9 @@
 function logout() {
-    const ok = confirm("Bạn có chắc muốn đăng xuất?");
+    const ok = confirm("Ban co chac muon dang xuat?");
     if (!ok) return;
 
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     sessionStorage.clear();
-    window.location.href = "login.php";
+    window.location.href = "../auth/logout.php";
 }

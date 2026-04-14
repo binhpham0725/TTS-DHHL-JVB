@@ -1,35 +1,32 @@
 <?php
-session_start();
-require_once "../../config/db.php";
-require_once "../../reports/average.php";
+require_once __DIR__ . '/../../app/bootstrap.php';
 
-$subject_id = (int)($_POST['subject_id'] ?? 0);
+Session::start();
+Auth::requireLogin();
+
+$conn = app_db();
+$subjectId = (int)($_POST['subject_id'] ?? 0);
 $class = trim($_POST['class'] ?? '');
 
-if ($subject_id <= 0) {
-    header("Location: ../../interface/scores.php?msg=error_subject");
+if ($subjectId <= 0) {
+    header('Location: ../../interface/scores.php?msg=error_subject');
     exit;
 }
 
-if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== 0) {
-    header("Location: ../../interface/scores.php?subject_id={$subject_id}&class=" . urlencode($class) . "&msg=error_file");
+if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+    header('Location: ../../interface/scores.php?subject_id=' . $subjectId . '&class=' . urlencode($class) . '&msg=error_file');
     exit;
 }
 
-$subjectStmt = mysqli_prepare($conn, "SELECT attendance_weight, midterm_weight, final_weight FROM subject WHERE id = ?");
-mysqli_stmt_bind_param($subjectStmt, "i", $subject_id);
-mysqli_stmt_execute($subjectStmt);
-$subjectRes = mysqli_stmt_get_result($subjectStmt);
-$subject = mysqli_fetch_assoc($subjectRes);
-
-if (!$subject) {
-    header("Location: ../../interface/scores.php?msg=error_subject");
+$subject = (new SubjectModel($conn))->find($subjectId);
+if ($subject === null) {
+    header('Location: ../../interface/scores.php?msg=error_subject');
     exit;
 }
 
 $file = fopen($_FILES['csv_file']['tmp_name'], 'r');
 if (!$file) {
-    header("Location: ../../interface/scores.php?subject_id={$subject_id}&class=" . urlencode($class) . "&msg=error_file");
+    header('Location: ../../interface/scores.php?subject_id=' . $subjectId . '&class=' . urlencode($class) . '&msg=error_file');
     exit;
 }
 
@@ -37,35 +34,32 @@ $firstRow = true;
 $imported = 0;
 $skipped = 0;
 
-while (($data = fgetcsv($file, 1000, ",")) !== false) {
+while (($data = fgetcsv($file, 1000, ',')) !== false) {
     if ($firstRow) {
         $firstRow = false;
-        if (isset($data[0]) && mb_strtolower(trim($data[0]), 'UTF-8') === 'mssv') {
+        if (isset($data[0]) && trim(mb_strtolower($data[0])) === 'mã môn') {
             continue;
         }
     }
 
-    if (count($data) < 4) {
+    if (count($data) < 7) {
         $skipped++;
         continue;
     }
 
-    $mssv = trim($data[0]);
-    $attendance = round((float)($data[1] ?? 0), 1);
-    $midterm = round((float)($data[2] ?? 0), 1);
-    $final = round((float)($data[3] ?? 0), 1);
+    $mssv = trim($data[1] ?? '');
+    $attendance = max(0, min(10, round((float)($data[4] ?? 0), 1)));
+    $midterm = max(0, min(10, round((float)($data[5] ?? 0), 1)));
+    $final = max(0, min(10, round((float)($data[6] ?? 0), 1)));
 
-    $attendance = max(0, min(10, $attendance));
-    $midterm = max(0, min(10, $midterm));
-    $final = max(0, min(10, $final));
+    $studentStmt = $conn->prepare('SELECT id, class FROM students WHERE mssv = ? LIMIT 1');
+    $studentStmt->bind_param('s', $mssv);
+    $studentStmt->execute();
+    $studentRes = $studentStmt->get_result();
+    $student = $studentRes->fetch_assoc();
+    $studentStmt->close();
 
-    $studentStmt = mysqli_prepare($conn, "SELECT id, class FROM students WHERE mssv = ?");
-    mysqli_stmt_bind_param($studentStmt, "s", $mssv);
-    mysqli_stmt_execute($studentStmt);
-    $studentRes = mysqli_stmt_get_result($studentStmt);
-    $student = mysqli_fetch_assoc($studentRes);
-
-    if (!$student) {
+    if ($student === null) {
         $skipped++;
         continue;
     }
@@ -75,8 +69,7 @@ while (($data = fgetcsv($file, 1000, ",")) !== false) {
         continue;
     }
 
-    $student_id = (int)$student['id'];
-
+    $studentId = (int)$student['id'];
     $total = calculateAverage(
         $attendance,
         $midterm,
@@ -86,36 +79,31 @@ while (($data = fgetcsv($file, 1000, ",")) !== false) {
         (int)$subject['final_weight']
     );
 
-    $checkStmt = mysqli_prepare($conn, "SELECT id FROM scores WHERE student_id = ? AND subject_id = ?");
-    mysqli_stmt_bind_param($checkStmt, "ii", $student_id, $subject_id);
-    mysqli_stmt_execute($checkStmt);
-    $checkRes = mysqli_stmt_get_result($checkStmt);
+    $checkStmt = $conn->prepare('SELECT id FROM scores WHERE student_id = ? AND subject_id = ?');
+    $checkStmt->bind_param('ii', $studentId, $subjectId);
+    $checkStmt->execute();
+    $checkRes = $checkStmt->get_result();
+    $existing = $checkRes->fetch_assoc();
+    $checkStmt->close();
 
-    if ($row = mysqli_fetch_assoc($checkRes)) {
-        $score_id = (int)$row['id'];
-
-        $updateStmt = mysqli_prepare(
-            $conn,
-            "UPDATE scores
-             SET attendance_score = ?, midterm_score = ?, final_score = ?, scores = ?
-             WHERE id = ?"
-        );
-        mysqli_stmt_bind_param($updateStmt, "ddddi", $attendance, $midterm, $final, $total, $score_id);
-        mysqli_stmt_execute($updateStmt);
+    if ($existing) {
+        $scoreId = (int)$existing['id'];
+        $stmt = $conn->prepare('UPDATE scores SET attendance_score = ?, midterm_score = ?, final_score = ?, scores = ? WHERE id = ?');
+        $stmt->bind_param('ddddi', $attendance, $midterm, $final, $total, $scoreId);
     } else {
-        $insertStmt = mysqli_prepare(
-            $conn,
-            "INSERT INTO scores (student_id, subject_id, attendance_score, midterm_score, final_score, scores)
-             VALUES (?, ?, ?, ?, ?, ?)"
+        $stmt = $conn->prepare(
+            'INSERT INTO scores (student_id, subject_id, attendance_score, midterm_score, final_score, scores)
+             VALUES (?, ?, ?, ?, ?, ?)'
         );
-        mysqli_stmt_bind_param($insertStmt, "iidddd", $student_id, $subject_id, $attendance, $midterm, $final, $total);
-        mysqli_stmt_execute($insertStmt);
+        $stmt->bind_param('iidddd', $studentId, $subjectId, $attendance, $midterm, $final, $total);
     }
 
+    $stmt->execute();
+    $stmt->close();
     $imported++;
 }
 
 fclose($file);
 
-header("Location: ../../interface/scores.php?subject_id={$subject_id}&class=" . urlencode($class) . "&msg=import_success&imported={$imported}&skipped={$skipped}");
+header('Location: ../../interface/scores.php?subject_id=' . $subjectId . '&class=' . urlencode($class) . '&msg=import_success&imported=' . $imported . '&skipped=' . $skipped);
 exit;

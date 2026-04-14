@@ -25,11 +25,11 @@ class Controller
 
        return false;
    }
-    function renderView($view,$data=[]){
+    function renderView($view, $data = []) {
         extract($data);
         if (file_exists(__DIR_ROOT__ . '/app/views/' . $view . '.php')) {
             require_once __DIR_ROOT__ . '/app/views/' . $view . '.php';
-            }
+        }
     }
     function renderPlainView($view, $data = []) {
         extract($data);

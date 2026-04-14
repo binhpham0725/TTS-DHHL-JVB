@@ -11,6 +11,7 @@
                 "Trang chủ";
             }
         ?></title>
+    <link>
     <link rel="stylesheet" href="<?php echo __WEB_ROOT__?>/public/assets/client/css/main.css">
 </head>
 <body>
@@ -28,5 +29,7 @@
     $this->renderView("blocks/footer");
     ?>
 </footer>
+    <php
+
 </body>
 </html>

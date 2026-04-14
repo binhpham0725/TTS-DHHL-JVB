@@ -67,4 +67,19 @@ public function fetchAll($sql, $params = [])
         $status = $stmt->execute($params);
         return $status; // Trả về true nếu thành công, false nếu thất bại
     }
+    public function fetch($sql, $params = [])
+{
+    try {
+        $stmt = $this->__conn->prepare($sql);
+        $result = $stmt->execute($params);
+
+        if ($result) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        return false;
+    } catch (PDOException $e) {
+        die("Lỗi SQL (fetch): " . $e->getMessage() . " - Câu lệnh: " . $sql);
+    }
+}
 }

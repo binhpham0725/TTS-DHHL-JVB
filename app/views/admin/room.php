@@ -1,132 +1,102 @@
 <div class="admin-container">
     <header class="page-header">
-        <div class="page-header__info">
-            <h2 class="page-header__title">Quản lý phòng</h2>
-        </div>
-        <div class="page-header__actions">
-            <button  class="btn btn--primary btn--open__model" data-target="#model-room">
+        <h2 class="page-header__title">Quản lý phòng</h2>
+        <div style="display:flex;gap:0.5rem">
+            <button class="btn" id="btnExport" style="background:var(--bs-success)">
+                <i class="fa-solid fa-file-export"></i> Xuất CSV
+            </button>
+            <button class="btn" id="btn-open-add-room">
                 <i class="fas fa-plus-circle"></i> Thêm phòng
             </button>
         </div>
     </header>
+
     <section class="data-card">
         <div class="table-tools">
-            <div class="table-tools__limit">
-                <span>Hiển thị</span>
-                <select class="select-custom" id = "room-limit-select">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                </select>
+            <div class="search-input">
+                <input type="text" id="keyword-room" placeholder="Tìm tên phòng...">
+                <i class="fas fa-search"></i>
             </div>
         </div>
-
         <div class="table-wrapper">
             <table class="data-table" id="table-rooms">
                 <thead>
-                <tr class="text-nowrap">
-                    <th style="width: 50px;text-align: center">STT</th>
-                    <th>Số phòng</th>
-                    <th>Loại phòng</th>
-                    <th>Số người ở hiện tại</th>
-                    <th>Trạng thái</th>
-                    <th style="width: 100px" class="text-center">Thao tác</th>
-                </tr>
+                    <tr class="text-nowrap">
+                        <th>STT</th>
+                        <th>Số phòng</th>
+                        <th>Loại phòng</th>
+                        <th>Giới tính</th>
+                        <th>Sĩ số</th>
+                        <th>Trạng thái</th>
+                        <th class="no_export">Thao tác</th>
+                    </tr>
                 </thead>
-                <tbody>
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
-        <div class="table-pagination" id="student-pagination">
-            <ul class="pagination-list">
-                <li><a href="#" class="pagination-item"><i class="fas fa-angle-left"></i></a></li>
-                <li><a href="#" class="pagination-item pagination-item--active">1</a></li>
-                <li><a href="#" class="pagination-item">2</a></li>
-
-                <li><a href="#" class="pagination-item">4</a></li>
-                <li>...</li>
-                <li><a href="#" class="pagination-item">14</a></li>
-                <li><a href="#" class="pagination-item"><i class="fas fa-angle-right"></i></a></li>
-            </ul>
-        </div>
     </section>
-    <div class="modal" id="model-student">
+
+    <!-- MODAL THÊM / SỬA -->
+    <div class="modal" id="modal-room">
         <div class="modal-container">
             <div class="modal-header">
-                <h3>Cập nhật thông tin sinh viên</h3>
-                <button class="btn btn-close modal-close">
+                <h3 class="modal-title">Thêm phòng</h3>
+                <button type="button" class="btn btn-close modal-close">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="" class="" id="formCapNhatSV">
-                    <input type="text" name="id" hidden>
+                <form id="form-room">
+                    <input type="hidden" name="id">
                     <div class="row">
                         <div class="input-group col">
-                            <label>
-                                Mã số sinh viên:
-                            </label>
-                            <input type="text" rules="required" name="mssv" id="mssv" placeholder="Nhập mã số sinh viên">
+                            <label>Tên phòng</label>
+                            <input type="text" name="room_name" rules="required" placeholder="VD: A101">
                             <span class="form-message"></span>
                         </div>
-                        <div class="input-group  col">
-                            <label>Họ và tên:</label>
-                            <input class="" type="text" rules="required" name="name" placeholder="Nhập họ tên sinh viên ">
-                            <span class="form-message"></span>
-                        </div>
-                    </div>
-                    <div class="row">
                         <div class="input-group col">
-                            <label for="">Ngày sinh:</label>
-                            <input type="date" name="birthday" id="">
-                        </div>
-                        <div class="input-group col">
-                            <label for="">Email:</label>
-                            <input name="email" rules="required|email" id="" placeholder="Nhập địa chỉ email">
-                            <span class="form-message"></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-group col">
-                            <label>
-                                Giới tính:
-                            </label>
-                            <select  id="gender" name="gender" >
-                                <option value="0">Nam</option>
-                                <option value="1">Nữ</option>
+                            <label>Giới tính</label>
+                            <select name="gender">
+                                <option value="1">Nam</option>
+                                <option value="0">Nữ</option>
                             </select>
                         </div>
-                        <div class="input-group col">
-                            <label>CCCD:</label>
-                            <input type="text" name="cccd" rules="required|cccd" placeholder="">
-                            <span class="form-message"></span>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="input-group col">
-                            <label for="">Số điện thoại:</label>
-                            <input type="text" rules="required" name="phone">
-                            <span class="form-message"></span>
-                        </div>
-                        <div class="input-group col">
-                            <label for="">Địa chỉ:</label>
-                            <input type="text" rules="required" name="address">
-                            <span class="form-message"></span>
-                        </div>
                     </div>
                     <div class="row">
-
                         <div class="input-group col">
-                            <label for="">Mật khẩu tài khoản:</label>
-                            <input type="text" rules="required" name="password">
-                            <span class="form-message"></span>
+                            <label>Loại phòng</label>
+                            <select name="room_type" id="room_type"></select>
+                        </div>
+                        <div class="input-group col" id="wrap-room-status" style="display:none">
+                            <label>Trạng thái</label>
+                            <select name="room_status">
+                                <option value="1">Hoạt động</option>
+                                <option value="0">Sửa chữa</option>
+                            </select>
                         </div>
                     </div>
-                    <button class="btn btn-submit">
-                        Lưu
-                    </button>
+                    <div class="modal-footer" style="margin-top:1rem;text-align:right">
+                        <button type="submit" class="btn btn-submit">Lưu</button>
+                    </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL XÁC NHẬN XÓA -->
+    <div class="modal" id="modal-delete-room">
+        <div class="modal-container" style="max-width:400px">
+            <div class="modal-header">
+                <h3>Xác nhận xóa</h3>
+                <button class="btn btn-close modal-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding:1.5rem 1rem">
+                <p>Bạn có chắc muốn xóa phòng <strong id="delete-room-name"></strong>?</p>
+                <input type="hidden" id="delete-room-id">
+                <div style="margin-top:1.5rem;display:flex;gap:0.5rem;justify-content:flex-end">
+                    <button class="btn modal-close" style="background:var(--n-200);color:var(--n-800)">Hủy</button>
+                    <button class="btn" id="btn-confirm-delete-room" style="background:var(--bs-danger)">Xóa</button>
+                </div>
             </div>
         </div>
     </div>

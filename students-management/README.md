@@ -216,7 +216,6 @@ Theo file `students_management.sql` và code hiện tại:
 - dữ liệu SQL cũ còn chỗ lỗi encoding và project chưa có test tự động
 
 ## 19. Hướng nâng cấp tiếp theo
-- chuyển đăng nhập sang `password_hash()` và `password_verify()`
 - chuẩn hóa UTF-8 cho PHP, SQL và dữ liệu
 - dời nốt logic procedural về controller/model
 - tối ưu tìm kiếm, lọc, phân trang bằng SQL

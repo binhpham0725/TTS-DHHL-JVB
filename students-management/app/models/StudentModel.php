@@ -2,6 +2,8 @@
 
 class StudentModel
 {
+    private const IMPORT_ERROR_FILE = 'error_file';
+
     public function __construct(private readonly mysqli $db)
     {
     }
@@ -60,6 +62,24 @@ class StudentModel
         } else {
             $stmt = $this->db->prepare('SELECT id FROM students WHERE mssv = ? LIMIT 1');
             $stmt->bind_param('s', $mssv);
+        }
+
+        $stmt->execute();
+        $stmt->store_result();
+        $exists = $stmt->num_rows > 0;
+        $stmt->close();
+
+        return $exists;
+    }
+
+    public function existsByEmail(string $email, ?int $excludeId = null): bool
+    {
+        if ($excludeId !== null) {
+            $stmt = $this->db->prepare('SELECT id FROM students WHERE email = ? AND id != ? LIMIT 1');
+            $stmt->bind_param('si', $email, $excludeId);
+        } else {
+            $stmt = $this->db->prepare('SELECT id FROM students WHERE email = ? LIMIT 1');
+            $stmt->bind_param('s', $email);
         }
 
         $stmt->execute();
@@ -130,41 +150,53 @@ class StudentModel
 
     public function importCsv(string $path): array
     {
+        $delimiter = $this->detectCsvDelimiter($path);
         $handle = fopen($path, 'r');
+
         if (!$handle) {
-            return ['imported' => 0, 'skipped' => 0, 'error' => 'error_file'];
+            return ['imported' => 0, 'skipped' => 0, 'error' => self::IMPORT_ERROR_FILE, 'reason' => null];
         }
 
         $rowIndex = 0;
         $imported = 0;
         $skipped = 0;
+        $firstReason = null;
 
-        while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+        while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
             $rowIndex++;
+            $row = array_map([$this, 'sanitizeCsvValue'], $row);
+
+            if ($this->isEmptyCsvRow($row)) {
+                continue;
+            }
 
             // Bỏ qua dòng tiêu đề nếu file CSV có header ở dòng đầu tiên.
-            if ($rowIndex === 1 && strtolower(trim($row[0] ?? '')) === 'mssv') {
+            if ($rowIndex === 1 && $this->isStudentCsvHeader($row)) {
                 continue;
             }
 
             if (count($row) < 7) {
                 $skipped++;
+                $firstReason ??= 'File CSV chưa đúng 7 cột theo định dạng yêu cầu.';
                 continue;
             }
 
-            $student = [
-                'mssv' => trim($row[0] ?? ''),
-                'fullname' => trim($row[1] ?? ''),
-                'birthday' => trim($row[2] ?? ''),
-                'gender' => trim($row[3] ?? ''),
-                'phone' => trim($row[4] ?? ''),
-                'email' => trim($row[5] ?? ''),
-                'address' => trim($row[6] ?? ''),
-            ];
+            $hasClassColumn = count($row) >= 8;
+            $student = $this->normalizeImportedStudent([
+                'mssv' => trim((string)($row[0] ?? '')),
+                'fullname' => trim((string)($row[1] ?? '')),
+                'birthday' => trim((string)($row[2] ?? '')),
+                'gender' => trim((string)($row[3] ?? '')),
+                'phone' => trim((string)($row[4] ?? '')),
+                'email' => trim((string)($row[5] ?? '')),
+                // Cho phép import lại file export 8 cột: mssv, fullname, birthday, gender, phone, email, class, address.
+                'address' => trim((string)($hasClassColumn ? ($row[7] ?? '') : ($row[6] ?? ''))),
+            ]);
 
             $validation = $this->validate($student, false);
             if ($validation['error'] !== null) {
                 $skipped++;
+                $firstReason ??= $validation['error'];
                 continue;
             }
 
@@ -173,19 +205,33 @@ class StudentModel
 
             if ($this->existsByMssv($student['mssv'])) {
                 $skipped++;
+                $firstReason ??= 'MSSV đã tồn tại trong hệ thống.';
                 continue;
             }
 
-            if ($this->create($student)) {
-                $imported++;
-            } else {
+            if ($this->existsByEmail($student['email'])) {
                 $skipped++;
+                $firstReason ??= 'Email đã tồn tại trong hệ thống.';
+                continue;
+            }
+
+            try {
+                if ($this->create($student)) {
+                    $imported++;
+                } else {
+                    $skipped++;
+                    $firstReason ??= 'Có ít nhất một dòng dữ liệu không hợp lệ.';
+                }
+            } catch (Throwable $exception) {
+                // Một dòng lỗi không nên làm hỏng toàn bộ lượt import CSV.
+                $skipped++;
+                $firstReason ??= 'Có ít nhất một dòng dữ liệu không hợp lệ hoặc bị trùng.';
             }
         }
 
         fclose($handle);
 
-        return ['imported' => $imported, 'skipped' => $skipped, 'error' => null];
+        return ['imported' => $imported, 'skipped' => $skipped, 'error' => null, 'reason' => $firstReason];
     }
 
     public function validate(array $data, bool $requireClass = false, ?int $excludeId = null): array
@@ -224,5 +270,76 @@ class StudentModel
         }
 
         return ['error' => null, 'class' => $class];
+    }
+
+    private function detectCsvDelimiter(string $path): string
+    {
+        $handle = fopen($path, 'r');
+        if (!$handle) {
+            return ',';
+        }
+
+        $firstLine = fgets($handle) ?: '';
+        fclose($handle);
+
+        return substr_count($firstLine, ';') > substr_count($firstLine, ',') ? ';' : ',';
+    }
+
+    private function sanitizeCsvValue(string|null $value): string
+    {
+        return trim(str_replace("\xEF\xBB\xBF", '', (string)$value));
+    }
+
+    private function isEmptyCsvRow(array $row): bool
+    {
+        foreach ($row as $value) {
+            if ($this->sanitizeCsvValue((string)$value) !== '') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function isStudentCsvHeader(array $row): bool
+    {
+        $firstColumn = mb_strtolower($row[0] ?? '');
+        return in_array($firstColumn, ['mssv', 'mã số sinh viên', 'ma so sinh vien'], true);
+    }
+
+    private function normalizeImportedStudent(array $student): array
+    {
+        $student['birthday'] = $this->normalizeBirthday($student['birthday']);
+        $student['gender'] = $this->normalizeGender($student['gender']);
+        $student['phone'] = preg_replace('/\s+/', '', $student['phone']) ?? $student['phone'];
+
+        return $student;
+    }
+
+    private function normalizeBirthday(string $birthday): string
+    {
+        $birthday = trim($birthday);
+        $formats = ['Y-m-d', 'd/m/Y', 'd-m-Y', 'd.m.Y', 'Y/m/d'];
+
+        foreach ($formats as $format) {
+            $date = DateTime::createFromFormat($format, $birthday);
+            if ($date instanceof DateTime && $date->format($format) === $birthday) {
+                return $date->format('Y-m-d');
+            }
+        }
+
+        return $birthday;
+    }
+
+    private function normalizeGender(string $gender): string
+    {
+        $normalized = mb_strtolower(trim($gender));
+
+        return match ($normalized) {
+            'nam', 'male', 'm', '1' => 'Nam',
+            'nữ', 'nu', 'female', 'f', '0' => 'Nữ',
+            'khác', 'khac', 'other', '3' => 'Khác',
+            default => $gender,
+        };
     }
 }

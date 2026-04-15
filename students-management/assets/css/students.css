@@ -160,6 +160,7 @@ a {
 .students-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .students-table thead th {
@@ -171,6 +172,8 @@ a {
   font-weight: 800;
   background: #f8faff;
   border-bottom: 1px solid var(--line);
+  line-height: 1.35;
+  vertical-align: middle;
 }
 
 .students-table tbody td {
@@ -178,6 +181,65 @@ a {
   border-bottom: 1px solid #edf1f7;
   font-size: 15px;
   color: #233047;
+  vertical-align: middle;
+}
+
+.students-table th:nth-child(1),
+.students-table td:nth-child(1) {
+  width: 10%;
+  white-space: nowrap;
+}
+
+.students-table th:nth-child(2),
+.students-table td:nth-child(2) {
+  width: 16%;
+}
+
+.students-table th:nth-child(3),
+.students-table td:nth-child(3) {
+  width: 10%;
+  white-space: nowrap;
+}
+
+.students-table th:nth-child(4),
+.students-table td:nth-child(4) {
+  width: 8%;
+}
+
+.students-table th:nth-child(5),
+.students-table td:nth-child(5) {
+  width: 12%;
+}
+
+.students-table th:nth-child(6),
+.students-table td:nth-child(6) {
+  width: 18%;
+}
+
+.students-table th:nth-child(7),
+.students-table td:nth-child(7) {
+  width: 8%;
+  white-space: nowrap;
+}
+
+.students-table th:nth-child(8),
+.students-table td:nth-child(8) {
+  width: 10%;
+}
+
+.students-table th:nth-child(9),
+.students-table td:nth-child(9) {
+  width: 8%;
+  white-space: nowrap;
+}
+
+.students-table td:nth-child(2),
+.students-table td:nth-child(5),
+.students-table td:nth-child(6),
+.students-table td:nth-child(8) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 
@@ -294,6 +356,7 @@ a {
 .modal-dialog {
   width: 100%;
   max-width: 720px;
+  pointer-events: auto;
 }
 
 .modal-dialog.small {

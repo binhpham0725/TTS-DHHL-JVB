@@ -31,4 +31,15 @@ abstract class Controller
         echo json_encode($payload, JSON_UNESCAPED_UNICODE);
         exit;
     }
+
+    protected function reportException(Throwable $exception): void
+    {
+        error_log(sprintf(
+            '[%s] %s in %s:%d',
+            static::class,
+            $exception->getMessage(),
+            $exception->getFile(),
+            $exception->getLine()
+        ));
+    }
 }

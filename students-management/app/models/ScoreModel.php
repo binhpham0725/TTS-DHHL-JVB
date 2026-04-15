@@ -56,45 +56,54 @@ class ScoreModel
             return false;
         }
 
-        // Mỗi dòng điểm đều được tính lại điểm tổng kết theo đúng trọng số cấu hình của môn học đang chọn.
-        foreach ($scores as $studentId => $row) {
-            $studentId = (int)$studentId;
-            $attendance = max(0, min(10, round((float)($row['attendance_score'] ?? 0), 1)));
-            $midterm = max(0, min(10, round((float)($row['midterm_score'] ?? 0), 1)));
-            $final = max(0, min(10, round((float)($row['final_score'] ?? 0), 1)));
-            $total = calculateAverage(
-                $attendance,
-                $midterm,
-                $final,
-                (int)$subject['attendance_weight'],
-                (int)$subject['midterm_weight'],
-                (int)$subject['final_weight']
-            );
+        $this->db->begin_transaction();
 
-            $checkStmt = $this->db->prepare('SELECT id FROM scores WHERE student_id = ? AND subject_id = ?');
-            $checkStmt->bind_param('ii', $studentId, $subjectId);
-            $checkStmt->execute();
-            $result = $checkStmt->get_result();
-            $existing = $result->fetch_assoc();
-            $checkStmt->close();
+        try {
+            // Mỗi dòng điểm đều được tính lại điểm tổng kết theo đúng trọng số cấu hình của môn học đang chọn.
+            foreach ($scores as $studentId => $row) {
+                $studentId = (int)$studentId;
+                $attendance = max(0, min(10, round((float)($row['attendance_score'] ?? 0), 1)));
+                $midterm = max(0, min(10, round((float)($row['midterm_score'] ?? 0), 1)));
+                $final = max(0, min(10, round((float)($row['final_score'] ?? 0), 1)));
+                $total = calculateAverage(
+                    $attendance,
+                    $midterm,
+                    $final,
+                    (int)$subject['attendance_weight'],
+                    (int)$subject['midterm_weight'],
+                    (int)$subject['final_weight']
+                );
 
-            // Upsert thủ công: nếu đã có bản ghi điểm thì UPDATE, nếu chưa có thì INSERT mới.
-            if ($existing) {
-                $stmt = $this->db->prepare(
-                    'UPDATE scores SET attendance_score = ?, midterm_score = ?, final_score = ?, scores = ? WHERE id = ?'
-                );
-                $scoreId = (int)$existing['id'];
-                $stmt->bind_param('ddddi', $attendance, $midterm, $final, $total, $scoreId);
-            } else {
-                $stmt = $this->db->prepare(
-                    'INSERT INTO scores (student_id, subject_id, attendance_score, midterm_score, final_score, scores)
-                     VALUES (?, ?, ?, ?, ?, ?)'
-                );
-                $stmt->bind_param('iidddd', $studentId, $subjectId, $attendance, $midterm, $final, $total);
+                $checkStmt = $this->db->prepare('SELECT id FROM scores WHERE student_id = ? AND subject_id = ?');
+                $checkStmt->bind_param('ii', $studentId, $subjectId);
+                $checkStmt->execute();
+                $result = $checkStmt->get_result();
+                $existing = $result->fetch_assoc();
+                $checkStmt->close();
+
+                // Upsert thủ công: nếu đã có bản ghi điểm thì UPDATE, nếu chưa có thì INSERT mới.
+                if ($existing) {
+                    $stmt = $this->db->prepare(
+                        'UPDATE scores SET attendance_score = ?, midterm_score = ?, final_score = ?, scores = ? WHERE id = ?'
+                    );
+                    $scoreId = (int)$existing['id'];
+                    $stmt->bind_param('ddddi', $attendance, $midterm, $final, $total, $scoreId);
+                } else {
+                    $stmt = $this->db->prepare(
+                        'INSERT INTO scores (student_id, subject_id, attendance_score, midterm_score, final_score, scores)
+                         VALUES (?, ?, ?, ?, ?, ?)'
+                    );
+                    $stmt->bind_param('iidddd', $studentId, $subjectId, $attendance, $midterm, $final, $total);
+                }
+
+                $stmt->execute();
+                $stmt->close();
             }
 
-            $stmt->execute();
-            $stmt->close();
+            $this->db->commit();
+        } catch (Throwable $exception) {
+            $this->db->rollback();
+            throw $exception;
         }
 
         return true;

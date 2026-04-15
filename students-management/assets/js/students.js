@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const importModal = document.getElementById('importModal');
     const editModal = document.getElementById('editStudentModal');
     const editModalContent = document.getElementById('editModalContent');
+    const texts = (window.APP_TEXTS && window.APP_TEXTS.students) || {};
 
     const openAddBtn = document.getElementById('openAddModal');
     const openImportBtn = document.getElementById('openImportModal');
@@ -27,11 +28,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function loadEditForm(studentId) {
         if (!editModal || !editModalContent) {
-            console.error('Không tìm thấy modal sửa hoặc vùng chứa nội dung.');
+            console.error(texts.missing_modal || 'Không tìm thấy modal sửa hoặc vùng chứa nội dung.');
             return;
         }
 
-        editModalContent.innerHTML = '<p>Đang tải...</p>';
+        editModalContent.innerHTML = '<p>' + (texts.loading || 'Đang tải...') + '</p>';
         openModal(editModal);
 
         fetch('../function/students/edit.php?id=' + encodeURIComponent(studentId), {
@@ -40,19 +41,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(function (response) {
-            if (!response.ok) {
-                throw new Error('HTTP error: ' + response.status);
-            }
-            return response.text();
-        })
-        .then(function (html) {
-            editModalContent.innerHTML = html;
-        })
-        .catch(function (error) {
-            console.error('Lỗi khi tải form sửa:', error);
-            editModalContent.innerHTML = '<p>Không tải được form sửa.</p>';
-        });
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('HTTP error: ' + response.status);
+                }
+                return response.text();
+            })
+            .then(function (html) {
+                editModalContent.innerHTML = html;
+            })
+            .catch(function (error) {
+                console.error(texts.load_error || 'Không tải được form sửa.', error);
+                editModalContent.innerHTML = '<p>' + (texts.load_error || 'Không tải được form sửa.') + '</p>';
+            });
     }
 
     if (openAddBtn) {
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const id = editBtn.getAttribute('data-id');
 
             if (!id) {
-                console.error('Không tìm thấy data-id của sinh viên.');
+                console.error(texts.missing_student_id || 'Không tìm thấy data-id của sinh viên.');
                 return;
             }
 
@@ -104,10 +105,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Xử lý submit form edit (dùng delegation vì form load động qua AJAX)
+    // Xử lý submit form edit bằng delegation vì form được nạp động qua AJAX.
     document.addEventListener('submit', function (e) {
         const form = e.target.closest('#editStudentForm');
-        if (!form) return;
+        if (!form) {
+            return;
+        }
 
         e.preventDefault();
 
@@ -122,22 +125,22 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
             body: formData
         })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            if (data.success) {
-                closeModal(editModal);
-                location.reload();
-            } else {
-                errorBox.textContent = data.message || 'Cập nhật thất bại.';
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.success) {
+                    closeModal(editModal);
+                    location.reload();
+                } else {
+                    errorBox.textContent = data.message || texts.update_failed || 'Cập nhật thất bại.';
+                    errorBox.style.display = 'block';
+                }
+            })
+            .catch(function (error) {
+                console.error(texts.unexpected_error || 'Có lỗi xảy ra, vui lòng thử lại.', error);
+                errorBox.textContent = texts.unexpected_error || 'Có lỗi xảy ra, vui lòng thử lại.';
                 errorBox.style.display = 'block';
-            }
-        })
-        .catch(function (error) {
-            console.error('Lỗi khi cập nhật:', error);
-            errorBox.textContent = 'Có lỗi xảy ra, vui lòng thử lại.';
-            errorBox.style.display = 'block';
-        });
+            });
     });
 });

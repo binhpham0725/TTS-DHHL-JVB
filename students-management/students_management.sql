@@ -280,9 +280,9 @@ CREATE TABLE `teacher` (
 --
 
 INSERT INTO `teacher` (`id`, `name`, `email`, `password`, `phone`) VALUES
-(1, 'UnKnow', 'admin@hluv.edu.com.vn', 'Abcxyz@123', '0901111111'),
-(2, 'Tran Thi Lan', 'gv1@hluv.edu.com.vn', '12345678', '0902222222'),
-(3, 'Phạm Bảo Khoa', 'khoartk135@hluv.edu.com.vn', 'Khoa422005@@', '0912740611');
+(1, 'UnKnow', 'admin@hluv.edu.com.vn', '$2y$10$xhX65Fww/Clot14yCuEntuYSYTCB8XJHEjGdeVYuKX0QyGiGIvfvC', '0901111111'),
+(2, 'Tran Thi Lan', 'gv1@hluv.edu.com.vn', '$2y$10$3DQZ.KKCRhnWhE9smh.pxOL2VUAyh1hQTcO4SQOAlmaCV6c.fLsWq', '0902222222'),
+(3, 'Phạm Bảo Khoa', 'khoartk135@hluv.edu.com.vn', '$2y$10$XaaER8ehWyvX95.0/s4aeOAiQsJstVa7NiNeVYQDyYmWiGfAr/2ia', '0912740611');
 
 --
 -- Indexes for dumped tables

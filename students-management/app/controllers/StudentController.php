@@ -39,7 +39,7 @@ class StudentController extends Controller
             'totalStudents' => $totalStudents,
             'totalPages' => $totalPages,
             'start' => $start,
-            'teacherName' => Session::get('teacher_name', 'Chua dang nhap'),
+            'teacherName' => Session::get('teacher_name', app_text('common.not_logged_in')),
             'exportUrl' => app_url('function/students/export.php') . ($exportQuery ? '?' . $exportQuery : ''),
             'addError' => Session::flash('student_add_error', ''),
             'addOld' => Session::flash('student_add_old', []),
@@ -69,18 +69,20 @@ class StudentController extends Controller
             'address' => trim($_POST['address'] ?? ''),
         ];
 
-        // Khi thêm mới, lớp không nhập tay mà được suy ra từ 4 số đầu của MSSV trong model validate().
-        $validation = $this->students->validate($data, false);
-        if ($validation['error'] !== null) {
-            Session::set('student_add_error', $validation['error']);
-            Session::set('student_add_old', $data);
-            $this->redirect(app_url('interface/listsv.php'));
-        }
+        try {
+            // Khi thêm mới, lớp không nhập tay mà được suy ra từ 4 số đầu của MSSV trong model validate().
+            $validation = $this->students->validate($data, false);
+            if ($validation['error'] !== null) {
+                Session::set('student_add_error', $validation['error']);
+                Session::set('student_add_old', $data);
+                $this->redirect(app_url('interface/listsv.php'));
+            }
 
-        $data['class'] = $validation['class'];
-
-        if (!$this->students->create($data)) {
-            Session::set('student_add_error', 'Them sinh vien that bai.');
+            $data['class'] = $validation['class'];
+            $this->students->create($data);
+        } catch (Throwable $exception) {
+            $this->reportException($exception);
+            Session::set('student_add_error', app_text('students.errors.create_failed'));
             Session::set('student_add_old', $data);
         }
 
@@ -94,7 +96,7 @@ class StudentController extends Controller
 
         $student = $this->students->find($id);
         if ($student === null) {
-            echo '<div class="modal-card"><p style="padding:20px">Khong tim thay sinh vien.</p></div>';
+            echo '<div class="modal-card"><p style="padding:20px">' . htmlspecialchars(app_text('students.edit_modal.error_not_found')) . '</p></div>';
             return;
         }
 
@@ -122,17 +124,20 @@ class StudentController extends Controller
         ];
 
         if ($id <= 0) {
-            $this->json(['success' => false, 'message' => 'Sinh vien khong hop le.'], 422);
+            $this->json(['success' => false, 'message' => app_text('students.errors.invalid_student')], 422);
         }
 
-        // Trả lời JSON để form sửa trong modal có thể submit bằng fetch/AJAX mà không cần tải lại form HTML.
-        $validation = $this->students->validate($data, true, $id);
-        if ($validation['error'] !== null) {
-            $this->json(['success' => false, 'message' => $validation['error']], 422);
-        }
+        try {
+            // Trả lời JSON để form sửa trong modal có thể submit bằng fetch/AJAX mà không cần tải lại form HTML.
+            $validation = $this->students->validate($data, true, $id);
+            if ($validation['error'] !== null) {
+                $this->json(['success' => false, 'message' => $validation['error']], 422);
+            }
 
-        if (!$this->students->update($id, $data)) {
-            $this->json(['success' => false, 'message' => 'Cap nhat that bai.'], 500);
+            $this->students->update($id, $data);
+        } catch (Throwable $exception) {
+            $this->reportException($exception);
+            $this->json(['success' => false, 'message' => app_text('students.errors.update_failed')], 500);
         }
 
         $this->json(['success' => true]);
@@ -142,9 +147,16 @@ class StudentController extends Controller
     {
         Session::start();
         Auth::requireLogin();
-        if ($id > 0) {
-            $this->students->delete($id);
+
+        try {
+            if ($id > 0) {
+                $this->students->delete($id);
+            }
+        } catch (Throwable $exception) {
+            $this->reportException($exception);
+            $this->redirect(app_url('interface/listsv.php?msg=delete_error'));
         }
+
         $this->redirect(app_url('interface/listsv.php'));
     }
 
@@ -161,13 +173,23 @@ class StudentController extends Controller
             $this->redirect(app_url('interface/listsv.php?msg=error_file'));
         }
 
-        // Model trả về số dòng import thành công và số dòng bị bỏ qua để hiển thị thông báo ngoài giao diện.
-        $result = $this->students->importCsv($_FILES['csv_file']['tmp_name']);
-        if ($result['error'] !== null) {
-            $this->redirect(app_url('interface/listsv.php?msg=' . urlencode($result['error'])));
-        }
+        try {
+            // Model trả về số dòng import thành công, số dòng bị bỏ qua và lý do đầu tiên nếu dữ liệu không hợp lệ.
+            $result = $this->students->importCsv($_FILES['csv_file']['tmp_name']);
+            if ($result['error'] !== null) {
+                $this->redirect(app_url('interface/listsv.php?msg=' . urlencode($result['error'])));
+            }
 
-        $this->redirect(app_url('interface/listsv.php?msg=import_success&imported=' . $result['imported'] . '&skipped=' . $result['skipped']));
+            $query = 'msg=import_success&imported=' . $result['imported'] . '&skipped=' . $result['skipped'];
+            if (!empty($result['reason'])) {
+                $query .= '&reason=' . urlencode($result['reason']);
+            }
+
+            $this->redirect(app_url('interface/listsv.php?' . $query));
+        } catch (Throwable $exception) {
+            $this->reportException($exception);
+            $this->redirect(app_url('interface/listsv.php?msg=error_file'));
+        }
     }
 
     public function export(): void

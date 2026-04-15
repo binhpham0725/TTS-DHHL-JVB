@@ -1,9 +1,18 @@
+<?php
+$common = app_text_group('common');
+$nav = app_text_group('nav');
+$texts = app_text_group('scores');
+$messages = $texts['messages'];
+$filters = $texts['filters'];
+$headers = $texts['headers'];
+$deleteTexts = $texts['delete'];
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nhập điểm học phần</title>
+    <title><?= htmlspecialchars($texts['page_title']) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -21,25 +30,25 @@
                 <div class="brand-icon">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
-                <h2>HLUV</h2>
+                <h2><?= htmlspecialchars($common['brand']) ?></h2>
             </div>
 
             <nav class="menu">
                 <a href="index.php" class="menu-item">
                     <i class="fa-solid fa-table-cells-large"></i>
-                    <span>Bảng điều khiển</span>
+                    <span><?= htmlspecialchars($nav['dashboard']) ?></span>
                 </a>
                 <a href="listsv.php" class="menu-item">
                     <i class="fa-solid fa-users"></i>
-                    <span>Danh sách Sinh viên</span>
+                    <span><?= htmlspecialchars($nav['students']) ?></span>
                 </a>
                 <a href="scores.php" class="menu-item active">
                     <i class="fa-solid fa-star"></i>
-                    <span>Quản lý Điểm</span>
+                    <span><?= htmlspecialchars($nav['scores']) ?></span>
                 </a>
                 <a href="subjects.php" class="menu-item">
                     <i class="fa-solid fa-book-bookmark"></i>
-                    <span>Môn học</span>
+                    <span><?= htmlspecialchars($nav['subjects']) ?></span>
                 </a>
             </nav>
         </div>
@@ -47,7 +56,7 @@
         <div class="user-card">
             <div class="sidebar-footer">
                 <div>
-                    <h4>GV: <?= htmlspecialchars($teacherName) ?></h4>
+                    <h4><?= htmlspecialchars($common['teacher_prefix']) ?> <?= htmlspecialchars($teacherName) ?></h4>
                 </div>
             </div>
         </div>
@@ -57,23 +66,23 @@
     <main class="col-12 col-lg-9 col-xl-10 main-col">
         <div class="main">
         <header class="topbar">
-            <button class="icon-circle mobile-menu-toggle" type="button" aria-label="Mo menu">
+            <button class="icon-circle mobile-menu-toggle" type="button" aria-label="<?= htmlspecialchars($common['open_menu']) ?>">
                 <i class="fa-solid fa-bars"></i>
             </button>
-            <div class="breadcrumb">Pages <span>/</span> <strong>Môn học</strong></div>
+            <div class="breadcrumb"><?= htmlspecialchars($common['pages']) ?> <span>/</span> <strong><?= htmlspecialchars($texts['breadcrumb']) ?></strong></div>
             <div class="topbar-actions">
-                <button class="icon-circle">
+                <button class="icon-circle" aria-label="<?= htmlspecialchars($common['bell_aria']) ?>">
                     <i class="fa-regular fa-bell"></i>
                 </button>
 
                 <div class="profile-menu">
-                    <button class="icon-circle">
+                    <button class="icon-circle" aria-label="<?= htmlspecialchars($common['settings_aria']) ?>">
                         <i class="fa-solid fa-gear"></i>
                     </button>
 
                     <div class="dropdown">
                         <button class="dropdown-item logout" onclick="logout()">
-                            <span><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất</span>
+                            <span><i class="fa-solid fa-arrow-right-from-bracket"></i> <?= htmlspecialchars($common['logout']) ?></span>
                         </button>
                     </div>
                 </div>
@@ -83,14 +92,16 @@
         <section class="content">
             <div class="page-head">
                 <div>
-                    <h2>Nhập điểm học phần</h2>
+                    <h2><?= htmlspecialchars($texts['heading']) ?></h2>
                     <p>
                         <?php if ($subjectInfo): ?>
-                            Lớp: <?= $selectedClass !== '' ? htmlspecialchars($selectedClass) : 'Tất cả' ?>
-                            - Mã môn: <?= htmlspecialchars($subjectInfo['subject_code']) ?>
-                            - Môn học: <?= htmlspecialchars($subjectInfo['subject_name']) ?>
+                            <?= htmlspecialchars(app_text('scores.summary', [
+                                'class' => $selectedClass !== '' ? $selectedClass : app_text('scores.summary_all'),
+                                'code' => $subjectInfo['subject_code'],
+                                'name' => $subjectInfo['subject_name'],
+                            ])) ?>
                         <?php else: ?>
-                            Chọn môn học và lớp để nhập hoặc export điểm
+                            <?= htmlspecialchars($texts['summary_empty']) ?>
                         <?php endif; ?>
                     </p>
                 </div>
@@ -101,7 +112,7 @@
                         <input type="hidden" name="class" value="<?= htmlspecialchars($selectedClass) ?>">
                         <label class="action-btn">
                             <i class="fa-solid fa-file-import"></i>
-                            <span>Nhập từ CSV</span>
+                            <span><?= htmlspecialchars($texts['import_csv']) ?></span>
                             <input type="file" name="csv_file" accept=".csv" hidden onchange="this.form.submit()">
                         </label>
                     </form>
@@ -109,12 +120,12 @@
                     <a class="action-btn <?= $selectedSubject <= 0 ? 'disabled' : '' ?>"
                        href="<?= $selectedSubject > 0 ? '../function/scores/export.php?subject_id=' . $selectedSubject . '&class=' . urlencode($selectedClass) : '#' ?>">
                         <i class="fa-solid fa-file-export"></i>
-                        <span>Xuất CSV</span>
+                        <span><?= htmlspecialchars($texts['export_csv']) ?></span>
                     </a>
 
                     <button class="action-btn primary" form="scoreForm" type="submit">
                         <i class="fa-solid fa-floppy-disk"></i>
-                        <span>Lưu thay đổi</span>
+                        <span><?= htmlspecialchars($texts['save_changes']) ?></span>
                     </button>
                 </div>
             </div>
@@ -125,28 +136,34 @@
                 <?php
                 switch ($_GET['msg']) {
                     case 'saved':
-                        echo 'Đã lưu điểm thành công.';
+                        echo htmlspecialchars($messages['saved']);
                         break;
                     case 'del_success':
-                        echo 'Đã xóa sinh viên khỏi bảng điểm.';
+                        echo htmlspecialchars($messages['del_success']);
                         break;
                     case 'error_subject':
-                        echo 'Vui lòng chọn môn học hợp lệ.';
+                        echo htmlspecialchars($messages['error_subject']);
+                        break;
+                    case 'error_save':
+                        echo htmlspecialchars($messages['error_save']);
+                        break;
+                    case 'error_delete':
+                        echo htmlspecialchars($messages['error_delete']);
                         break;
                     case 'import_success':
-                        echo 'Import CSV thành công.';
+                        echo htmlspecialchars($messages['import_success']);
                         if (isset($_GET['imported'])) {
-                            echo ' Đã nhập: ' . (int)$_GET['imported'] . ' dòng.';
+                            echo ' ' . htmlspecialchars(app_text('scores.messages.imported_count', ['count' => (int)$_GET['imported']]));
                         }
                         if (isset($_GET['skipped'])) {
-                            echo ' Bỏ qua: ' . (int)$_GET['skipped'] . ' dòng.';
+                            echo ' ' . htmlspecialchars(app_text('scores.messages.skipped_count', ['count' => (int)$_GET['skipped']]));
                         }
                         break;
                     case 'error_file':
-                        echo 'File CSV không hợp lệ hoặc không thể đọc.';
+                        echo htmlspecialchars($messages['error_file']);
                         break;
                     default:
-                        echo 'Thao tác thành công.';
+                        echo htmlspecialchars($common['action_success']);
                         break;
                 }
                 ?>
@@ -156,7 +173,7 @@
         <form method="GET" class="score-filters">
             <div class="select-box">
                 <select name="subject_id" class="filter-select" required>
-                    <option value="">Chọn Môn học</option>
+                    <option value=""><?= htmlspecialchars($filters['subject_placeholder']) ?></option>
                     <?php foreach ($subjects as $item): ?>
                         <option value="<?= $item['id'] ?>" <?= $selectedSubject === (int)$item['id'] ? 'selected' : '' ?>>
                             <?= htmlspecialchars($item['subject_name']) ?> (<?= htmlspecialchars($item['subject_code']) ?>)
@@ -167,7 +184,7 @@
 
             <div class="select-box">
                 <select name="class" class="filter-select">
-                    <option value="">Tất cả các khóa</option>
+                    <option value=""><?= htmlspecialchars($filters['all_classes']) ?></option>
                     <?php foreach ($classes as $className): ?>
                         <option value="<?= htmlspecialchars($className) ?>" <?= $selectedClass === $className ? 'selected' : '' ?>>
                             <?= htmlspecialchars($className) ?>
@@ -176,7 +193,7 @@
                 </select>
             </div>
 
-            <button type="submit" class="filter-submit">Lọc dữ liệu</button>
+            <button type="submit" class="filter-submit"><?= htmlspecialchars($filters['submit']) ?></button>
         </form>
 
         <form id="scoreForm" action="../function/scores/save.php" method="POST">
@@ -189,25 +206,25 @@
                     <table class="score-table">
                         <thead>
                             <tr>
-                                <th>MSSV</th>
-                                <th>Họ và tên</th>
-                                <th>Chuyên cần</th>
-                                <th>Giữa kỳ</th>
-                                <th>Cuối kỳ</th>
-                                <th>Trung bình</th>
-                                <th>Đánh giá</th>
-                                <th>Xếp loại</th>
-                                <th>Chức năng</th>
+                                <th><?= htmlspecialchars($headers['mssv']) ?></th>
+                                <th><?= htmlspecialchars($headers['fullname']) ?></th>
+                                <th><?= htmlspecialchars($headers['attendance']) ?></th>
+                                <th><?= htmlspecialchars($headers['midterm']) ?></th>
+                                <th><?= htmlspecialchars($headers['final']) ?></th>
+                                <th><?= htmlspecialchars($headers['average']) ?></th>
+                                <th><?= htmlspecialchars($headers['result']) ?></th>
+                                <th><?= htmlspecialchars($headers['rank']) ?></th>
+                                <th><?= htmlspecialchars($headers['actions']) ?></th>
                             </tr>
                         </thead>
                         <tbody>
                         <?php if ($selectedSubject <= 0): ?>
                             <tr>
-                                <td colspan="9" class="empty-cell">Vui lòng chọn môn học để hiển thị danh sách điểm.</td>
+                                <td colspan="9" class="empty-cell"><?= htmlspecialchars($texts['empty_select_subject']) ?></td>
                             </tr>
                         <?php elseif (empty($scoreRows)): ?>
                             <tr>
-                                <td colspan="9" class="empty-cell">Không có sinh viên phù hợp.</td>
+                                <td colspan="9" class="empty-cell"><?= htmlspecialchars($texts['empty_no_students']) ?></td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($scoreRows as $row): ?>
@@ -232,17 +249,17 @@
                                     <td class="avg-cell"><?= number_format($avg, 1) ?></td>
                                     <td>
                                         <span class="status-badge <?= $statusClass ?>">
-                                            <?= $statusText ?>
+                                            <?= htmlspecialchars($statusText) ?>
                                         </span>
                                     </td>
-                                    <td class="rank-cell"><?= $rank ?></td>
+                                    <td class="rank-cell"><?= htmlspecialchars($rank) ?></td>
                                     <td>
                                         <?php if (!empty($row['score_id'])): ?>
-                                            <a class="delete-score-btn" href="../function/scores/del.php?id=<?= $row['score_id'] ?>&subject_id=<?= $selectedSubject ?>&class=<?= urlencode($selectedClass) ?>&page=<?= $page ?>" onclick="return confirm('Bạn có chắc muốn xóa sinh viên này khỏi bảng điểm?')">
-                                                Xóa
+                                            <a class="delete-score-btn" href="../function/scores/del.php?id=<?= $row['score_id'] ?>&subject_id=<?= $selectedSubject ?>&class=<?= urlencode($selectedClass) ?>&page=<?= $page ?>" onclick="return confirm('<?= htmlspecialchars($deleteTexts['confirm'], ENT_QUOTES) ?>')">
+                                                <?= htmlspecialchars($deleteTexts['label']) ?>
                                             </a>
                                         <?php else: ?>
-                                            <span class="no-action">Chưa có</span>
+                                            <span class="no-action"><?= htmlspecialchars($deleteTexts['empty']) ?></span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -256,9 +273,13 @@
                     <div class="table-footer">
                         <div class="table-info">
                             <?php if ($totalStudents > 0): ?>
-                                Hiển thị <?= $offset + 1 ?> - <?= min($offset + $perPage, $totalStudents) ?> trong số <?= $totalStudents ?> sinh viên
+                                <?= htmlspecialchars(app_text('students.showing_range', [
+                                    'from' => $offset + 1,
+                                    'to' => min($offset + $perPage, $totalStudents),
+                                    'total' => $totalStudents,
+                                ])) ?>
                             <?php else: ?>
-                                Hiển thị 0 sinh viên
+                                <?= htmlspecialchars(app_text('students.showing_zero')) ?>
                             <?php endif; ?>
                         </div>
 
@@ -300,6 +321,12 @@
     </div>
 </div>
 
+<script>
+    window.APP_TEXTS = window.APP_TEXTS || {};
+    window.APP_TEXTS.common = <?= json_encode([
+        'logout_confirm' => app_text('common.logout_confirm'),
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+</script>
 <script src="../assets/js/layout.js"></script>
 <script src="../assets/js/logout.js"></script>
 </body>

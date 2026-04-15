@@ -14,7 +14,7 @@ class DashboardController extends Controller
 
         $this->render('dashboard/index', [
             'activeClass' => $activeClass,
-            'teacherName' => Session::get('teacher_name', 'Chưa đăng nhập'),
+            'teacherName' => Session::get('teacher_name', app_text('common.not_logged_in')),
         ]);
     }
 }

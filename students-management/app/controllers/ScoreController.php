@@ -49,7 +49,7 @@ class ScoreController extends Controller
             'classes' => $classes,
             'subjectInfo' => $subjectInfo,
             'scoreRows' => $scoreRows,
-            'teacherName' => Session::get('teacher_name', 'Chua dang nhap'),
+            'teacherName' => Session::get('teacher_name', app_text('common.not_logged_in')),
         ]);
     }
 
@@ -63,14 +63,19 @@ class ScoreController extends Controller
         $class = trim($_POST['class'] ?? '');
         $scoreData = $_POST['scores'] ?? [];
 
-        // Nếu chưa chọn môn học thì không thể lưu vì không xác định được trọng số và đích cập nhật.
-        if ($subjectId <= 0) {
-            $this->redirect(app_url('interface/scores.php?msg=error_subject'));
-        }
+        try {
+            // Nếu chưa chọn môn học thì không thể lưu vì không xác định được trọng số và đích cập nhật.
+            if ($subjectId <= 0) {
+                $this->redirect(app_url('interface/scores.php?msg=error_subject'));
+            }
 
-        // Model sẽ tự tính lại điểm tổng kết và quyết định UPDATE hay INSERT cho từng sinh viên.
-        if (!$this->scores->saveBatch($subjectId, $scoreData)) {
-            $this->redirect(app_url('interface/scores.php?msg=error_subject'));
+            // Model sẽ tự tính lại điểm tổng kết và quyết định UPDATE hay INSERT cho từng sinh viên.
+            if (!$this->scores->saveBatch($subjectId, $scoreData)) {
+                $this->redirect(app_url('interface/scores.php?msg=error_subject'));
+            }
+        } catch (Throwable $exception) {
+            $this->reportException($exception);
+            $this->redirect(app_url('interface/scores.php?subject_id=' . $subjectId . '&class=' . urlencode($class) . '&msg=error_save'));
         }
 
         $this->redirect(app_url('interface/scores.php?subject_id=' . $subjectId . '&class=' . urlencode($class) . '&msg=saved'));
@@ -85,8 +90,13 @@ class ScoreController extends Controller
         $subjectId = (int)($_GET['subject_id'] ?? 0);
         $class = trim($_GET['class'] ?? '');
 
-        if ($id > 0) {
-            $this->scores->delete($id);
+        try {
+            if ($id > 0) {
+                $this->scores->delete($id);
+            }
+        } catch (Throwable $exception) {
+            $this->reportException($exception);
+            $this->redirect(app_url('interface/scores.php?subject_id=' . $subjectId . '&class=' . urlencode($class) . '&msg=error_delete'));
         }
 
         $this->redirect(app_url('interface/scores.php?subject_id=' . $subjectId . '&class=' . urlencode($class) . '&msg=del_success'));

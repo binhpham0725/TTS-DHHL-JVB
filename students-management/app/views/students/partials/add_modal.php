@@ -1,6 +1,7 @@
+<?php $modalTexts = app_text_group('students.add_modal'); ?>
 <div class="modal-card">
     <div class="modal-header">
-        <h3>Thêm sinh viên mới</h3>
+        <h3><?= htmlspecialchars($modalTexts['title']) ?></h3>
         <button type="button" class="close-modal" data-close="addStudentModal">
             <i class="fa-solid fa-xmark"></i>
         </button>
@@ -14,54 +15,54 @@
         <div class="form-grid">
             <div class="form-group">
                 <label>MSSV</label>
-                <input type="text" name="mssv" maxlength="8" placeholder="VD: 20230001"
+                <input type="text" name="mssv" maxlength="8" placeholder="<?= htmlspecialchars($modalTexts['mssv_placeholder']) ?>"
                        value="<?= htmlspecialchars($old['mssv'] ?? '') ?>"
                        oninput="previewClass(this.value)" required>
             </div>
 
             <div class="form-group">
-                <label>Họ và tên</label>
+                <label><?= htmlspecialchars($modalTexts['fullname']) ?></label>
                 <input type="text" name="fullname" value="<?= htmlspecialchars($old['fullname'] ?? '') ?>" required>
             </div>
 
             <div class="form-group">
-                <label>Ngày sinh</label>
+                <label><?= htmlspecialchars($modalTexts['birthday']) ?></label>
                 <input type="date" name="birthday" value="<?= htmlspecialchars($old['birthday'] ?? '') ?>" required>
             </div>
 
             <div class="form-group">
-                <label for="gender">Giới tính</label>
+                <label for="gender"><?= htmlspecialchars($modalTexts['gender']) ?></label>
                 <select name="gender" id="gender" class="form-control" required>
-                    <option value="">-- Chọn giới tính --</option>
-                    <option value="Nam" <?= ($old['gender'] ?? '') === 'Nam' ? 'selected' : '' ?>>Nam</option>
-                    <option value="Nữ" <?= ($old['gender'] ?? '') === 'Nữ' ? 'selected' : '' ?>>Nữ</option>
-                    <option value="Khác" <?= ($old['gender'] ?? '') === 'Khác' ? 'selected' : '' ?>>Khác</option>
+                    <option value=""><?= htmlspecialchars($modalTexts['gender_placeholder']) ?></option>
+                    <option value="Nam" <?= ($old['gender'] ?? '') === 'Nam' ? 'selected' : '' ?>><?= htmlspecialchars($modalTexts['gender_male']) ?></option>
+                    <option value="Nữ" <?= ($old['gender'] ?? '') === 'Nữ' ? 'selected' : '' ?>><?= htmlspecialchars($modalTexts['gender_female']) ?></option>
+                    <option value="Khác" <?= ($old['gender'] ?? '') === 'Khác' ? 'selected' : '' ?>><?= htmlspecialchars($modalTexts['gender_other']) ?></option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label>Số điện thoại</label>
+                <label><?= htmlspecialchars($modalTexts['phone']) ?></label>
                 <input type="text" name="phone" maxlength="10" value="<?= htmlspecialchars($old['phone'] ?? '') ?>" required>
             </div>
 
             <div class="form-group">
-                <label>Email</label>
+                <label><?= htmlspecialchars($modalTexts['email']) ?></label>
                 <input type="email" name="email" value="<?= htmlspecialchars($old['email'] ?? '') ?>" required>
             </div>
 
             <div class="form-group">
-                <label>Lớp (tự động)</label>
-                <input type="text" id="classPreview" readonly placeholder="Nhập MSSV để xác định lớp">
+                <label><?= htmlspecialchars($modalTexts['class_preview']) ?></label>
+                <input type="text" id="classPreview" readonly placeholder="<?= htmlspecialchars($modalTexts['class_preview_placeholder']) ?>">
             </div>
 
             <div class="form-group">
-                <label>Địa chỉ</label>
+                <label><?= htmlspecialchars($modalTexts['address']) ?></label>
                 <input type="text" name="address" value="<?= htmlspecialchars($old['address'] ?? '') ?>" required>
             </div>
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Lưu sinh viên</button>
+            <button type="submit" class="btn btn-primary"><?= htmlspecialchars($modalTexts['submit']) ?></button>
         </div>
     </form>
 </div>

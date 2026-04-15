@@ -39,18 +39,23 @@ class AuthController extends Controller
         Session::set('old_email', $email);
 
         if ($email === '' || $password === '') {
-            Session::set('error', 'Vui long nhap day du email va mat khau');
+            Session::set('error', app_text('auth.errors.required_fields'));
             $this->redirect(app_url('auth/login.php'));
         }
 
-        $teacher = $this->teachers->findByEmail($email);
-        // Project hiện tại so sánh mật khẩu trực tiếp theo dữ liệu đang lưu trong bảng teacher.
-        if ($teacher && $password === $teacher['password']) {
-            Auth::login($teacher);
-            $this->redirect(app_url('interface/index.php'));
+        try {
+            $teacher = $this->teachers->findByEmail($email);
+            if ($teacher && $this->teachers->verifyPassword($teacher, $password)) {
+                Auth::login($teacher);
+                $this->redirect(app_url('interface/index.php'));
+            }
+        } catch (Throwable $exception) {
+            $this->reportException($exception);
+            Session::set('error', app_text('auth.errors.login_unavailable'));
+            $this->redirect(app_url('auth/login.php'));
         }
 
-        Session::set('error', 'Sai email hoac mat khau');
+        Session::set('error', app_text('auth.errors.login_failed'));
         $this->redirect(app_url('auth/login.php'));
     }
 

@@ -1,3 +1,8 @@
+<?php
+$common = app_text_group('common');
+$texts = app_text_group('subjects.form');
+$labels = $texts['labels'];
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -43,43 +48,43 @@
         <form method="POST">
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Mã môn</label>
+                    <label><?= htmlspecialchars($labels['subject_code']) ?></label>
                     <input type="text" name="subject_code" value="<?= htmlspecialchars($subject['subject_code'] ?? '') ?>" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Tên môn học</label>
+                    <label><?= htmlspecialchars($labels['subject_name']) ?></label>
                     <input type="text" name="subject_name" value="<?= htmlspecialchars($subject['subject_name'] ?? '') ?>" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Số tín chỉ</label>
+                    <label><?= htmlspecialchars($labels['credits']) ?></label>
                     <input type="number" name="credits" min="1" value="<?= htmlspecialchars((string)($subject['credits'] ?? 3)) ?>" required>
                 </div>
 
                 <div class="form-group full">
-                    <label>Mô tả</label>
+                    <label><?= htmlspecialchars($labels['description']) ?></label>
                     <textarea name="description"><?= htmlspecialchars($subject['description'] ?? '') ?></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label>Tỷ trọng chuyên cần (%)</label>
+                    <label><?= htmlspecialchars($labels['attendance_weight']) ?></label>
                     <input type="number" name="attendance_weight" min="0" max="100" value="<?= htmlspecialchars((string)($subject['attendance_weight'] ?? 10)) ?>" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Tỷ trọng giữa kỳ (%)</label>
+                    <label><?= htmlspecialchars($labels['midterm_weight']) ?></label>
                     <input type="number" name="midterm_weight" min="0" max="100" value="<?= htmlspecialchars((string)($subject['midterm_weight'] ?? 30)) ?>" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Tỷ trọng cuối kỳ (%)</label>
+                    <label><?= htmlspecialchars($labels['final_weight']) ?></label>
                     <input type="number" name="final_weight" min="0" max="100" value="<?= htmlspecialchars((string)($subject['final_weight'] ?? 60)) ?>" required>
                 </div>
             </div>
 
             <div class="actions">
-                <a href="<?= htmlspecialchars($backUrl) ?>" class="btn btn-back">Quay lại</a>
+                <a href="<?= htmlspecialchars($backUrl) ?>" class="btn btn-back"><?= htmlspecialchars($common['back']) ?></a>
                 <button type="submit" class="btn btn-save"><?= htmlspecialchars($submitLabel) ?></button>
             </div>
         </form>

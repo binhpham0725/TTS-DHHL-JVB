@@ -215,12 +215,6 @@ Theo file `students_management.sql` và code hiện tại:
 - một số file trong `function/scores/` vẫn còn procedural, tìm kiếm sinh viên vẫn lọc trong PHP
 - dữ liệu SQL cũ còn chỗ lỗi encoding và project chưa có test tự động
 
-## 19. Hướng nâng cấp tiếp theo
-- chuẩn hóa UTF-8 cho PHP, SQL và dữ liệu
-- dời nốt logic procedural về controller/model
-- tối ưu tìm kiếm, lọc, phân trang bằng SQL
-- thêm validate mạnh hơn cho email, số điện thoại, file CSV
-
-## 20. Kết luận
+## 19. Kết luận
 Đây là một project quản lý sinh viên quy mô nhỏ, phù hợp cho bài tập môn học, demo nội bộ hoặc làm nền để học cách tổ chức code PHP theo kiểu MVC.
 Tài liệu này được viết theo đúng môi trường bạn đang dùng là `XAMPP + phpMyAdmin`, không mô tả theo hướng MariaDB nữa.

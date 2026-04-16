@@ -20,7 +20,7 @@ return [
         'logout_confirm' => 'Bạn có chắc muốn đăng xuất?',
     ],
     'nav' => [
-        'dashboard' => 'Bảng điều khiển',
+        'dashboard' => 'Dashboard',
         'students' => 'Danh sách Sinh viên',
         'scores' => 'Quản lý Điểm',
         'subjects' => 'Môn học',
@@ -77,7 +77,7 @@ return [
             'edit' => 'Sửa',
             'delete' => 'Xóa',
         ],
-        'showing_range' => 'Hiển thị :from - :to trong số :total sinh viên',
+        'showing_range' => 'Hiển thị :from - :to trong số :to sinh viên',
         'showing_zero' => 'Hiển thị 0 sinh viên',
         'messages' => [
             'import_success' => 'Import CSV thành công.',

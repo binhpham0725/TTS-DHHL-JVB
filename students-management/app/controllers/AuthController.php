@@ -3,6 +3,7 @@
 class AuthController extends Controller
 {
     private TeacherModel $teachers;
+    private const HLUV_EMAIL_PATTERN = '/^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)*hluv\.edu\.com\.vn$/i';
 
     public function __construct()
     {
@@ -21,6 +22,7 @@ class AuthController extends Controller
         // Dùng flash để giữ lại lỗi và email vừa nhập sau một lần redirect.
         $this->render('auth/login', [
             'error' => Session::flash('error', ''),
+            'fieldErrors' => Session::flash('auth_login_errors', []),
             'oldEmail' => Session::flash('old_email', ''),
         ]);
     }
@@ -35,11 +37,24 @@ class AuthController extends Controller
 
         $email = trim($_POST['email'] ?? '');
         $password = trim($_POST['password'] ?? '');
+        $fieldErrors = [];
 
         Session::set('old_email', $email);
 
-        if ($email === '' || $password === '') {
-            Session::set('error', app_text('auth.errors.required_fields'));
+        if ($email === '') {
+            $fieldErrors['email'] = app_text('auth.errors.email_required');
+        } elseif (!preg_match(self::HLUV_EMAIL_PATTERN, $email)) {
+            $fieldErrors['email'] = app_text('auth.errors.email_invalid');
+        }
+
+        if ($password === '') {
+            $fieldErrors['password'] = app_text('auth.errors.password_required');
+        } elseif (mb_strlen($password) < 8) {
+            $fieldErrors['password'] = app_text('auth.errors.password_min');
+        }
+
+        if ($fieldErrors !== []) {
+            Session::set('auth_login_errors', $fieldErrors);
             $this->redirect(app_url('auth/login.php'));
         }
 
@@ -51,11 +66,15 @@ class AuthController extends Controller
             }
         } catch (Throwable $exception) {
             $this->reportException($exception);
-            Session::set('error', app_text('auth.errors.login_unavailable'));
+            Session::set('auth_login_errors', [
+                'password' => app_text('auth.errors.login_unavailable'),
+            ]);
             $this->redirect(app_url('auth/login.php'));
         }
 
-        Session::set('error', app_text('auth.errors.login_failed'));
+        Session::set('auth_login_errors', [
+            'password' => app_text('auth.errors.login_failed'),
+        ]);
         $this->redirect(app_url('auth/login.php'));
     }
 

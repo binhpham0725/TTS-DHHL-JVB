@@ -1,8 +1,13 @@
 <?php
 $error = $error ?? '';
 $oldEmail = $oldEmail ?? '';
+$fieldErrors = is_array($fieldErrors ?? null) ? $fieldErrors : [];
 $baseUrl = defined('APP_BASE') ? APP_BASE : '/' . basename(dirname(__DIR__, 3));
 $texts = app_text_group('auth');
+
+if ($error !== '' && !isset($fieldErrors['password'])) {
+    $fieldErrors['password'] = $error;
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -19,25 +24,37 @@ $texts = app_text_group('auth');
         <div class="overlay"></div>
         <div class="login-box">
             <h2><?= htmlspecialchars($texts['heading']) ?></h2>
-            <?php if ($error !== ''): ?>
-                <div class="error-text"><?= htmlspecialchars($error) ?></div>
-            <?php endif; ?>
 
-            <form action="<?= htmlspecialchars($baseUrl) ?>/auth/login.php" method="POST">
-                <div class="input-group">
-                    <input type="text" name="email" placeholder="<?= htmlspecialchars($texts['email_placeholder']) ?>" value="<?= htmlspecialchars($oldEmail) ?>" required>
-                </div>
-
-                <div class="input-group">
-                    <input type="password" name="password" placeholder="<?= htmlspecialchars($texts['password_placeholder']) ?>" required>
-                </div>
-
-                <div class="options">
-                    <label class="remember">
-                        <input type="checkbox" name="remember">
-                        <?= htmlspecialchars($texts['remember']) ?>
+            <form id="loginForm" action="<?= htmlspecialchars($baseUrl) ?>/auth/login.php" method="POST" novalidate>
+                <div class="input-group <?= isset($fieldErrors['email']) ? 'has-error' : '' ?>">
+                    <label for="email">
+                        <?= htmlspecialchars($texts['email_label']) ?>
+                        <span class="required-mark" aria-hidden="true">*</span>
                     </label>
-                    <a href="#" class="forgot"><?= htmlspecialchars($texts['forgot_password']) ?></a>
+                    <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        placeholder="<?= htmlspecialchars($texts['email_placeholder']) ?>"
+                        value="<?= htmlspecialchars($oldEmail) ?>"
+                        autocomplete="username"
+                    >
+                    <small id="emailError" class="field-error"><?= htmlspecialchars($fieldErrors['email'] ?? '') ?></small>
+                </div>
+
+                <div class="input-group <?= isset($fieldErrors['password']) ? 'has-error' : '' ?>">
+                    <label for="password">
+                        <?= htmlspecialchars($texts['password_label']) ?>
+                        <span class="required-mark" aria-hidden="true">*</span>
+                    </label>
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        placeholder="<?= htmlspecialchars($texts['password_placeholder']) ?>"
+                        autocomplete="current-password"
+                    >
+                    <small id="passwordError" class="field-error"><?= htmlspecialchars($fieldErrors['password'] ?? '') ?></small>
                 </div>
 
                 <button type="submit" class="login-btn"><?= htmlspecialchars($texts['submit']) ?></button>

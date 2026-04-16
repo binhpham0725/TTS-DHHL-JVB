@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 class StudentModel
 {
@@ -92,6 +92,12 @@ class StudentModel
 
     public function create(array $data): bool
     {
+        $birthday = $this->normalizeNullableValue($data['birthday'] ?? '');
+        $gender = trim((string)($data['gender'] ?? '')) === '' ? 'Khác' : trim((string)$data['gender']);
+        $phone = trim((string)($data['phone'] ?? ''));
+        $email = $this->normalizeNullableValue($data['email'] ?? '');
+        $address = $this->normalizeNullableValue($data['address'] ?? '');
+
         $stmt = $this->db->prepare(
             'INSERT INTO students (mssv, fullname, birthday, gender, phone, email, class, address)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
@@ -100,12 +106,12 @@ class StudentModel
             'ssssssss',
             $data['mssv'],
             $data['fullname'],
-            $data['birthday'],
-            $data['gender'],
-            $data['phone'],
-            $data['email'],
+            $birthday,
+            $gender,
+            $phone,
+            $email,
             $data['class'],
-            $data['address']
+            $address
         );
         $ok = $stmt->execute();
         $stmt->close();
@@ -270,6 +276,105 @@ class StudentModel
         }
 
         return ['error' => null, 'class' => $class];
+    }
+
+    public function validateCreateForm(array $data): array
+    {
+        $mssv = trim($data['mssv'] ?? '');
+        $fullname = trim($data['fullname'] ?? '');
+        $birthday = trim($data['birthday'] ?? '');
+        $gender = trim($data['gender'] ?? '');
+        $phone = trim($data['phone'] ?? '');
+        $email = trim($data['email'] ?? '');
+        $address = trim($data['address'] ?? '');
+
+        $errors = [];
+        $class = null;
+
+        if ($mssv === '') {
+            $errors['mssv'] = 'Vui lòng nhập MSSV.';
+        } elseif (!preg_match('/^\d{8}$/', $mssv)) {
+            $errors['mssv'] = 'MSSV phải gồm đúng 8 chữ số.';
+        } else {
+            $class = getClassFromMssv($mssv);
+            if ($class === null) {
+                $errors['mssv'] = '4 số đầu của MSSV chưa thuộc nhóm lớp đang hỗ trợ.';
+            } elseif ($this->existsByMssv($mssv)) {
+                $errors['mssv'] = 'MSSV đã tồn tại.';
+            }
+        }
+
+        if ($fullname === '') {
+            $errors['fullname'] = 'Vui lòng nhập họ và tên.';
+        }
+
+        if ($birthday === '') {
+            $errors['birthday'] = 'Vui lòng chọn ngày sinh.';
+        } else {
+            $birthdayError = $this->validateCreateBirthday($birthday);
+            if ($birthdayError !== null) {
+                $errors['birthday'] = $birthdayError;
+            }
+        }
+
+        if ($gender === '') {
+            $errors['gender'] = 'Vui lòng chọn giới tính.';
+        } elseif (!in_array($gender, ['Nam', 'Nữ', 'Khác'], true)) {
+            $errors['gender'] = 'Giới tính không hợp lệ.';
+        }
+
+        if ($phone === '') {
+            $errors['phone'] = 'Vui lòng nhập số điện thoại.';
+        } elseif (!preg_match('/^0\d{9}$/', $phone)) {
+            $errors['phone'] = 'Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0.';
+        }
+
+        if ($email === '') {
+            $errors['email'] = 'Vui lòng nhập email.';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'Email không hợp lệ.';
+        } elseif ($this->existsByEmail($email)) {
+            $errors['email'] = 'Email đã tồn tại.';
+        }
+
+        if ($address === '') {
+            $errors['address'] = 'Vui lòng nhập địa chỉ.';
+        }
+
+        return [
+            'error' => $errors === [] ? null : reset($errors),
+            'errors' => $errors,
+            'class' => $errors === [] ? $class : null,
+        ];
+    }
+
+    private function validateCreateBirthday(string $birthday): ?string
+    {
+        if ($birthday === '') {
+            return 'Vui lòng chọn ngày sinh.';
+        }
+
+        $date = DateTime::createFromFormat('Y-m-d', $birthday);
+        $lastErrors = DateTime::getLastErrors();
+        $hasDateErrors = is_array($lastErrors)
+            && (($lastErrors['warning_count'] ?? 0) > 0 || ($lastErrors['error_count'] ?? 0) > 0);
+
+        if (!$date instanceof DateTime || $hasDateErrors || $date->format('Y-m-d') !== $birthday) {
+            return 'Ngày sinh không hợp lệ.';
+        }
+
+        $today = new DateTime('today');
+        if ($date > $today) {
+            return 'Ngày sinh không được lớn hơn ngày hiện tại.';
+        }
+
+        return null;
+    }
+
+    private function normalizeNullableValue(string|null $value): ?string
+    {
+        $value = trim((string)$value);
+        return $value === '' ? null : $value;
     }
 
     private function detectCsvDelimiter(string $path): string

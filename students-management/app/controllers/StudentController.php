@@ -42,6 +42,7 @@ class StudentController extends Controller
             'teacherName' => Session::get('teacher_name', app_text('common.not_logged_in')),
             'exportUrl' => app_url('function/students/export.php') . ($exportQuery ? '?' . $exportQuery : ''),
             'addError' => Session::flash('student_add_error', ''),
+            'addFieldErrors' => Session::flash('student_add_errors', []),
             'addOld' => Session::flash('student_add_old', []),
         ]);
     }
@@ -70,19 +71,22 @@ class StudentController extends Controller
         ];
 
         try {
-            // Khi thêm mới, lớp không nhập tay mà được suy ra từ 4 số đầu của MSSV trong model validate().
-            $validation = $this->students->validate($data, false);
+            // Khi thêm mới, lớp không nhập tay mà được suy ra từ 4 số đầu của MSSV trong model validate.
+            $validation = $this->students->validateCreateForm($data);
             if ($validation['error'] !== null) {
-                Session::set('student_add_error', $validation['error']);
+                Session::set('student_add_error', 'Vui lòng kiểm tra lại các trường thông tin bên dưới.');
+                Session::set('student_add_errors', $validation['errors'] ?? []);
                 Session::set('student_add_old', $data);
                 $this->redirect(app_url('interface/listsv.php'));
             }
 
             $data['class'] = $validation['class'];
             $this->students->create($data);
+            $this->redirect(app_url('interface/listsv.php?msg=add_success'));
         } catch (Throwable $exception) {
             $this->reportException($exception);
             Session::set('student_add_error', app_text('students.errors.create_failed'));
+            Session::set('student_add_errors', []);
             Session::set('student_add_old', $data);
         }
 
@@ -140,7 +144,10 @@ class StudentController extends Controller
             $this->json(['success' => false, 'message' => app_text('students.errors.update_failed')], 500);
         }
 
-        $this->json(['success' => true]);
+        $this->json([
+            'success' => true,
+            'message' => app_text('students.messages.edit_success'),
+        ]);
     }
 
     public function delete(int $id): void
@@ -157,7 +164,7 @@ class StudentController extends Controller
             $this->redirect(app_url('interface/listsv.php?msg=delete_error'));
         }
 
-        $this->redirect(app_url('interface/listsv.php'));
+        $this->redirect(app_url('interface/listsv.php?msg=delete_success'));
     }
 
     public function import(): void

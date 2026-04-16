@@ -2,6 +2,7 @@
   --bg: #f5f6fa;
   --surface: #ffffff;
   --sidebar-bg: #f7f7f8;
+  --sidebar-width: 280px;
   --text: #1f2937;
   --muted: #8b95a7;
   --line: #e5e7eb;
@@ -41,7 +42,7 @@ select {
 
 .layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
   min-height: 100vh;
 }
 
@@ -59,7 +60,7 @@ select {
 }
 
 .sidebar {
-  width: 280px;
+  width: var(--sidebar-width);
   min-height: 100vh;
   background: #fff;
   border-right: 1px solid var(--line);
@@ -299,15 +300,16 @@ select {
   }
 
   .sidebar-col {
-    flex: 0 0 24%;
-    max-width: 24%;
+    flex: 0 0 var(--sidebar-width);
+    max-width: var(--sidebar-width);
     display: flex;
     min-height: 100vh;
   }
 
   .main-col {
-    flex: 0 0 76%;
-    max-width: 76%;
+    flex: 1 1 auto;
+    max-width: calc(100% - var(--sidebar-width));
+    min-width: 0;
   }
 
   .layout {

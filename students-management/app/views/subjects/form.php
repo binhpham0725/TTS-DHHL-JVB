@@ -2,6 +2,16 @@
 $common = app_text_group('common');
 $texts = app_text_group('subjects.form');
 $labels = $texts['labels'];
+$baseUrl = defined('APP_BASE') ? APP_BASE : '/' . basename(dirname(__DIR__, 3));
+$toasts = [];
+
+if (!empty($errors)) {
+    $toasts[] = [
+        'type' => 'error',
+        'title' => 'Vui lòng kiểm tra lại thông tin môn học.',
+        'items' => $errors,
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -9,6 +19,7 @@ $labels = $texts['labels'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($title) ?></title>
+    <link rel="stylesheet" href="<?= htmlspecialchars($baseUrl) ?>/assets/css/toast.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
@@ -16,8 +27,6 @@ $labels = $texts['labels'];
         .wrapper { max-width: 760px; margin: 40px auto; background: #fff; border-radius: 18px; padding: 28px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); border: 1px solid #e5e7eb; }
         h2 { margin: 0 0 8px; font-size: 28px; font-weight: 800; }
         .sub { color: #6b7280; margin-bottom: 24px; }
-        .alert { padding: 14px 16px; border-radius: 12px; margin-bottom: 18px; font-size: 14px; }
-        .alert.error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .form-group { margin-bottom: 16px; }
         .form-group.full { grid-column: 1 / -1; }
@@ -33,17 +42,10 @@ $labels = $texts['labels'];
     </style>
 </head>
 <body>
+    <?php require dirname(__DIR__) . '/partials/toast.php'; ?>
     <div class="wrapper">
         <h2><?= htmlspecialchars($title) ?></h2>
         <div class="sub"><?= htmlspecialchars($subtitle) ?></div>
-
-        <?php if (!empty($errors)): ?>
-            <div class="alert error">
-                <?php foreach ($errors as $item): ?>
-                    <div>- <?= htmlspecialchars($item) ?></div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
 
         <form method="POST">
             <div class="form-grid">
@@ -89,5 +91,6 @@ $labels = $texts['labels'];
             </div>
         </form>
     </div>
+    <script src="<?= htmlspecialchars($baseUrl) ?>/assets/js/toast.js"></script>
 </body>
 </html>

@@ -39,6 +39,27 @@ function getRank($avg)
     return app_text('helpers.rank.weak');
 }
 
+function getRankClass($avg)
+{
+    if ($avg >= 9) {
+        return 'rank-excellent';
+    }
+
+    if ($avg >= 8) {
+        return 'rank-good';
+    }
+
+    if ($avg >= 6.5) {
+        return 'rank-fair';
+    }
+
+    if ($avg >= 5) {
+        return 'rank-average';
+    }
+
+    return 'rank-weak';
+}
+
 function calculateAverage($attendance, $midterm, $final, $attendanceWeight = 10, $midtermWeight = 30, $finalWeight = 60)
 {
     // Chuẩn hóa điểm đầu vào về khoảng 0-10 trước khi áp dụng trọng số.

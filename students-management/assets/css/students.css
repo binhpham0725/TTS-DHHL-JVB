@@ -184,6 +184,18 @@ a {
   vertical-align: middle;
 }
 
+.students-table tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.students-table tbody tr:nth-child(even) {
+  background: #f8fbff;
+}
+
+.students-table tbody tr:hover {
+  background: #eef4ff;
+}
+
 .students-table th:nth-child(1),
 .students-table td:nth-child(1) {
   width: 10%;
@@ -399,6 +411,17 @@ a {
   padding: 24px;
 }
 
+.alert-error {
+  margin: 18px 24px 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #fff3f2;
+  border: 1px solid #f8c8c4;
+  color: #b42318;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -417,6 +440,11 @@ a {
   color: #314158;
 }
 
+.form-group label .required-mark {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
 .form-group input,
 .form-group select {
   height: 50px;
@@ -433,6 +461,21 @@ a {
 .form-group select:focus {
   border-color: #91a8ee;
   box-shadow: 0 0 0 3px rgba(121, 148, 234, 0.12);
+}
+
+.form-group.has-error input,
+.form-group.has-error select {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+}
+
+.field-error {
+  display: block;
+  min-height: 18px;
+  margin-top: -2px;
+  color: #c2410c;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .form-control {

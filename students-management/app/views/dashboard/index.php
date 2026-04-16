@@ -12,6 +12,7 @@ $texts = app_text_group('dashboard');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <link rel="stylesheet" href="../assets/css/confirm.css"/>
     <link rel="stylesheet" href="../assets/css/style.css"/>
     <link rel="stylesheet" href="../assets/css/nav.css"/>
 </head>
@@ -126,9 +127,13 @@ $texts = app_text_group('dashboard');
         window.APP_TEXTS = window.APP_TEXTS || {};
         window.APP_TEXTS.common = <?= json_encode([
             'logout_confirm' => app_text('common.logout_confirm'),
+            'confirm_title' => 'Xác nhận thao tác',
+            'confirm_accept' => 'Đồng ý',
+            'confirm_cancel' => 'Hủy',
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../assets/js/confirm.js"></script>
     <script src="../assets/js/layout.js"></script>
     <script src="../assets/js/logout.js"></script>
     <script src="../assets/js/statisticals.js"></script>
